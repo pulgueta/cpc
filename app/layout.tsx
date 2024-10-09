@@ -15,8 +15,7 @@ const geistSans = localFont({
 export const metadata = {
   title: {
     template: "Centro Popular Comercial - %s",
-    default:
-      "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
+    default: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
   },
   description: "Adquiere los mejores productos en el Centro Popular Comercial",
 } satisfies Metadata;
@@ -29,12 +28,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableColorScheme
-          enableSystem
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme enableSystem>
           {children}
         </ThemeProvider>
       </body>

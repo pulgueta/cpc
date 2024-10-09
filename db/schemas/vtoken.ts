@@ -11,5 +11,5 @@ export const verificationTokens = pgTable(
     compositePk: primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
     }),
-  })
+  }),
 );

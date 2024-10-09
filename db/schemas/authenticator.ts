@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  primaryKey,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, primaryKey, boolean, integer } from "drizzle-orm/pg-core";
 
 import { users } from "./user";
 
@@ -26,5 +20,5 @@ export const authenticators = pgTable(
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  })
+  }),
 );
