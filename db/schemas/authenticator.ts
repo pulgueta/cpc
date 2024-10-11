@@ -5,6 +5,7 @@ import { users } from "./user";
 export const authenticators = pgTable(
   "authenticator",
   {
+    id: text("id").primaryKey(),
     credentialID: text("credentialID").notNull().unique(),
     userId: text("userId")
       .notNull()

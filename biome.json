@@ -43,7 +43,8 @@
           "fix": "unsafe",
           "level": "warn",
           "options": {
-            "attributes": ["class", "className"]
+            "attributes": ["class", "className", "classList"],
+            "functions": ["clsx", "cn", "tw", "cva"]
           }
         }
       }
