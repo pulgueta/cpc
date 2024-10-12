@@ -8,6 +8,8 @@ export const env = createEnv({
     AUTH_SECRET: z.string(),
     CAPTCHA_SECRET_KEY: z.string(),
     RESEND_API_KEY: z.string(),
+    UPSTASH_REDIS_URL: z.string().url(),
+    UPSTASH_REDIS_TOKEN: z.string(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -15,5 +17,7 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     CAPTCHA_SECRET_KEY: process.env.CAPTCHA_SECRET_KEY,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL,
+    UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN,
   },
 });
