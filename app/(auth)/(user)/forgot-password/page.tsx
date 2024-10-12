@@ -10,7 +10,7 @@ interface ForgotPasswordProps {
 }
 
 const ForgotPassword: NextPage<ForgotPasswordProps> = ({ searchParams }) => {
-  return !searchParams.code ? <UpdatePasswordForm /> : <ForgotPasswordForm />;
+  return searchParams.code ? <UpdatePasswordForm /> : <ForgotPasswordForm />;
 };
 
 export default ForgotPassword;

@@ -9,6 +9,9 @@ export const users = pgTable("user", {
   name: text("name").notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
+  document: text("document").unique().notNull(),
+  phone: text("phone").notNull(),
+  role: text("role", { enum: ["admin", "storeOwner", "user"] }).notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
 });

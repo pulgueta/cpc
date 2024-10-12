@@ -1,16 +1,18 @@
 "use client";
 
-import Link from "next/link";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { ResetPasswordSchema } from "@/schemas/user";
 import { resetPasswordSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CREATE_USER } from "@/constants";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Heading, Paragraph } from "@/components/ui/typography";
 
 export const UpdatePasswordForm = () => {
   const form = useForm<ResetPasswordSchema>({
@@ -27,12 +29,11 @@ export const UpdatePasswordForm = () => {
   return (
     <>
       <header className="mb-4">
-        <h1 className="text-3xl tracking-tighter text-balance font-bold text-center">
-          Actualizar contraseña
-        </h1>
-        <p className="text-center text-muted-foreground mt-2 text-pretty text-sm">
+        <Heading center>Actualizar contraseña</Heading>
+
+        <Paragraph center muted weight="normal" className="mt-2">
           Ingresa el código de recuperación que te enviamos a tu correo
-        </p>
+        </Paragraph>
       </header>
 
       <Form {...form}>
@@ -40,37 +41,32 @@ export const UpdatePasswordForm = () => {
           <form className="space-y-4" onSubmit={onSubmit}>
             <FormComponent
               name="password"
-              label="Nueva contraseña"
               render={({ field }) => (
-                <Input
-                  type="password"
-                  autoComplete="new-password"
-                  aria-disabled={form.formState.isSubmitting}
-                  placeholder="********"
-                  className="shadow"
-                  minLength={CREATE_USER.email.minLength.value}
-                  maxLength={CREATE_USER.email.maxLength.value}
-                  {...field}
-                />
+                <div className="w-max mx-auto">
+                  <InputOTP
+                    maxLength={6}
+                    {...field}
+                    autoComplete="one-time-code"
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
               )}
             />
 
             <Button className="w-full" loading={form.formState.isSubmitting}>
-              Actualizar contraseña
+              Validar código
             </Button>
           </form>
         </section>
       </Form>
-
-      <p className="text-center text-muted-foreground text-sm mt-4">
-        ¿No tienes cuenta?{" "}
-        <Link
-          href="/register"
-          className="mt-2 font-medium text-black dark:text-white text-sm underline-offset-4 hover:underline"
-        >
-          Regístrate
-        </Link>
-      </p>
     </>
   );
 };
