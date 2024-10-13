@@ -8,8 +8,8 @@ const Verify = () => {
         <Heading center>Validar código</Heading>
 
         <Paragraph center muted weight="normal" className="mt-2">
-          Hemos enviado un código de verificación a su correo electrónico. Por
-          favor, ingréselo a continuación.
+          Hemos enviado un código de verificación a su correo electrónico. Por favor, ingréselo a
+          continuación.
         </Paragraph>
       </header>
 

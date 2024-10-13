@@ -4,28 +4,20 @@ import { timestamp, pgTable, text } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
-import { stores } from "./store";
-
-export const users = pgTable("user", {
+export const stores = pgTable("store", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
   name: text("name").notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
-  document: text("document").unique(),
-  phone: text("phone"),
-  role: text("role", { enum: ["admin", "storeOwner", "user"] }).default("user"),
+  document: text("document").unique().notNull(),
+  phone: text("phone").notNull(),
+  role: text("role", { enum: ["admin", "storeOwner", "store"] }).default("store"),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).$onUpdateFn(
-    () => new Date(),
-  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$onUpdateFn(() => new Date()),
 });
 
-export const userRelations = relations(stores, ({ many }) => ({
-  stores: many(stores),
-}));
-
-export type NewUser = InferInsertModel<typeof users>;
+export type NewUser = InferInsertModel<typeof stores>;

@@ -10,6 +10,8 @@ export const env = createEnv({
     RESEND_API_KEY: z.string(),
     UPSTASH_REDIS_URL: z.string().url(),
     UPSTASH_REDIS_TOKEN: z.string(),
+    SITE_URL: z.string().url(),
+    FROM_EMAIL: z.string().email(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -19,5 +21,7 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL,
     UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN,
+    SITE_URL: process.env.SITE_URL,
+    FROM_EMAIL: process.env.FROM_EMAIL,
   },
 });

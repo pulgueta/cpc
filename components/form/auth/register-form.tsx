@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import type { RegisterSchema } from "@/schemas/user";
 import { registerSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useCreateUser } from "@/hooks/user/useCreateUser";
 
 export const RegisterForm = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -21,6 +23,7 @@ export const RegisterForm = () => {
   const loginHref = usePathname().includes("stores")
     ? "/stores/login"
     : "/login";
+  const router = useRouter();
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -30,8 +33,19 @@ export const RegisterForm = () => {
     },
   });
 
-  const onSubmit = form.handleSubmit((data) => {
-    console.log(data);
+  const { mutateAsync: register, isPending, isSuccess } = useCreateUser();
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    const res = await register(data);
+
+    if ("message" in res) {
+      return toast.error(res.message);
+    }
+
+    if (form.formState.isSubmitted && isSuccess) {
+      toast.success("Cuenta creada exitosamente");
+      return router.push("/verify");
+    }
   });
 
   return (
@@ -46,7 +60,7 @@ export const RegisterForm = () => {
                 <Input
                   autoComplete="given-name"
                   autoFocus
-                  aria-disabled={form.formState.isSubmitting}
+                  aria-disabled={form.formState.isSubmitting && isPending}
                   placeholder="Sebastian Rojas"
                   className="shadow"
                   {...field}
@@ -61,7 +75,7 @@ export const RegisterForm = () => {
                 <Input
                   type="email"
                   autoComplete="email"
-                  aria-disabled={form.formState.isSubmitting}
+                  aria-disabled={form.formState.isSubmitting && isPending}
                   placeholder="correo@miempresa.com"
                   className="shadow"
                   {...field}
@@ -77,7 +91,7 @@ export const RegisterForm = () => {
                   <Input
                     type={show ? "text" : "password"}
                     autoComplete="current-password"
-                    aria-disabled={form.formState.isSubmitting}
+                    aria-disabled={form.formState.isSubmitting && isPending}
                     placeholder="********"
                     className="shadow"
                     {...field}
@@ -98,7 +112,10 @@ export const RegisterForm = () => {
               )}
             />
 
-            <Button className="w-full" disabled={form.formState.isSubmitting}>
+            <Button
+              className="w-full"
+              loading={form.formState.isSubmitting && isPending}
+            >
               Crear cuenta
             </Button>
           </form>

@@ -25,9 +25,7 @@ import { CREATE_USER } from "@/constants";
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
 
-  const registerHref = usePathname().includes("stores")
-    ? "/stores/register"
-    : "/register";
+  const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
 
   const isStorePath = usePathname().includes("stores");
 
@@ -90,9 +88,7 @@ export const LoginForm = () => {
                     variant="ghost"
                     type="button"
                     className="absolute top-0 right-0"
-                    aria-label={
-                      show ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
+                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}

@@ -40,8 +40,6 @@ export const registerSchema = createInsertSchema(users, {
       .max(CREATE_USER.password.maxLength.value, {
         message: CREATE_USER.password.maxLength.message,
       }),
-  phone: (s) => s.phone.optional(),
-  document: (s) => s.document.optional(),
 });
 
 export const loginSchema = registerSchema.pick({

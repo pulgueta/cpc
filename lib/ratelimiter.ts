@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
@@ -16,13 +14,7 @@ export const ratelimit = new Ratelimit({
 export const checkRateLimit = async (key: string, ip?: string | undefined) => {
   const { success } = await ratelimit.limit(key, { ip: ip ?? key });
 
-  if (!success) {
-    return NextResponse.json(
-      {
-        message:
-          "Has excedido el límite de peticiones, intenta nuevamente más tarde.",
-      },
-      { status: 429 },
-    );
-  }
+  return {
+    exceeded: !success,
+  };
 };

@@ -13,6 +13,9 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    serverComponentsExternalPackages: ["@node-rs/argon2"],
+  },
 };
 
 export default nextConfig;

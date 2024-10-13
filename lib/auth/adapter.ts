@@ -1,19 +1,9 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, eq } from "drizzle-orm";
-import type {
-  Adapter,
-  AdapterAccount,
-  AdapterAuthenticator,
-} from "next-auth/adapters";
+import type { Adapter, AdapterAccount, AdapterAuthenticator } from "next-auth/adapters";
 
 import { db } from "@/db/config";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-  authenticators,
-} from "@/db/schemas";
+import { accounts, sessions, users, verificationTokens, authenticators } from "@/db/schemas";
 
 export const drizzleAdapter = {
   ...DrizzleAdapter(db, {
@@ -28,10 +18,7 @@ export const drizzleAdapter = {
       .select()
       .from(accounts)
       .where(
-        and(
-          eq(accounts.provider, provider),
-          eq(accounts.providerAccountId, providerAccountId),
-        ),
+        and(eq(accounts.provider, provider), eq(accounts.providerAccountId, providerAccountId)),
       );
     return (account as AdapterAccount) ?? null;
   },
@@ -41,10 +28,7 @@ export const drizzleAdapter = {
       id,
       ...data,
     });
-    const [authenticator] = await db
-      .select()
-      .from(authenticators)
-      .where(eq(authenticators.id, id));
+    const [authenticator] = await db.select().from(authenticators).where(eq(authenticators.id, id));
     const { transports, id: _, ...rest } = authenticator;
     return { ...rest, transports: transports ?? undefined };
   },
@@ -56,10 +40,7 @@ export const drizzleAdapter = {
     return (authenticator as AdapterAuthenticator) ?? null;
   },
   listAuthenticatorsByUserId: async (userId) => {
-    const auths = await db
-      .select()
-      .from(authenticators)
-      .where(eq(authenticators.userId, userId));
+    const auths = await db.select().from(authenticators).where(eq(authenticators.userId, userId));
     return auths.map((a) => ({
       ...a,
       transports: a.transports ?? undefined,

@@ -41,10 +41,7 @@ interface HeadingProps
 }
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-  (
-    { as, className, children, fontStyle, weight, center = false, ...rest },
-    ref,
-  ) => {
+  ({ as, className, children, fontStyle, weight, center = false, ...rest }, ref) => {
     const Comp = as || "h1";
 
     return (
@@ -97,10 +94,7 @@ export interface ParagraphProps
 }
 
 export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
-  (
-    { weight, variant, className, center = false, muted = false, ...props },
-    ref,
-  ) => {
+  ({ weight, variant, className, center = false, muted = false, ...props }, ref) => {
     return (
       <p
         className={cn(paragraphVariants({ className, variant, weight }), {
@@ -116,17 +110,16 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
 
 Paragraph.displayName = "Paragraph";
 
-export const Blockquote = forwardRef<
-  HTMLQuoteElement,
-  HTMLAttributes<HTMLQuoteElement>
->(({ className, ...props }, ref) => {
-  return (
-    <blockquote
-      className={cn("text-pretty font-semibold text-xs", className)}
-      ref={ref}
-      {...props}
-    />
-  );
-});
+export const Blockquote = forwardRef<HTMLQuoteElement, HTMLAttributes<HTMLQuoteElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <blockquote
+        className={cn("text-pretty font-semibold text-xs", className)}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
 
 Blockquote.displayName = "Caption";

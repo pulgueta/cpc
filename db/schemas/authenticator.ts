@@ -1,11 +1,16 @@
-import { pgTable, text, primaryKey, boolean, integer } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  primaryKey,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 
 import { users } from "./user";
 
 export const authenticators = pgTable(
   "authenticator",
   {
-    id: text("id").primaryKey(),
     credentialID: text("credentialID").notNull().unique(),
     userId: text("userId")
       .notNull()
@@ -18,7 +23,8 @@ export const authenticators = pgTable(
     transports: text("transports"),
   },
   (authenticator) => ({
-    compositePK: primaryKey({
+    pk: primaryKey({
+      name: "authenticator_userId_credentialID_pk",
       columns: [authenticator.userId, authenticator.credentialID],
     }),
   }),

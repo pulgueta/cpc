@@ -7,11 +7,7 @@ import type { ResetPasswordSchema } from "@/schemas/user";
 import { resetPasswordSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 export const VerifyOTP = () => {
   const form = useForm<ResetPasswordSchema>({

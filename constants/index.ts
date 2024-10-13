@@ -25,8 +25,7 @@ export const CREATE_USER = {
     },
   },
   confirmPassword: {
-    invalid_type_error:
-      "La confirmación de la contraseña debe ser texto válido",
+    invalid_type_error: "La confirmación de la contraseña debe ser texto válido",
     required_error: "La confirmación de la contraseña es obligatoria",
     message: "Las contraseñas no coinciden",
   },

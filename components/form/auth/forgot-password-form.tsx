@@ -32,8 +32,7 @@ export const ForgotPasswordForm = () => {
           Recuperar mi contraseña
         </h1>
         <p className="text-center text-muted-foreground mt-2 text-pretty text-sm">
-          Ingresa tu correo electrónico para enviarte un enlace de recuperación
-          de contraseña.
+          Ingresa tu correo electrónico para enviarte un enlace de recuperación de contraseña.
         </p>
       </header>
 

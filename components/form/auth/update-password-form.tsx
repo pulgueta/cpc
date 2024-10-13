@@ -7,11 +7,7 @@ import type { ResetPasswordSchema } from "@/schemas/user";
 import { resetPasswordSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Heading, Paragraph } from "@/components/ui/typography";
 
 export const UpdatePasswordForm = () => {
@@ -43,11 +39,7 @@ export const UpdatePasswordForm = () => {
               name="password"
               render={({ field }) => (
                 <div className="w-max mx-auto">
-                  <InputOTP
-                    maxLength={6}
-                    {...field}
-                    autoComplete="one-time-code"
-                  >
+                  <InputOTP maxLength={6} {...field} autoComplete="one-time-code">
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />

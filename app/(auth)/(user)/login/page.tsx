@@ -15,8 +15,8 @@ const Login = () => {
         <Heading center>¡Bienvenido de vuelta!</Heading>
 
         <Paragraph center muted weight="normal" className="mt-2">
-          Ingresa tus credenciales para acceder a tu cuenta y disfrutar de todos
-          los beneficios que tenemos para ti.
+          Ingresa tus credenciales para acceder a tu cuenta y disfrutar de todos los beneficios que
+          tenemos para ti.
         </Paragraph>
       </header>
 
