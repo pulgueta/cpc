@@ -20,9 +20,7 @@ import { useCreateUser } from "@/hooks/user/useCreateUser";
 export const RegisterForm = () => {
   const [show, setShow] = useState<boolean>(false);
 
-  const loginHref = usePathname().includes("stores")
-    ? "/stores/login"
-    : "/login";
+  const loginHref = usePathname().includes("stores") ? "/stores/login" : "/login";
   const router = useRouter();
 
   const form = useForm<RegisterSchema>({
@@ -102,9 +100,7 @@ export const RegisterForm = () => {
                     type="button"
                     className="absolute top-0 right-0"
                     onClick={() => setShow(!show)}
-                    aria-label={
-                      show ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
+                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                   </Button>
@@ -112,21 +108,18 @@ export const RegisterForm = () => {
               )}
             />
 
-            <Button
-              className="w-full"
-              loading={form.formState.isSubmitting && isPending}
-            >
+            <Button className="w-full" loading={form.formState.isSubmitting && isPending}>
               Crear cuenta
             </Button>
           </form>
         </section>
       </Form>
 
-      <p className="text-center text-muted-foreground text-sm mt-4">
+      <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿Ya tienes cuenta?{" "}
         <Link
           href={loginHref}
-          className="mt-2 font-medium text-black dark:text-white text-sm underline-offset-4 hover:underline"
+          className="mt-2 font-medium text-black text-sm underline-offset-4 hover:underline dark:text-white"
         >
           Ingresa aquí
         </Link>

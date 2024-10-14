@@ -105,13 +105,13 @@ export const LoginForm = () => {
           {!isStorePath && (
             <>
               <div className="relative py-4">
-                <span className="absolute left-1/2 top-1.5 -translate-x-1/2 bg-white dark:bg-neutral-900 px-2.5 text-sm font-medium text-muted-foreground">
+                <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
                   O inicia sesión con:
                 </span>
                 <Separator />
               </div>
 
-              <section className="grid gap-2 grid-cols-2">
+              <section className="grid grid-cols-2 gap-2">
                 <Button
                   className="w-full"
                   variant="outline"
@@ -133,7 +133,7 @@ export const LoginForm = () => {
                 </Button>
 
                 <Button
-                  className="w-full col-span-2"
+                  className="col-span-2 w-full"
                   variant="outline"
                   aria-label="Iniciar sesión con datos biométricos"
                   onClick={() => passkeyLogin("passkey")}
@@ -147,20 +147,20 @@ export const LoginForm = () => {
         </section>
       </Form>
 
-      <p className="text-center text-muted-foreground text-sm mt-4">
+      <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿No tienes cuenta?{" "}
         <Link
           href={registerHref}
-          className="mt-2 font-medium text-black dark:text-white text-sm underline-offset-4 hover:underline"
+          className="mt-2 font-medium text-black text-sm underline-offset-4 hover:underline dark:text-white"
         >
           Regístrate
         </Link>
       </p>
 
-      <p className="text-center text-muted-foreground text-sm mt-2">
+      <p className="mt-2 text-center text-muted-foreground text-sm">
         <Link
           href="/forgot-password"
-          className="mt-2 font-medium text-black dark:text-white text-sm underline-offset-4 hover:underline"
+          className="mt-2 font-medium text-black text-sm underline-offset-4 hover:underline dark:text-white"
         >
           Olvidé mi contraseña
         </Link>

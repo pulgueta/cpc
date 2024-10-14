@@ -42,3 +42,19 @@ export const CREATE_USER = {
     },
   },
 } as const;
+
+export const OTP_CODE = {
+  invalid_type_error: "El código de verificación debe ser texto válido",
+  required_error: "El código de verificación es obligatorio",
+  minLength: {
+    value: 6,
+    message: "El código de verificación debe tener al menos 6 caracteres",
+  },
+  maxLength: {
+    value: 6,
+    message: "El código de verificación debe tener como máximo 6 caracteres",
+  },
+} as const;
+
+export const publicApiRoutes = new Set(["/stores"] as const);
+export const publicRoutes = new Set(["/login", "/register"] as const);

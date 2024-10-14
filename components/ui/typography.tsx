@@ -6,7 +6,7 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const headingVariants = cva("text-balance tracking-tighter scroll-m-20", {
+const headingVariants = cva("scroll-m-20 text-balance tracking-tighter", {
   variants: {
     as: {
       h1: "text-3xl md:text-4xl lg:text-5xl",

@@ -111,7 +111,7 @@ const FormDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLPara
       <p
         ref={ref}
         id={formDescriptionId}
-        className={cn("text-muted-foreground text-sm text-pretty", className)}
+        className={cn("text-pretty text-muted-foreground text-sm", className)}
         {...props}
       />
     );
@@ -132,7 +132,7 @@ const FormMessage = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagrap
       <p
         ref={ref}
         id={formMessageId}
-        className={cn("font-medium text-destructive text-sm text-pretty", className)}
+        className={cn("text-pretty font-medium text-destructive text-sm", className)}
         {...props}
       >
         {body}

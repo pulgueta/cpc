@@ -24,7 +24,5 @@ export const TanstackProvider: FC<PropsWithChildren> = ({ children }) => {
       }),
   );
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };

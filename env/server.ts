@@ -12,6 +12,8 @@ export const env = createEnv({
     UPSTASH_REDIS_TOKEN: z.string(),
     SITE_URL: z.string().url(),
     FROM_EMAIL: z.string().email(),
+    GOOGLE_CLIENT_ID: z.string(),
+    GOOGLE_CLIENT_SECRET: z.string(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -23,5 +25,7 @@ export const env = createEnv({
     UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN,
     SITE_URL: process.env.SITE_URL,
     FROM_EMAIL: process.env.FROM_EMAIL,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   },
 });

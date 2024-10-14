@@ -28,10 +28,10 @@ export const ForgotPasswordForm = () => {
   return (
     <>
       <header className="mb-4">
-        <h1 className="text-3xl tracking-tighter text-balance font-bold text-center">
+        <h1 className="text-balance text-center font-bold text-3xl tracking-tighter">
           Recuperar mi contraseña
         </h1>
-        <p className="text-center text-muted-foreground mt-2 text-pretty text-sm">
+        <p className="mt-2 text-pretty text-center text-muted-foreground text-sm">
           Ingresa tu correo electrónico para enviarte un enlace de recuperación de contraseña.
         </p>
       </header>
@@ -68,11 +68,11 @@ export const ForgotPasswordForm = () => {
         </section>
       </Form>
 
-      <p className="text-center text-muted-foreground text-sm mt-4">
+      <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿No tienes cuenta?{" "}
         <Link
           href="/register"
-          className="mt-2 font-medium text-black dark:text-white text-sm underline-offset-4 hover:underline"
+          className="mt-2 font-medium text-black text-sm underline-offset-4 hover:underline dark:text-white"
         >
           Regístrate
         </Link>

@@ -15,15 +15,12 @@ export const POST = async (req: NextRequest) => {
   if (request.exceeded) {
     return NextResponse.json(
       { message: "Demasiadas solicitudes, intenta más tarde" },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
   if (!request.success) {
-    return NextResponse.json(
-      { message: "Error creando usuario" },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Error creando usuario" }, { status: 400 });
   }
 
   const user = await createUser(request.data);
@@ -33,7 +30,7 @@ export const POST = async (req: NextRequest) => {
       {
         message: "El correo electrónico ya está tomado, intenta con uno nuevo",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -44,8 +41,5 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ message: email.message }, { status: 500 });
   }
 
-  return NextResponse.json<CreateUserResponse>(
-    { ...user, code },
-    { status: 201 }
-  );
+  return NextResponse.json<CreateUserResponse>({ ...user, code }, { status: 201 });
 };

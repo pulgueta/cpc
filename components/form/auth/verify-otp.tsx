@@ -28,7 +28,7 @@ export const VerifyOTP = () => {
           <FormComponent
             name="password"
             render={({ field }) => (
-              <div className="w-max mx-auto">
+              <div className="mx-auto w-max">
                 <InputOTP maxLength={6} {...field} autoComplete="one-time-code">
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />

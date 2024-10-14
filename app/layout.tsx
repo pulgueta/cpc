@@ -19,8 +19,7 @@ const geistSans = localFont({
 export const metadata = {
   title: {
     template: "Centro Popular Comercial - %s",
-    default:
-      "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
+    default: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
   },
   description: "Adquiere los mejores productos en el Centro Popular Comercial",
   metadataBase: new URL(env.SITE_URL),
@@ -30,11 +29,9 @@ export const metadata = {
   applicationName: "Centro Popular Comercial",
   openGraph: {
     type: "website",
-    description:
-      "Adquiere los mejores productos en el Centro Popular Comercial",
+    description: "Adquiere los mejores productos en el Centro Popular Comercial",
     siteName: "Centro Popular Comercial",
-    title:
-      "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
+    title: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
     url: new URL(env.SITE_URL),
   },
 } satisfies Metadata;
@@ -47,12 +44,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableColorScheme
-          enableSystem
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme enableSystem>
           <TanstackProvider>
             <Toaster richColors position="top-center" pauseWhenPageIsHidden />
             {children}

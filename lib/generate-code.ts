@@ -14,7 +14,8 @@ export const generateOTPCode = async (userId: NewUser["id"]) => {
   await db
     .insert(otpCode)
     .values({
-      code: encryptedCode,
+      hashedCode: encryptedCode,
+      code,
       userId,
     })
     .returning({

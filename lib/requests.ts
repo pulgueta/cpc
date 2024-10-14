@@ -6,7 +6,7 @@ import { checkRateLimit } from "./ratelimiter";
 
 export const handleRequest = async <const TData extends object>(
   req: NextRequest,
-  schema: AnyZodObject
+  schema: AnyZodObject,
 ) => {
   const exc = await checkRateLimit(req.ip ?? "localhost");
 

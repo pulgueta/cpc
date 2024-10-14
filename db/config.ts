@@ -6,4 +6,8 @@ import { env } from "@/env/server";
 
 const client = new Pool({ connectionString: env.DATABASE_URL, max: 1 });
 
-export const db = drizzle(client, { logger: true, schema });
+export const db = drizzle(client, {
+  logger: true,
+  schema,
+  casing: "snake_case",
+});
