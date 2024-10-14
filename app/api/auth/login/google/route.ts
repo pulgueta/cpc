@@ -4,12 +4,14 @@ import { generateState, generateCodeVerifier } from "arctic";
 
 import { google } from "@/lib/auth/oauth";
 
-export const GET = () => {
+export const GET = async () => {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
-  const url = google.createAuthorizationURL(state, codeVerifier, {
+  const url = await google.createAuthorizationURL(state, codeVerifier, {
     scopes: ["profile", "email"],
   });
+
+  console.log({ state, codeVerifier, url });
 
   cookies().set("google_oauth_state", state, {
     path: "/",

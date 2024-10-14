@@ -7,25 +7,23 @@ import { usePathname } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
-import type { BuiltInProviderType } from "next-auth/providers";
-import { signIn } from "next-auth/react";
-import { signIn as passkeyLogin } from "next-auth/webauthn";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import type { LoginSchema } from "@/schemas/user";
 import { loginSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/icons/google";
-import { FacebookIcon } from "@/components/icons/facebook";
 import { CREATE_USER } from "@/constants";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
 
-  const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
+  const registerHref = usePathname().includes("stores")
+    ? "/stores/register"
+    : "/register";
 
   const isStorePath = usePathname().includes("stores");
 
@@ -40,10 +38,6 @@ export const LoginForm = () => {
   const onSubmit = form.handleSubmit((data) => {
     console.log(data);
   });
-
-  const providerLogin = (provider: BuiltInProviderType) => async () => {
-    await signIn(provider);
-  };
 
   return (
     <>
@@ -88,7 +82,9 @@ export const LoginForm = () => {
                     variant="ghost"
                     type="button"
                     className="absolute top-0 right-0"
-                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    aria-label={
+                      show ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
@@ -111,36 +107,18 @@ export const LoginForm = () => {
                 <Separator />
               </div>
 
-              <section className="grid grid-cols-2 gap-2">
-                <Button
-                  className="w-full"
-                  variant="outline"
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <Link
+                  href="/api/auth/login/google"
+                  className={buttonVariants({
+                    className: "w-full",
+                    variant: "outline",
+                  })}
                   aria-label="Iniciar sesión con Google"
-                  onClick={providerLogin("google")}
                 >
                   <GoogleIcon className="mr-2 size-5" />
                   Google
-                </Button>
-
-                <Button
-                  className="w-full"
-                  variant="outline"
-                  aria-label="Iniciar sesión con Facebook"
-                  onClick={providerLogin("facebook")}
-                >
-                  <FacebookIcon className="mr-2 size-5" />
-                  Facebook
-                </Button>
-
-                <Button
-                  className="col-span-2 w-full"
-                  variant="outline"
-                  aria-label="Iniciar sesión con datos biométricos"
-                  onClick={() => passkeyLogin("passkey")}
-                >
-                  <FingerprintIcon className="mr-2 size-4" />
-                  Biometría
-                </Button>
+                </Link>
               </section>
             </>
           )}

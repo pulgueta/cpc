@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 
+import { OAuth2RequestError } from "arctic";
+
 import { generateSessionToken, createSession } from "@/lib/auth/session";
 import { google } from "@/lib/auth/oauth";
 import { setSessionTokenCookie } from "@/lib/auth/cookies";
@@ -24,12 +26,7 @@ export const GET = async (request: Request) => {
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null;
 
-  if (
-    code === null ||
-    state === null ||
-    storedState === null ||
-    codeVerifier === null
-  ) {
+  if (code === null || state === null || storedState === null || codeVerifier === null) {
     return new Response(null, {
       status: 400,
     });
@@ -44,14 +41,11 @@ export const GET = async (request: Request) => {
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
 
-    const response = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-      }
-    );
+    const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    });
 
     const googleUser: GoogleUser = await response.json();
 
@@ -93,9 +87,14 @@ export const GET = async (request: Request) => {
       },
     });
   } catch (e) {
-    console.error(e);
+    if (e instanceof OAuth2RequestError) {
+      return new Response(null, {
+        status: 400,
+      });
+    }
+
     return new Response(null, {
-      status: 400,
+      status: 500,
     });
   }
 };

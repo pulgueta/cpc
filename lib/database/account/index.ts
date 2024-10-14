@@ -10,10 +10,7 @@ export const getAccountByGoogleId = async (googleId: User["googleId"]) => {
   return user;
 };
 
-export const createAccountViaGoogle = async (
-  userId: User["id"],
-  googleId: string
-) => {
+export const createAccountViaGoogle = async (userId: User["id"], googleId: string) => {
   const [acc] = await db
     .insert(accounts)
     .values({

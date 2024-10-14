@@ -3,7 +3,7 @@ import { pgTable, serial, text } from "drizzle-orm/pg-core";
 
 import { users } from "./user";
 
-export const accounts = pgTable("accounts", {
+export const accounts = pgTable("account", {
   id: serial().primaryKey(),
   userId: text()
     .unique()
