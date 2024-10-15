@@ -13,6 +13,16 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        port: "",
+        pathname: "**",
+      },
+    ],
+  },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
   },

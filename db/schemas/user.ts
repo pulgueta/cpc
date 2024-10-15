@@ -23,7 +23,7 @@ export const users = pgTable("user", {
   updatedAt: timestamp({ mode: "date" }).$onUpdateFn(() => new Date()),
 });
 
-export const userRelations = relations(stores, ({ many }) => ({
+export const userRelations = relations(users, ({ many }) => ({
   stores: many(stores),
 }));
 

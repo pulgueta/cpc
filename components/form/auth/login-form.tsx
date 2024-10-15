@@ -3,11 +3,12 @@
 import { useState } from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import type { LoginSchema } from "@/schemas/user";
 import { loginSchema } from "@/schemas/user";
@@ -24,8 +25,8 @@ export const LoginForm = () => {
   const registerHref = usePathname().includes("stores")
     ? "/stores/register"
     : "/register";
-
   const isStorePath = usePathname().includes("stores");
+  const { push } = useRouter();
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -35,8 +36,21 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = form.handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = form.handleSubmit(async (data) => {
+    const q = await fetch("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const res = await q.json();
+
+    if (!q.ok) {
+      return toast.error(res.message);
+    }
+
+    toast.success("Inicio de sesión exitoso");
+
+    return push("/");
   });
 
   return (
@@ -107,7 +121,7 @@ export const LoginForm = () => {
                 <Separator />
               </div>
 
-              <section className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <section className="grid grid-cols-1">
                 <Link
                   href="/api/auth/login/google"
                   className={buttonVariants({

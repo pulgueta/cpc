@@ -32,10 +32,13 @@ export const createUser = async (values: NewUser) => {
   return user;
 };
 
-export const getUserByEmail = async (email: NewUser["email"]) => {
+export const getUserByEmail = async (
+  email: NewUser["email"],
+  getCached: boolean = false
+) => {
   const cached = await cache.get<User>(email);
 
-  if (cached) {
+  if (cached && getCached) {
     return cached;
   }
 
@@ -75,4 +78,10 @@ export const getUserById = async (id: User["id"]) => {
   });
 
   return user;
+};
+
+export const isEmailVerified = async (email: NewUser["email"]) => {
+  const user = await getUserByEmail(email);
+
+  return user?.emailVerified !== null;
 };

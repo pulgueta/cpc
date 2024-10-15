@@ -10,9 +10,10 @@ export const otpCode = pgTable("otp_code", {
     .primaryKey()
     .$defaultFn(() => createId()),
   code: text("code").notNull(),
-  hashedCode: text("hashed_code").notNull(),
   userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
-  expiresAt: timestamp("expires_at").$defaultFn(() => new Date(Date.now() + 1000 * 60 * 10)),
+  expiresAt: timestamp("expires_at").$defaultFn(
+    () => new Date(Date.now() + 1000 * 60 * 10)
+  ),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
 });

@@ -5,7 +5,8 @@ import { Heading, Paragraph } from "@/components/ui/typography";
 
 export const metadata = {
   title: "Crear cuenta",
-  description: "Crear una cuenta para obtener acceso a todas las funciones de la aplicación.",
+  description:
+    "Crear una cuenta para obtener acceso a todas las funciones de la aplicación.",
 } satisfies Metadata;
 
 const Register = () => {
@@ -15,8 +16,8 @@ const Register = () => {
         <Heading center>Crear una cuenta</Heading>
 
         <Paragraph center muted weight="normal" className="mt-2">
-          Crea una cuenta ahora para poder obtener los beneficios, descuentos, eventos y mucho más
-          que hay para ti en el Centro Popular Comercial.
+          Crea una cuenta ahora para poder obtener los beneficios, descuentos,
+          eventos y mucho más que hay para ti en el Centro Popular Comercial.
         </Paragraph>
       </header>
 

@@ -25,7 +25,8 @@ export const CREATE_USER = {
     },
   },
   confirmPassword: {
-    invalid_type_error: "La confirmación de la contraseña debe ser texto válido",
+    invalid_type_error:
+      "La confirmación de la contraseña debe ser texto válido",
     required_error: "La confirmación de la contraseña es obligatoria",
     message: "Las contraseñas no coinciden",
   },
@@ -56,5 +57,9 @@ export const OTP_CODE = {
   },
 } as const;
 
-export const publicApiRoutes = new Set(["/stores"] as const);
-export const publicRoutes = new Set(["/login", "/register"] as const);
+export const authRoutes = new Set([
+  "/login",
+  "/register",
+  "/verify",
+  "forgot-password",
+]);

@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { NewUser } from "@/db/schemas";
+import type { NewUser, User } from "@/db/schemas";
 import type { CreateUserResponse } from "@/types/CreateUserResponse";
 
-export const useCreateUser = () => {
+export const useCreateUser = (path: User["role"] = "user") => {
   const client = useQueryClient();
 
   const mutation = useMutation({
     mutationKey: ["createUser"],
     mutationFn: async (data: NewUser) => {
-      const q = await fetch("/api/auth/register", {
+      const q = await fetch(`/api/auth/register?role=${path}`, {
         method: "POST",
         body: JSON.stringify(data),
       });

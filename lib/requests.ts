@@ -1,22 +1,43 @@
 import type { NextRequest } from "next/server";
 
-import type { AnyZodObject } from "zod";
+import type { AnyZodObject, TypeOf } from "zod";
 
 import { checkRateLimit } from "./ratelimiter";
 
-export const handleRequest = async <const TData extends object>(
+type RequestResult<T> =
+  | {
+      success: true;
+      data: T;
+      exceeded: boolean;
+    }
+  | {
+      success: false;
+      error: {
+        [x: PropertyKey]: string[] | undefined;
+      };
+      exceeded: boolean;
+    };
+
+export const handleRequest = async <T extends AnyZodObject>(
   req: NextRequest,
-  schema: AnyZodObject,
-) => {
+  schema: T
+): Promise<RequestResult<TypeOf<T>>> => {
   const exc = await checkRateLimit(req.ip ?? "localhost");
 
   const _body = await req.json();
+  const result = await schema.safeParseAsync(_body);
 
-  const body = schema.safeParse(_body);
-
-  return {
-    success: body.success,
-    exceeded: exc.exceeded,
-    data: body.data as TData,
-  };
+  if (result.success) {
+    return {
+      success: true,
+      data: result.data,
+      exceeded: exc.exceeded,
+    };
+  } else {
+    return {
+      success: false,
+      error: result.error.flatten().fieldErrors,
+      exceeded: exc.exceeded,
+    };
+  }
 };

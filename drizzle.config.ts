@@ -9,6 +9,9 @@ export default defineConfig({
   schema: "./db/schemas",
   out: "./drizzle",
   dbCredentials: {
-    url: env.DATABASE_URL ?? "",
+    url: env.DATABASE_URL,
   },
+  verbose: true,
+  strict: true,
+  casing: "snake_case",
 });

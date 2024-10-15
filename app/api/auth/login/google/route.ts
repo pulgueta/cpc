@@ -11,8 +11,6 @@ export const GET = async () => {
     scopes: ["profile", "email"],
   });
 
-  console.log({ state, codeVerifier, url });
-
   cookies().set("google_oauth_state", state, {
     path: "/",
     httpOnly: true,
@@ -28,10 +26,5 @@ export const GET = async () => {
     sameSite: "lax",
   });
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: url.toString(),
-    },
-  });
+  return Response.redirect(url);
 };

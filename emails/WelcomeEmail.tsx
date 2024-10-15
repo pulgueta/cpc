@@ -17,9 +17,14 @@ import tailwindConfig from "@/tailwind.config";
 interface WelcomeEmailProps {
   name: string;
   code: string;
+  email: string;
 }
 
-const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({ name = "John Doe", code = "123456" }) => {
+const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({
+  name = "John Doe",
+  code = "123456",
+  email = "my@comp.com",
+}) => {
   return (
     <Tailwind config={tailwindConfig}>
       <Html lang="es">
@@ -28,7 +33,10 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({ name = "John Doe", code
         <Container>
           <Container>
             <Container className="rounded bg-neutral-900 px-2 text-white dark:bg-white dark:text-black">
-              <Heading as="h1" className="text-balance text-center font-bold tracking-tighter">
+              <Heading
+                as="h1"
+                className="text-balance text-center font-bold tracking-tighter"
+              >
                 ¡Bienvenido al Centro Popular Comercial!
               </Heading>
             </Container>
@@ -37,10 +45,13 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({ name = "John Doe", code
               alt="Welcome"
               className="my-4 max-h-96 w-full rounded object-cover"
             />
-            <Text className="text-pretty text-black dark:text-white">Estimado {name}:</Text>
             <Text className="text-pretty text-black dark:text-white">
-              Estamos muy felices de que hagas parte de nuestra nueva plataforma. Mediante este
-              email, confirma tu correo electrónico y digita el código que aparece a continuación:
+              Estimado {name}:
+            </Text>
+            <Text className="text-pretty text-black dark:text-white">
+              Estamos muy felices de que hagas parte de nuestra nueva
+              plataforma. Mediante este email, confirma tu correo electrónico y
+              digita el código que aparece a continuación:
             </Text>
             <Container className="mb-4 rounded bg-neutral-200">
               <Text className="text-center font-bold text-3xl text-black dark:text-white">
@@ -59,10 +70,13 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({ name = "John Doe", code
 
           <Container>
             <Text className="text-pretty text-gray-600 text-sm">
-              Si tienes problemas con el botón, copia y pega el siguiente enlace en tu navegador:
+              Si tienes problemas con el botón, copia y pega el siguiente enlace
+              en tu navegador:
             </Text>
             <Text className="text-pretty text-center text-black text-sm dark:text-white">
-              {`${process.env.SITE_URL}/verify?code=${code}`}
+              {`${process.env.SITE_URL}/verify?code=${code}&email=${btoa(
+                email
+              )}`}
             </Text>
             <Text className="text-pretty text-gray-600 text-sm">
               Si no has solicitado este correo, por favor ignóralo.
@@ -70,7 +84,8 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({ name = "John Doe", code
           </Container>
           <Container className="rounded-b bg-neutral-200">
             <Text className="text-pretty text-center font-medium text-gray-600 text-sm">
-              Barrancabermeja, Centro Popular Comercial © {new Date().getFullYear()}
+              Barrancabermeja, Centro Popular Comercial ©{" "}
+              {new Date().getFullYear()}
             </Text>
           </Container>
         </Container>

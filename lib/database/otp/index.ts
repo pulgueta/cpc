@@ -1,12 +1,14 @@
 import { and, eq } from "drizzle-orm";
 
-import type { NewOTPCode, NewUser } from "@/db/schemas";
+import type { NewOTPCode, User } from "@/db/schemas";
 import { otpCode } from "@/db/schemas/otp-code";
 import { getUserByEmail } from "../user";
 import { db } from "@/db/config";
-import { hashValue, verifyValue } from "@/lib/crypto";
 
-export const verifyUserCode = async (email: NewUser["email"], code: NewOTPCode["code"]) => {
+export const verifyUserCode = async (
+  email: User["email"],
+  code: NewOTPCode["code"]
+) => {
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -15,12 +17,13 @@ export const verifyUserCode = async (email: NewUser["email"], code: NewOTPCode["
 
   const dbCode = await getCode(code, user);
 
-  const isValidCode = await verifyValue(dbCode?.hashedCode as string, code);
-
-  return !!dbCode && isValidCode;
+  return !!dbCode;
 };
 
-export const deleteCode = async (email: NewUser["email"], code: NewOTPCode["code"]) => {
+export const deleteCode = async (
+  email: User["email"],
+  code: NewOTPCode["code"]
+) => {
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -32,21 +35,16 @@ export const deleteCode = async (email: NewUser["email"], code: NewOTPCode["code
   if (dbCode) {
     await db
       .delete(otpCode)
-      .where(and(eq(otpCode.userId, user?.id as string), eq(otpCode.code, code)));
+      .where(
+        and(eq(otpCode.userId, user?.id as string), eq(otpCode.code, code))
+      );
   }
 };
 
-export const getCode = async (code: NewOTPCode["code"], user: NewUser) => {
-  const hashedCode = await hashValue(code);
-
+export const getCode = async (code: NewOTPCode["code"], user: User) => {
   const dbCode = await db.query.otpCode.findFirst({
     where: (t, { eq, and, lt }) =>
-      and(
-        eq(t.userId, user?.id as string),
-        eq(t.code, code),
-        eq(t.hashedCode, hashedCode),
-        lt(t.expiresAt, new Date()),
-      ),
+      and(eq(t.userId, user.id), eq(t.code, code), lt(t.expiresAt, new Date())),
   });
 
   return dbCode;
