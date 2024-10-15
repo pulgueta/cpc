@@ -34,6 +34,9 @@ export const metadata = {
     title: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
     url: new URL(env.SITE_URL),
   },
+  twitter: {
+    card: "summary",
+  },
 } satisfies Metadata;
 
 export default function RootLayout({

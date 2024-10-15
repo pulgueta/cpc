@@ -14,11 +14,7 @@ const Home = async () => {
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-white p-4 dark:bg-neutral-900">
-      {user ? (
-        <Heading>Hello, {user.name}</Heading>
-      ) : (
-        <Paragraph>Not logged in</Paragraph>
-      )}
+      {user ? <Heading>Hello, {user.name}</Heading> : <Paragraph>Not logged in</Paragraph>}
 
       {session && (
         <pre>

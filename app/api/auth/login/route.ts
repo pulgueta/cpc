@@ -14,15 +14,12 @@ export const POST = async (req: NextRequest) => {
   if (request.exceeded) {
     return NextResponse.json(
       { message: "Demasiadas solicitudes, intenta más tarde" },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
   if (!request.success) {
-    return NextResponse.json(
-      { message: "Error creando usuario" },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Error creando usuario" }, { status: 400 });
   }
 
   const { data: user } = request;
@@ -32,24 +29,18 @@ export const POST = async (req: NextRequest) => {
   if (dbUser?.emailVerified === null) {
     return NextResponse.json(
       { message: "Debes verificar tu correo para poder iniciar sesión" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
   if (!dbUser) {
-    return NextResponse.json(
-      { message: "Verifica tus credenciales" },
-      { status: 404 }
-    );
+    return NextResponse.json({ message: "Verifica tus credenciales" }, { status: 404 });
   }
 
   const isValidPassword = await verifyValue(dbUser.password, user.password);
 
   if (!isValidPassword) {
-    return NextResponse.json(
-      { message: "Correo o contraseña incorrectos" },
-      { status: 401 }
-    );
+    return NextResponse.json({ message: "Correo o contraseña incorrectos" }, { status: 401 });
   }
 
   const sessionToken = generateSessionToken();

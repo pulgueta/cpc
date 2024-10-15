@@ -32,10 +32,7 @@ export const createUser = async (values: NewUser) => {
   return user;
 };
 
-export const getUserByEmail = async (
-  email: NewUser["email"],
-  getCached: boolean = false
-) => {
+export const getUserByEmail = async (email: NewUser["email"], getCached: boolean = false) => {
   const cached = await cache.get<User>(email);
 
   if (cached && getCached) {
