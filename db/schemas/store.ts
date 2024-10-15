@@ -23,7 +23,7 @@ export const stores = pgTable(
   },
   (t) => ({
     storeIdx: index("store_idx").on(t.name),
-  })
+  }),
 );
 
 export const storesRelations = relations(stores, ({ one }) => ({

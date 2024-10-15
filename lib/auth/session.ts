@@ -1,7 +1,6 @@
 import { cache } from "react";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
@@ -10,7 +9,6 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import type { Session, User } from "@/db/schemas";
 import { sessions, users } from "@/db/schemas";
 import { db } from "@/db/config";
-import { deleteSessionTokenCookie } from "./cookies";
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
@@ -81,24 +79,6 @@ export const getCurrentSession = cache(async (): Promise<SessionValidationResult
   const result = await validateSessionToken(token);
   return result;
 });
-
-export const logout = async () => {
-  "use server";
-
-  const { session } = await getCurrentSession();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
-  await invalidateSession(session.id);
-
-  deleteSessionTokenCookie();
-
-  return redirect("/login");
-};
 
 export type SessionValidationResult =
   | { session: Session; user: User }

@@ -8,11 +8,7 @@ import { toast } from "sonner";
 
 import { Form, FormComponent } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import type { OTPCodeSchema } from "@/schemas/otp-code";
 import { otpCodeSchema } from "@/schemas/otp-code";
 
@@ -44,9 +40,7 @@ export const VerifyOTP = () => {
       return toast.error(res.message);
     }
 
-    toast.success(
-      "Se ha verificado tu correo con éxito, ya puedes iniciar sesión"
-    );
+    toast.success("Se ha verificado tu correo con éxito, ya puedes iniciar sesión");
 
     return push("/login");
   });

@@ -5,10 +5,7 @@ import { otpCode } from "@/db/schemas/otp-code";
 import { getUserByEmail } from "../user";
 import { db } from "@/db/config";
 
-export const verifyUserCode = async (
-  email: User["email"],
-  code: NewOTPCode["code"]
-) => {
+export const verifyUserCode = async (email: User["email"], code: NewOTPCode["code"]) => {
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -20,10 +17,7 @@ export const verifyUserCode = async (
   return !!dbCode;
 };
 
-export const deleteCode = async (
-  email: User["email"],
-  code: NewOTPCode["code"]
-) => {
+export const deleteCode = async (email: User["email"], code: NewOTPCode["code"]) => {
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -35,9 +29,7 @@ export const deleteCode = async (
   if (dbCode) {
     await db
       .delete(otpCode)
-      .where(
-        and(eq(otpCode.userId, user?.id as string), eq(otpCode.code, code))
-      );
+      .where(and(eq(otpCode.userId, user?.id as string), eq(otpCode.code, code)));
   }
 };
 

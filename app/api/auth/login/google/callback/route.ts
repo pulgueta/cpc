@@ -25,13 +25,11 @@ export const GET = async (request: Request) => {
   const state = url.searchParams.get("state");
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null;
+  const redirectPath = cookies().get("redirect_url")?.value;
 
-  if (
-    code === null ||
-    state === null ||
-    storedState === null ||
-    codeVerifier === null
-  ) {
+  const redirectUrl = `${url.origin}${redirectPath}`;
+
+  if (code === null || state === null || storedState === null || codeVerifier === null) {
     return new Response(null, {
       status: 400,
     });
@@ -46,14 +44,11 @@ export const GET = async (request: Request) => {
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
 
-    const response = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-      }
-    );
+    const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    });
 
     const googleUser: GoogleUser = await response.json();
 
@@ -70,7 +65,7 @@ export const GET = async (request: Request) => {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: "/",
+          Location: redirectUrl,
         },
       });
     }
@@ -94,7 +89,7 @@ export const GET = async (request: Request) => {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/",
+        Location: redirectUrl,
       },
     });
   } catch (e) {

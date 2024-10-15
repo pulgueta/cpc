@@ -79,9 +79,3 @@ export const getUserById = async (id: User["id"]) => {
 
   return user;
 };
-
-export const isEmailVerified = async (email: NewUser["email"]) => {
-  const user = await getUserByEmail(email);
-
-  return user?.emailVerified !== null;
-};

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import { handleRequest } from "@/lib/requests";
 import { loginSchema } from "@/schemas/user";
-import { getUserByEmail, isEmailVerified } from "@/lib/database/user";
+import { getUserByEmail } from "@/lib/database/user";
 import { createSession, generateSessionToken } from "@/lib/auth/session";
 import { setSessionTokenCookie } from "@/lib/auth/cookies";
 import { verifyValue } from "@/lib/crypto";
@@ -27,20 +27,18 @@ export const POST = async (req: NextRequest) => {
 
   const { data: user } = request;
 
-  const isVerified = await isEmailVerified(user.email);
+  const dbUser = await getUserByEmail(user.email);
 
-  if (!isVerified) {
+  if (dbUser?.emailVerified === null) {
     return NextResponse.json(
       { message: "Debes verificar tu correo para poder iniciar sesión" },
       { status: 401 }
     );
   }
 
-  const dbUser = await getUserByEmail(user.email);
-
   if (!dbUser) {
     return NextResponse.json(
-      { message: "El usuario no existe" },
+      { message: "Verifica tus credenciales" },
       { status: 404 }
     );
   }
@@ -49,7 +47,7 @@ export const POST = async (req: NextRequest) => {
 
   if (!isValidPassword) {
     return NextResponse.json(
-      { message: "Contraseña incorrecta" },
+      { message: "Correo o contraseña incorrectos" },
       { status: 401 }
     );
   }

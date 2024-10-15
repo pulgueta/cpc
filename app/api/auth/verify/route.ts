@@ -13,15 +13,12 @@ export const POST = async (req: NextRequest) => {
   if (request.exceeded) {
     return NextResponse.json(
       { message: "Demasiadas solicitudes, intenta más tarde" },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
   if (!request.success) {
-    return NextResponse.json(
-      { message: "Error verificando usuario" },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Error verificando usuario" }, { status: 400 });
   }
 
   const { data } = request;
@@ -34,10 +31,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ message: "Código inválido" }, { status: 400 });
   }
 
-  const [, user] = await Promise.all([
-    deleteCode(email, data.code),
-    verifyEmail(email),
-  ]);
+  const [, user] = await Promise.all([deleteCode(email, data.code), verifyEmail(email)]);
 
   return NextResponse.json<VerifyUserResponse>(user, { status: 200 });
 };
