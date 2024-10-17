@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { TanstackProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { Navbar } from "@/components/navbar/navbar";
 import { env } from "@/env/server";
 
 import "./globals.css";
@@ -50,6 +51,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme enableSystem>
           <TanstackProvider>
             <Toaster richColors position="top-center" pauseWhenPageIsHidden duration={1500} />
+            <Navbar />
             {children}
           </TanstackProvider>
         </ThemeProvider>

@@ -15,7 +15,9 @@ export const LogoutButton = () => {
       variant="destructive"
       size={isPending || isRefetching ? "icon" : "sm"}
       loading={isPending || isRefetching}
-      onClick={async () => await signOut({ fetchOptions: { onSuccess: () => refresh() } })}
+      onClick={async () =>
+        await signOut({ fetchOptions: { onSuccess: () => refresh() } })
+      }
     >
       {(!isPending || !isRefetching) && "Cerrar sesión"}
     </Button>
