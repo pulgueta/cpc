@@ -1,16 +1,22 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-import { users } from "./user";
+import { user } from "./user";
 
-export const accounts = pgTable("account", {
-  id: serial().primaryKey(),
-  userId: text()
+export const account = pgTable("account", {
+  id: text("id").primaryKey(),
+  accountId: text("accountId").notNull(),
+  providerId: text("providerId").notNull(),
+  userId: text("userId")
     .unique()
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  googleId: text().unique(),
+    .references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("accessToken"),
+  refreshToken: text("refreshToken"),
+  idToken: text("idToken"),
+  expiresAt: timestamp("expiresAt"),
+  password: text("password"),
 });
 
-export type NewAccount = InferInsertModel<typeof accounts>;
-export type Account = InferSelectModel<typeof accounts>;
+export type NewAccount = InferInsertModel<typeof account>;
+export type Account = InferSelectModel<typeof account>;

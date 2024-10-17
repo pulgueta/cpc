@@ -1,14 +1,18 @@
 import type { InferSelectModel } from "drizzle-orm";
 import { timestamp, pgTable, text } from "drizzle-orm/pg-core";
 
-import { users } from "./user";
+import { user } from "./user";
 
-export const sessions = pgTable("session", {
-  id: text().primaryKey(),
-  userId: text()
+export const session = pgTable("session", {
+  id: text("id").primaryKey(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  ipAddress: text("ipAddress"),
+  userAgent: text("userAgent"),
+  userId: text("userId")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expiresAt: timestamp({ mode: "date", withTimezone: true }).notNull(),
+    .references(() => user.id, { onDelete: "cascade" }),
+  impersonatedBy: text("impersonatedBy").references(() => user.id),
+  activeOrganizationId: text("activeOrganizationId"),
 });
 
-export type Session = InferSelectModel<typeof sessions>;
+export type Session = InferSelectModel<typeof session>;

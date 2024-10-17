@@ -1,56 +1,22 @@
-import type { NextFetchEvent, NextMiddleware, NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { authRoutes } from "@/constants";
+import { authMiddleware } from "better-auth/next-js";
 
-export const AuthMiddleware =
-  (md: NextMiddleware) => async (req: NextRequest, e: NextFetchEvent) => {
-    if (req.method === "GET") {
-      const response = NextResponse.next();
+export default authMiddleware({
+  customRedirect: async (session, request) => {
+    const baseURL = request.nextUrl.origin;
 
-      const token = req.cookies.get("session")?.value ?? null;
+    console.log(session);
 
-      if (token && authRoutes.has(req.nextUrl.pathname)) {
-        return Response.redirect(new URL("/", req.nextUrl).toString());
-      }
-
-      if (token !== null) {
-        response.cookies.set("session", token, {
-          path: "/",
-          maxAge: 60 * 60 * 24 * 30,
-          sameSite: "lax",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        });
-      }
-
-      return response;
+    if (authRoutes.has(request.nextUrl.pathname) && session) {
+      return NextResponse.redirect(new URL("/dashboard", baseURL));
     }
 
-    const originHeader = req.headers.get("Origin");
-    const hostHeader = req.headers.get("X-Forwarded-Host");
-
-    if (originHeader === null || hostHeader === null) {
-      return new NextResponse(null, {
-        status: 403,
-      });
+    if (request.nextUrl.pathname === "/dashboard" && !session) {
+      return NextResponse.redirect(new URL("/login", baseURL));
     }
 
-    let origin: URL;
-
-    try {
-      origin = new URL(originHeader);
-    } catch {
-      return new NextResponse(null, {
-        status: 403,
-      });
-    }
-
-    if (origin.host !== hostHeader) {
-      return new NextResponse(null, {
-        status: 403,
-      });
-    }
-
-    return md(req, e);
-  };
+    return NextResponse.next();
+  },
+});

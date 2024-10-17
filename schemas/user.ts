@@ -2,10 +2,10 @@ import type { TypeOf } from "zod";
 import { string } from "zod";
 import { createInsertSchema } from "drizzle-zod";
 
-import { users } from "@/db/schemas";
+import { user } from "@/db/schemas";
 import { CREATE_USER } from "@/constants";
 
-export const registerSchema = createInsertSchema(users, {
+export const registerSchema = createInsertSchema(user, {
   name: () =>
     string({
       invalid_type_error: CREATE_USER.name.invalid_type_error,
@@ -40,6 +40,7 @@ export const registerSchema = createInsertSchema(users, {
       .max(CREATE_USER.password.maxLength.value, {
         message: CREATE_USER.password.maxLength.message,
       }),
+  role: (s) => s.role.optional(),
 });
 
 export const loginSchema = registerSchema.pick({

@@ -1,31 +1,35 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { timestamp, pgTable, text } from "drizzle-orm/pg-core";
+import { timestamp, pgTable, text, boolean, integer } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
 import { stores } from "./store";
 
-export const users = pgTable("user", {
-  id: text()
+export const user = pgTable("user", {
+  id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
-  name: text().notNull(),
-  email: text().unique().notNull(),
-  password: text().notNull(),
-  document: text().unique(),
-  phone: text(),
-  role: text({ enum: ["admin", "storeOwner", "user"] }).default("user"),
-  emailVerified: timestamp({ mode: "date" }),
-  image: text(),
-  googleId: text().unique(),
-  createdAt: timestamp({ mode: "date" }).defaultNow(),
-  updatedAt: timestamp({ mode: "date" }).$onUpdateFn(() => new Date()),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password"),
+  emailVerified: boolean("emailVerified"),
+  image: text("image"),
+  role: text("role").notNull(),
+  banned: boolean("banned"),
+  banReason: text("banReason"),
+  banExpires: integer("banExpires"),
+  document: text("document").unique(),
+  phone: text("phone").unique(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .$onUpdateFn(() => new Date()),
 });
 
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(user, ({ many }) => ({
   stores: many(stores),
 }));
 
-export type NewUser = InferInsertModel<typeof users>;
-export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof user>;
+export type User = InferSelectModel<typeof user>;
