@@ -19,6 +19,12 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
+  emailVerification: {
+    sendVerificationEmail: async (user, url) => {
+      await sendWelcomeEmail(user, url);
+    },
+    sendOnSignUp: true,
+  },
   emailAndPassword: {
     enabled: true,
     maxPasswordLength: 100,
@@ -28,13 +34,10 @@ export const auth = betterAuth({
       verify: async (a, b) => await verifyValue(a, b),
     },
     resetPasswordTokenExpiresIn: 3600 * 2,
-    sendResetPassword: async (url, user) => {
+    sendResetPassword: async (user, url) => {
       await sendPasswordResetEmail(user, url);
     },
-    sendVerificationEmail: async (url, user) => {
-      await sendWelcomeEmail(user, url);
-    },
-    sendEmailVerificationOnSignUp: true,
+    requireEmailVerification: true,
   },
   user: {
     additionalFields: {
@@ -67,6 +70,9 @@ export const auth = betterAuth({
         unique: true,
       },
     },
+    changeEmail: {
+      enabled: false,
+    },
   },
   session: {
     storeSessionInDatabase: true,
@@ -92,7 +98,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  plugins: [passkey({ rpID: process.env.RP_ID ?? "" }), admin()],
+  plugins: [passkey(), admin()],
   account: {
     accountLinking: {
       enabled: true,

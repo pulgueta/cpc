@@ -6,10 +6,7 @@ import type { NewUser } from "@/db/schemas";
 import { resend } from "./config";
 import { env } from "@/env/server";
 
-export const sendWelcomeEmail = async (
-  userData: Pick<NewUser, "email" | "name">,
-  url: string
-) => {
+export const sendWelcomeEmail = async (userData: Pick<NewUser, "email" | "name">, url: string) => {
   const { data, error } = await resend.emails.send({
     from: `Centro Popular Comercial <${env.FROM_EMAIL}>`,
     to: userData.email,
@@ -30,7 +27,7 @@ export const sendWelcomeEmail = async (
 
 export const sendPasswordResetEmail = async (
   userData: Pick<NewUser, "email" | "name">,
-  url: string
+  url: string,
 ) => {
   const { data, error } = await resend.emails.send({
     from: `Centro Popular Comercial <${env.FROM_EMAIL}>`,

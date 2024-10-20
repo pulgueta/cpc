@@ -32,10 +32,7 @@ const ResetPassword: FC<Readonly<ResetPasswordProps>> = ({
         <Container>
           <Container>
             <Container className="rounded bg-neutral-900 px-2 text-white dark:bg-white dark:text-black">
-              <Heading
-                as="h1"
-                className="text-balance text-center font-bold tracking-tighter"
-              >
+              <Heading as="h1" className="text-balance text-center font-bold tracking-tighter">
                 Centro Popular Comercial
               </Heading>
             </Container>
@@ -44,12 +41,10 @@ const ResetPassword: FC<Readonly<ResetPasswordProps>> = ({
               alt="Welcome"
               className="my-4 max-h-96 w-full rounded object-cover"
             />
+            <Text className="text-pretty text-black dark:text-white">Estimado {name}:</Text>
             <Text className="text-pretty text-black dark:text-white">
-              Estimado {name}:
-            </Text>
-            <Text className="text-pretty text-black dark:text-white">
-              Has solicitado restablecer tu contraseña. Haz clic en el siguiente
-              botón para continuar.
+              Has solicitado restablecer tu contraseña. Haz clic en el siguiente botón para
+              continuar.
             </Text>
             <Container className="flex items-center justify-center py-4">
               <Link
@@ -63,8 +58,7 @@ const ResetPassword: FC<Readonly<ResetPasswordProps>> = ({
 
           <Container>
             <Text className="text-pretty text-gray-600 text-sm">
-              Si tienes problemas con el botón, copia y pega el siguiente enlace
-              en tu navegador:
+              Si tienes problemas con el botón, copia y pega el siguiente enlace en tu navegador:
             </Text>
             <Text className="text-pretty text-center text-black text-sm dark:text-white">
               {url}
@@ -75,8 +69,7 @@ const ResetPassword: FC<Readonly<ResetPasswordProps>> = ({
           </Container>
           <Container className="rounded-b bg-neutral-200">
             <Text className="text-pretty text-center font-medium text-gray-600 text-sm">
-              Barrancabermeja, Centro Popular Comercial ©{" "}
-              {new Date().getFullYear()}
+              Barrancabermeja, Centro Popular Comercial © {new Date().getFullYear()}
             </Text>
           </Container>
         </Container>

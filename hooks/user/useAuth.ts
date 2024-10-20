@@ -2,7 +2,13 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import { passkey, signIn, signUp } from "@/lib/auth.client";
+import {
+  passkey,
+  signIn,
+  signUp,
+  forgetPassword,
+  resetPassword,
+} from "@/lib/auth.client";
 
 export const useAuth = () => {
   const { push } = useRouter();
@@ -27,21 +33,37 @@ export const useAuth = () => {
   const onPasskeyLogin = async () => {
     const data = await signIn.passkey();
 
-    if (data?.error) {
-      return toast.error(
-        data.error.message ?? `${data.error.status} ${data.error.statusText}`
-      );
-    }
+    return [data?.data, data?.error];
   };
 
   const onPasskeyRegister = async () => {
     const data = await passkey.addPasskey();
 
-    if (data?.error) {
-      return toast.error(
-        data.error.message ?? `${data.error.status} ${data.error.statusText}`
-      );
-    }
+    return [data?.data, data?.error];
+  };
+
+  const onForgetPassword = async (email: string) => {
+    const data = await forgetPassword(
+      {
+        email,
+        redirectTo: "/forgot-password/update",
+      },
+      {
+        onError: (ctx) => {
+          if (ctx.error.status === 404) {
+            toast.error("No se encontró una cuenta con ese correo electrónico");
+          }
+        },
+      }
+    );
+
+    return data;
+  };
+
+  const onUpdatePassword = async (password: string) => {
+    const data = await resetPassword({ newPassword: password });
+
+    return data;
   };
 
   const onEmailLogin = async ({
@@ -53,12 +75,21 @@ export const useAuth = () => {
     password: string;
     remember: boolean;
   }) => {
-    const { data, error } = await signIn.email({
-      email,
-      password,
-      callbackURL: isStorePath ? "/stores" : "/",
-      dontRememberMe: !remember,
-    });
+    const { data, error } = await signIn.email(
+      {
+        email,
+        password,
+        callbackURL: isStorePath ? "/stores" : "/",
+        dontRememberMe: !remember,
+      },
+      {
+        onError: (ctx) => {
+          if (ctx.error.status === 403) {
+            toast.error("Debes verificar tu correo electrónico");
+          }
+        },
+      }
+    );
 
     if (error) {
       return toast.error(error.message ?? error.statusText);
@@ -101,5 +132,7 @@ export const useAuth = () => {
     onEmailLogin,
     onRegister,
     onPasskeyRegister,
+    onForgetPassword,
+    onUpdatePassword,
   };
 };

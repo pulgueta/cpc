@@ -27,9 +27,7 @@ export const LoginForm = () => {
 
   const rememberId = useId();
 
-  const registerHref = usePathname().includes("stores")
-    ? "/stores/register"
-    : "/register";
+  const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
   const isStorePath = usePathname().includes("stores");
 
   const form = useForm<LoginSchema>({
@@ -89,9 +87,7 @@ export const LoginForm = () => {
                     variant="ghost"
                     type="button"
                     className="absolute top-0 right-0"
-                    aria-label={
-                      show ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
+                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
@@ -111,11 +107,7 @@ export const LoginForm = () => {
               onCheckedChange={() => setRemember((prev) => !prev)}
               id={rememberId}
             />
-            <Label
-              htmlFor={rememberId}
-              id={rememberId}
-              className="text-muted-foreground"
-            >
+            <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
               Recordar mi usuario
             </Label>
           </div>

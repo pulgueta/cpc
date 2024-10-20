@@ -32,10 +32,7 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({
         <Container>
           <Container>
             <Container className="rounded bg-neutral-900 px-2 text-white dark:bg-white dark:text-black">
-              <Heading
-                as="h1"
-                className="text-balance text-center font-bold tracking-tighter"
-              >
+              <Heading as="h1" className="text-balance text-center font-bold tracking-tighter">
                 ¡Bienvenido al Centro Popular Comercial!
               </Heading>
             </Container>
@@ -44,13 +41,10 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({
               alt="Welcome"
               className="my-4 max-h-96 w-full rounded object-cover"
             />
+            <Text className="text-pretty text-black dark:text-white">Estimado {name}:</Text>
             <Text className="text-pretty text-black dark:text-white">
-              Estimado {name}:
-            </Text>
-            <Text className="text-pretty text-black dark:text-white">
-              Estamos muy felices de que hagas parte de nuestra nueva
-              plataforma. Mediante este email, haz clic en el siguiente botón
-              para verificar tu correo electrónico.
+              Estamos muy felices de que hagas parte de nuestra nueva plataforma. Mediante este
+              email, haz clic en el siguiente botón para verificar tu correo electrónico.
             </Text>
             <Container className="flex items-center justify-center py-4">
               <Link
@@ -64,8 +58,7 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({
 
           <Container>
             <Text className="text-pretty text-gray-600 text-sm">
-              Si tienes problemas con el botón, copia y pega el siguiente enlace
-              en tu navegador:
+              Si tienes problemas con el botón, copia y pega el siguiente enlace en tu navegador:
             </Text>
             <Text className="text-pretty text-center text-black text-sm dark:text-white">
               {url}
@@ -76,8 +69,7 @@ const WelcomeEmail: FC<Readonly<WelcomeEmailProps>> = ({
           </Container>
           <Container className="rounded-b bg-neutral-200">
             <Text className="text-pretty text-center font-medium text-gray-600 text-sm">
-              Barrancabermeja, Centro Popular Comercial ©{" "}
-              {new Date().getFullYear()}
+              Barrancabermeja, Centro Popular Comercial © {new Date().getFullYear()}
             </Text>
           </Container>
         </Container>
