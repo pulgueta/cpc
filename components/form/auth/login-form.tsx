@@ -1,30 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { toast } from "sonner";
+import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
 
 import type { LoginSchema } from "@/schemas/user";
 import { loginSchema } from "@/schemas/user";
 import { Form, FormComponent } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/icons/google";
 import { CREATE_USER } from "@/constants";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/user/useAuth";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
+  const [remember, setRemember] = useState<boolean>(false);
+
+  const rememberId = useId();
 
   const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
   const isStorePath = usePathname().includes("stores");
-  const { push } = useRouter();
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -34,21 +38,10 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {
-    const q = await fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+  const { onEmailLogin, onGoogleLogin, onPasskeyLogin } = useAuth();
 
-    const res = await q.json();
-
-    if (!q.ok) {
-      return toast.error(res.message);
-    }
-
-    toast.success("Inicio de sesión exitoso");
-
-    return push("/");
+  const onSubmit = form.handleSubmit(async ({ email, password }) => {
+    await onEmailLogin({ email, password: password ?? "", remember });
   });
 
   return (
@@ -108,27 +101,43 @@ export const LoginForm = () => {
             </Button>
           </form>
 
+          <div className="flex items-center gap-x-2">
+            <Checkbox
+              checked={remember}
+              onCheckedChange={() => setRemember((prev) => !prev)}
+              id={rememberId}
+            />
+            <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
+              Recordar mi usuario
+            </Label>
+          </div>
+
           {!isStorePath && (
             <>
-              <div className="relative py-4">
+              <div className="relative py-2 pb-4">
                 <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
                   O inicia sesión con:
                 </span>
                 <Separator />
               </div>
 
-              <section className="grid grid-cols-1">
-                <Link
-                  href="/api/auth/login/google"
-                  className={buttonVariants({
-                    className: "w-full",
-                    variant: "outline",
-                  })}
+              <section className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <Button
                   aria-label="Iniciar sesión con Google"
+                  variant="outline"
+                  onClick={onGoogleLogin}
                 >
-                  <GoogleIcon className="mr-2 size-5" />
+                  <GoogleIcon className="mr-2 size-[18px]" />
                   Google
-                </Link>
+                </Button>
+                <Button
+                  aria-label="Iniciar sesión con Google"
+                  variant="outline"
+                  onClick={onPasskeyLogin}
+                >
+                  <FingerprintIcon className="mr-2" size={16} />
+                  Biometría
+                </Button>
               </section>
             </>
           )}

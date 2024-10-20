@@ -4,7 +4,7 @@ import { timestamp, pgTable, text, index } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
-import { users } from "./user";
+import { user } from "./user";
 
 export const stores = pgTable(
   "store",
@@ -15,7 +15,7 @@ export const stores = pgTable(
     name: text().notNull(),
     ownerId: text()
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     mainContactPhone: text().notNull(),
     image: text(),
     createdAt: timestamp({ mode: "date" }).defaultNow(),
@@ -27,7 +27,7 @@ export const stores = pgTable(
 );
 
 export const storesRelations = relations(stores, ({ one }) => ({
-  owner: one(users),
+  owner: one(user),
 }));
 
 export type NewStore = InferInsertModel<typeof stores>;
