@@ -3,10 +3,10 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: !!process.env.CI,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: !!process.env.CI,
   },
   logging: {
     fetches: {

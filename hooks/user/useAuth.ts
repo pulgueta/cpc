@@ -2,13 +2,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import {
-  passkey,
-  signIn,
-  signUp,
-  forgetPassword,
-  resetPassword,
-} from "@/lib/auth.client";
+import { passkey, signIn, signUp, forgetPassword, resetPassword } from "@/lib/auth.client";
 
 export const useAuth = () => {
   const { push } = useRouter();
@@ -54,7 +48,7 @@ export const useAuth = () => {
             toast.error("No se encontró una cuenta con ese correo electrónico");
           }
         },
-      }
+      },
     );
 
     return data;
@@ -75,7 +69,7 @@ export const useAuth = () => {
     password: string;
     remember: boolean;
   }) => {
-    const { data, error } = await signIn.email(
+    const data = await signIn.email(
       {
         email,
         password,
@@ -84,18 +78,20 @@ export const useAuth = () => {
       },
       {
         onError: (ctx) => {
-          if (ctx.error.status === 403) {
-            toast.error("Debes verificar tu correo electrónico");
+          switch (ctx.error.status) {
+            case 404:
+              toast.error("No se encontró una cuenta con ese correo electrónico");
+              break;
+
+            case 401:
+              toast.error("Credenciales incorrectas");
+              break;
           }
         },
-      }
+      },
     );
 
-    if (error) {
-      return toast.error(error.message ?? error.statusText);
-    }
-
-    return toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
+    return data;
   };
 
   const onRegister = async ({

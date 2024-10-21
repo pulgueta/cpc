@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import Link from "next/link";
 
+import type { User } from "better-auth";
 import { MenuIcon } from "lucide-react";
 
 import {
@@ -13,12 +14,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
-import type { User } from "@/db/schemas/user";
 import { authRoutes, noAuthRoutes } from "@/constants/routes";
 import { LogoutButton } from "../auth/logout-button";
 
 interface MobileNavProps {
-  user: User | null;
+  user: User | undefined;
 }
 
 export const MobileNav: FC<MobileNavProps> = ({ user }) => {
@@ -37,39 +37,33 @@ export const MobileNav: FC<MobileNavProps> = ({ user }) => {
       <SheetContent>
         <SheetHeader>
           <SheetTitle className="tracking-tight">
-            {user
-              ? `¡Hola otra vez, ${user.name}!`
-              : "Centro Popular Comercial"}
+            {user ? `¡Hola otra vez, ${user.name}!` : "Centro Popular Comercial"}
           </SheetTitle>
         </SheetHeader>
         <div className="mt-4">
-          <ul className="font-medium flex flex-col items-start gap-y-4">
+          <div className="flex flex-col items-start gap-y-4 font-medium">
             {user
               ? authRoutes.map(({ href, label }) => (
-                  <li key={href}>
-                    <SheetClose>
-                      <Link href={href}>{label}</Link>
-                    </SheetClose>
-                  </li>
+                  <SheetClose asChild key={href}>
+                    <Link href={href}>{label}</Link>
+                  </SheetClose>
                 ))
               : noAuthRoutes.map(({ href, label }) => (
-                  <li key={href}>
-                    <SheetClose>
-                      <Link href={href}>{label}</Link>
-                    </SheetClose>
-                  </li>
+                  <SheetClose asChild key={href}>
+                    <Link href={href}>{label}</Link>
+                  </SheetClose>
                 ))}
 
             {user ? (
-              <li className="w-full hidden md:block">
+              <div className="hidden w-full lg:block">
                 <LogoutButton />
-              </li>
+              </div>
             ) : (
-              <li className="w-full block md:hidden">
+              <div className="block w-full md:hidden">
                 <AuthButtons />
-              </li>
+              </div>
             )}
-          </ul>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
@@ -78,12 +72,9 @@ export const MobileNav: FC<MobileNavProps> = ({ user }) => {
 
 const AuthButtons = () => {
   return (
-    <div className="flex flex-col items-center gap-y-2 w-full">
+    <div className="flex w-full flex-col items-center gap-y-2">
       <SheetClose className="w-full">
-        <Link
-          href="/login"
-          className={buttonVariants({ size: "sm", className: "w-full" })}
-        >
+        <Link href="/login" className={buttonVariants({ size: "sm", className: "w-full" })}>
           Iniciar sesión
         </Link>
       </SheetClose>

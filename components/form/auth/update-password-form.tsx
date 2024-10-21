@@ -31,16 +31,14 @@ export const UpdatePasswordForm = () => {
 
     const res = await onUpdatePassword(password);
 
-    if (res.error) {
+    if (res.error !== null) {
       return toast.error(res.error.message);
     }
 
-    if (res.data.status) {
-      toast.error("No se pudo actualizar la contraseña.");
-      form.reset();
+    toast.success("Tu contraseña ha sido actualizada.");
+    form.reset();
 
-      return push("/login");
-    }
+    return push("/login");
   });
 
   return (

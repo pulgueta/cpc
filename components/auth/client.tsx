@@ -29,7 +29,7 @@ export const Client = () => {
           </div>
         ))
       ) : (
-        <p className="text-muted-foreground">No passkeys</p>
+        <p className="text-muted-foreground">No passkeys to show</p>
       )}
 
       {data?.session && <Button onClick={() => passkey.addPasskey()}>Create passkey</Button>}

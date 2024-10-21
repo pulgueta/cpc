@@ -8,8 +8,7 @@ const ForgotPassword = () => (
     <header className="mb-4">
       <Heading center>Recuperar mi contraseña</Heading>
       <Paragraph muted center className="mt-4">
-        Ingresa tu correo electrónico para enviarte un enlace de recuperación de
-        contraseña.
+        Ingresa tu correo electrónico para enviarte un enlace de recuperación de contraseña.
       </Paragraph>
     </header>
 

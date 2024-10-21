@@ -8,29 +8,33 @@ import { buttonVariants } from "../ui/button";
 import { authRoutes, noAuthRoutes } from "@/constants/routes";
 
 export const Navbar = async () => {
-  const { user, session } = await getCurrentSession();
+  const sessionData = await getCurrentSession();
 
   return (
-    <header className="w-full p-4 bg-neutral-200 dark:bg-neutral-900 flex items-center justify-between md:justify-around border-b shadow">
-      <Link href="/" className="text-3xl tracking-tighter font-bold">
+    <header className="flex w-full items-center justify-between border-b bg-neutral-200 p-4 shadow md:justify-around dark:bg-neutral-900">
+      <Link href="/" className="font-bold text-3xl tracking-tighter">
         <span className="block sm:hidden">CPC</span>
         <span className="hidden sm:block">Centro Popular Comercial</span>
       </Link>
       <nav className="flex items-center gap-x-4">
-        <ul className="hidden font-medium lg:flex lg:items-center gap-x-4 lg:text-sm">
-          {!!session
+        <ul className="hidden gap-x-4 font-medium lg:flex lg:items-center lg:text-sm">
+          {!!sessionData?.session
             ? authRoutes.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href}>{label}</Link>
+                  <Link className={buttonVariants({ size: "sm", variant: "link" })} href={href}>
+                    {label}
+                  </Link>
                 </li>
               ))
             : noAuthRoutes.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href}>{label}</Link>
+                  <Link className={buttonVariants({ size: "sm", variant: "link" })} href={href}>
+                    {label}
+                  </Link>
                 </li>
               ))}
         </ul>
-        {user ? (
+        {sessionData?.user ? (
           <LogoutButton />
         ) : (
           <div className="hidden md:block">
@@ -39,7 +43,7 @@ export const Navbar = async () => {
         )}
 
         <ThemeSwitcher />
-        <MobileNav user={user} />
+        <MobileNav user={sessionData?.user} />
       </nav>
     </header>
   );
@@ -47,14 +51,11 @@ export const Navbar = async () => {
 
 const AuthButtons = () => {
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex items-center gap-x-4">
       <Link href="/login" className={buttonVariants({ size: "sm" })}>
         Iniciar sesión
       </Link>
-      <Link
-        href="/register"
-        className={buttonVariants({ size: "sm", variant: "secondary" })}
-      >
+      <Link href="/register" className={buttonVariants({ size: "sm", variant: "secondary" })}>
         Registrarme
       </Link>
     </div>
