@@ -41,6 +41,11 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
+      plan: {
+        type: "string",
+        required: false,
+        defaultValue: "free",
+      },
       password: {
         type: "string",
         required: true,

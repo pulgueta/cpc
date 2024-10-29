@@ -1,4 +1,5 @@
-/** @type {import('next').NextConfig} */
+import type { NextConfig } from "next";
+
 const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
@@ -22,9 +23,8 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ["@node-rs/argon2"],
-  },
-};
+  serverExternalPackages: ["@node-rs/argon2"],
+  experimental: {},
+} satisfies NextConfig;
 
 export default nextConfig;

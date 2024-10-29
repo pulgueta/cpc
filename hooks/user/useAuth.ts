@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
@@ -6,12 +6,11 @@ import { passkey, signIn, signUp, forgetPassword, resetPassword } from "@/lib/au
 
 export const useAuth = () => {
   const { push } = useRouter();
-  const isStorePath = usePathname().includes("stores");
 
   const onGoogleLogin = async () => {
     const { data, error } = await signIn.social({
       provider: "google",
-      callbackURL: isStorePath ? "/stores" : "/",
+      callbackURL: "/dashboard",
     });
 
     if (error) {
@@ -73,7 +72,7 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: isStorePath ? "/stores" : "/",
+        callbackURL: "/dashboard",
         dontRememberMe: !remember,
       },
       {
@@ -110,7 +109,7 @@ export const useAuth = () => {
       password,
       name,
       role: roleToCreate,
-      callbackURL: isStorePath ? "/stores" : "/",
+      callbackURL: "/dashboard",
     });
 
     if (error) {

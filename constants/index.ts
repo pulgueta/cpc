@@ -56,4 +56,4 @@ export const OTP_CODE = {
   },
 } as const;
 
-export const authRoutes = new Set(["/login", "/register", "/verify", "forgot-password"]);
+export const authRoutes = ["/login", "/register", "/verify", "forgot-password"];

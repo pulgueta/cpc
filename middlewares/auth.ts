@@ -1,22 +1,62 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import type { Session } from "@/lib/auth";
 import { authRoutes } from "@/constants";
-import { authMiddleware } from "better-auth/next-js";
 
-export default authMiddleware({
-  customRedirect: async (session, request) => {
-    const baseURL = request.nextUrl.origin;
+const _OWNER_URL_PREFIX = "/owner";
+const _ADMIN_URL_PREFIX = "/admin";
 
-    console.log(session);
+export const AuthMiddleware = async (request: NextRequest) => {
+  const _session = (await fetch(`${request.nextUrl.origin}/api/auth/get-session`, {
+    headers: {
+      cookie: request.headers.get("cookie") || "",
+    },
+  }).then((res) => res.json())) as Session;
 
-    if (authRoutes.has(request.nextUrl.pathname) && session) {
-      return NextResponse.redirect(new URL("/dashboard", baseURL));
-    }
+  // if (
+  //   !session &&
+  //   (request.nextUrl.pathname.startsWith(OWNER_URL_PREFIX) ||
+  //     request.nextUrl.pathname.startsWith(ADMIN_URL_PREFIX))
+  // ) {
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // }
 
-    if (request.nextUrl.pathname === "/dashboard" && !session) {
-      return NextResponse.redirect(new URL("/login", baseURL));
-    }
+  //   const pathToRedirect = (role: string) => {
+  //     switch (role) {
+  //       case "storeOwner":
+  //         return "/owner/sales";
+  //       case "admin":
+  //         return "/admin";
+  //       case "user":
+  //       default:
+  //         return "/dashboard";
+  //     }
+  //   };
 
-    return NextResponse.next();
-  },
-});
+  //   if (session && authRoutes.includes(request.nextUrl.pathname)) {
+  //     return NextResponse.redirect(
+  //       new URL(pathToRedirect(session.user.role), request.url)
+  //     );
+  //   }
+
+  //   if (
+  //     request.nextUrl.pathname.startsWith("/owner") &&
+  //     !request.nextUrl.pathname.startsWith("/owner") &&
+  //     session.user.role !== "storeOwner"
+  //   ) {
+  //     return NextResponse.redirect(
+  //       new URL(pathToRedirect(session.user.role), request.url)
+  //     );
+  //   }
+
+  //   if (
+  //     request.nextUrl.pathname.startsWith("/admin") &&
+  //     !request.nextUrl.pathname.startsWith("/admin") &&
+  //     session.user.role !== "admin"
+  //   ) {
+  //     return NextResponse.redirect(
+  //       new URL(pathToRedirect(session.user.role), request.url)
+  //     );
+  //   }
+};

@@ -20,6 +20,7 @@ export const user = pgTable("user", {
   banReason: text("banReason"),
   banExpires: integer("banExpires"),
   document: text("document").unique(),
+  plan: text("plan", { enum: ["free", "pro"] }),
   phone: text("phone").unique(),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt")
