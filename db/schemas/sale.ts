@@ -10,9 +10,9 @@ export const sales = pgTable("sale", {
   id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
-  documentType: text({ enum: ["CC", "TI", "CE", "NIT"] }),
+  documentType: text({ enum: ["CC", "TI", "CE", "NIT"] }).notNull(),
   document: text().notNull(),
-  buyerEmail: text().notNull(),
+  buyerEmail: text(),
   buyerName: text().notNull(),
   buyerPhone: text().notNull(),
   createdAt: timestamp().defaultNow(),

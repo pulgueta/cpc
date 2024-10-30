@@ -1,10 +1,17 @@
 "use client";
 
+import type { ForwardRefExoticComponent, RefAttributes } from "react";
+
 import Link from "next/link";
 
-import { BookOpen, Bot, ChevronRight, DollarSign, Settings2 } from "lucide-react";
+import type { LucideProps } from "lucide-react";
+import { ChevronRight, DollarSign, Store } from "lucide-react";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +27,19 @@ import {
 import { useSession } from "@/lib/auth.client";
 import { Footer } from "./footer";
 import { cn } from "@/lib/utils";
+
+interface Nav {
+  title: string;
+  url: string;
+  isActive?: boolean;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  items: {
+    title: string;
+    url: string;
+  }[];
+}
 
 const data = {
   navMain: [
@@ -40,71 +60,17 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Mi tienda",
       url: "#",
-      icon: Bot,
+      icon: Store,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "Productos",
+          url: "/owner/products",
         },
       ],
     },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
+  ] as Nav[],
 };
 
 export const StoreOwnerSidebar = () => {

@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
+
 const Owner = () => {
-  return <div className="">Owner</div>;
+  return redirect("/owner/sales");
 };
 export default Owner;

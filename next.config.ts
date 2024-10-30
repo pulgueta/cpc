@@ -23,6 +23,14 @@ const nextConfig = {
       },
     ],
   },
+  rewrites: async () => {
+    return [
+      {
+        source: "/owner",
+        destination: "/owner/sales",
+      },
+    ];
+  },
   serverExternalPackages: ["@node-rs/argon2"],
   experimental: {},
 } satisfies NextConfig;
