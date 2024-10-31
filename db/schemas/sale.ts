@@ -22,10 +22,10 @@ export const sales = pgTable("sale", {
 export const saleProducts = pgTable("sale_product", {
   saleId: text()
     .notNull()
-    .references(() => sales.id),
+    .references(() => sales.id, { onDelete: "cascade" }),
   productId: text()
     .notNull()
-    .references(() => products.id),
+    .references(() => products.id, { onDelete: "cascade" }),
   quantity: integer().notNull(),
 });
 

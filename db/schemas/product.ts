@@ -19,13 +19,13 @@ export const products = pgTable(
     productImage: text().notNull(),
     productCategory: text()
       .notNull()
-      .references(() => categories.id),
+      .references(() => categories.id, { onDelete: "cascade" }),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  })
+  }),
 );
 
 export const productRelations = relations(products, ({ one }) => ({

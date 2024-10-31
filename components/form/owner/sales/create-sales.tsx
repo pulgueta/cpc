@@ -10,11 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createSaleAction } from "@/actions/create-sale";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { AlertCircle, Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
@@ -96,16 +92,12 @@ const frameworks: Product[] = [
 export const CreateSales = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [state, action, isPending] = useActionState(
-    createSaleAction,
-    undefined
-  );
+  const [state, action, isPending] = useActionState(createSaleAction, undefined);
 
   const { products, addProduct } = useSales((state) => state);
 
   const onAddProduct = (str: string) => {
-    if (products.find((product) => product.name === str))
-      frameworks.filter((framework) => framework.name !== str);
+    if (products.find((product) => product.name === str)) return;
 
     setValue(str === value ? "" : str);
     addProduct(frameworks.find((framework) => framework.name === str)!);
@@ -120,10 +112,7 @@ export const CreateSales = () => {
 
   return (
     <>
-      <Form
-        className="flex h-max flex-col justify-between gap-4"
-        action={action}
-      >
+      <Form className="flex h-max flex-col justify-between gap-4" action={action}>
         <div className="flex flex-col gap-2">
           <Label>Producto(s)</Label>
           <Popover open={open} onOpenChange={setOpen}>
@@ -135,8 +124,7 @@ export const CreateSales = () => {
                 className="w-full justify-between"
               >
                 {value
-                  ? frameworks.find((framework) => framework.name === value)
-                      ?.name
+                  ? frameworks.find((framework) => framework.name === value)?.name
                   : "Escoge los productos de la venta"}
                 <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
               </Button>
@@ -156,9 +144,7 @@ export const CreateSales = () => {
                         <Check
                           className={cn(
                             "mr-2 size-4",
-                            value === framework.name
-                              ? "opacity-100"
-                              : "opacity-0"
+                            value === framework.name ? "opacity-100" : "opacity-0",
                           )}
                         />
                         {framework.name}
@@ -170,7 +156,7 @@ export const CreateSales = () => {
             </PopoverContent>
           </Popover>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label>Nombre del comprador</Label>
             <Input placeholder="Juan Egea" name="buyerName" />

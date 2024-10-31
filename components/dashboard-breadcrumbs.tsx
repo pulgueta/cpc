@@ -22,7 +22,7 @@ export const DashboardBreadcrumbs = () => {
     .map((p) => p.charAt(0).toUpperCase().concat(p.slice(1)));
 
   return (
-    <Breadcrumb className="mt-2">
+    <Breadcrumb>
       <BreadcrumbList>
         {paths.map((path, index) => {
           if (index === paths.length - 1) {
@@ -36,9 +36,7 @@ export const DashboardBreadcrumbs = () => {
           return (
             <Fragment key={path}>
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/${path.toLowerCase()}`}>
-                  {path}
-                </BreadcrumbLink>
+                <BreadcrumbLink href={`/${path.toLowerCase()}`}>{path}</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
             </Fragment>

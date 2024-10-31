@@ -1,12 +1,22 @@
 import { createAuthClient } from "better-auth/react";
-import { passkeyClient, adminClient, inferAdditionalFields } from "better-auth/client/plugins";
+import {
+  passkeyClient,
+  adminClient,
+  inferAdditionalFields,
+  organizationClient,
+} from "better-auth/client/plugins";
 import { toast } from "sonner";
 
 import type { auth } from "./auth";
 
 const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_SITE_URL,
-  plugins: [passkeyClient(), adminClient(), inferAdditionalFields<typeof auth>()],
+  plugins: [
+    passkeyClient(),
+    adminClient(),
+    organizationClient(),
+    inferAdditionalFields<typeof auth>(),
+  ],
   fetchOptions: {
     onError: async (ctx) => {
       if (ctx.response.status === 429) {
@@ -33,7 +43,6 @@ export const {
   useListPasskeys,
   signUp,
   signOut,
-  session,
 } = authClient;
 
 export type Session = typeof $Infer.Session;

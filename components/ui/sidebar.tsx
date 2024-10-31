@@ -151,7 +151,7 @@ const SidebarProvider = forwardRef<
 );
 SidebarProvider.displayName = "SidebarProvider";
 
-interface SidebarProps extends ComponentProps<"div"> {
+interface SidebarProps extends ComponentProps<"aside"> {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
@@ -207,7 +207,7 @@ const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
     }
 
     return (
-      <div
+      <aside
         ref={ref}
         className="group peer hidden md:block"
         data-state={state}
@@ -247,7 +247,7 @@ const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
             {children}
           </div>
         </div>
-      </div>
+      </aside>
     );
   },
 );

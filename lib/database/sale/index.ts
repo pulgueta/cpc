@@ -4,7 +4,7 @@ import { sales, saleProducts } from "@/db/schemas/sale";
 
 export const createSaleWithProducts = async (
   saleData: NewSale,
-  products: { productId: string; quantity: number }[]
+  products: { productId: string; quantity: number }[],
 ) => {
   await db.transaction(async (trx) => {
     const [sale] = await trx.insert(sales).values(saleData).returning();

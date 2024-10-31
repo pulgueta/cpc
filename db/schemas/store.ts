@@ -5,6 +5,8 @@ import { timestamp, pgTable, text, index } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 
 import { user } from "./user";
+import { products } from "./product";
+import { categories } from "./category";
 
 export const stores = pgTable(
   "store",
@@ -26,8 +28,10 @@ export const stores = pgTable(
   }),
 );
 
-export const storesRelations = relations(stores, ({ one }) => ({
+export const storesRelations = relations(stores, ({ one, many }) => ({
   owner: one(user),
+  products: many(products),
+  categories: many(categories),
 }));
 
 export type NewStore = InferInsertModel<typeof stores>;

@@ -1,5 +1,5 @@
 import { betterAuth, RateLimit } from "better-auth";
-import { passkey, admin } from "better-auth/plugins";
+import { passkey, admin, organization } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { hashValue, verifyValue } from "./crypto";
@@ -81,6 +81,12 @@ export const auth = betterAuth({
   },
   session: {
     storeSessionInDatabase: true,
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
   },
   baseURL: process.env.BETTER_AUTH_URL ?? "",
   secret: process.env.BETTER_AUTH_SECRET ?? "",
@@ -103,7 +109,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  plugins: [passkey(), admin()],
+  plugins: [passkey(), admin(), organization()],
   account: {
     accountLinking: {
       enabled: true,

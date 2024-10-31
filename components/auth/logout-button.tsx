@@ -22,9 +22,7 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
       variant="destructive"
       size={isPending || isRefetching ? "icon" : "sm"}
       loading={isPending || isRefetching}
-      onClick={async () =>
-        await signOut({ fetchOptions: { onSuccess: () => push("/login") } })
-      }
+      onClick={async () => await signOut({ fetchOptions: { onSuccess: () => push("/login") } })}
       className={cn({
         "w-full": fullWidth,
       })}

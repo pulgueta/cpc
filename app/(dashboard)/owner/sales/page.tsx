@@ -7,6 +7,7 @@ const Sales = () => {
     <>
       <header className="my-3.5">
         <Heading>Ventas</Heading>
+        <Paragraph muted>Aquí podrás visualizar y administrar las ventas de tu tienda.</Paragraph>
       </header>
       <section className="w-full">
         <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">

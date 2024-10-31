@@ -7,11 +7,7 @@ import Link from "next/link";
 import type { LucideProps } from "lucide-react";
 import { ChevronRight, DollarSign, Store } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -24,17 +20,15 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useSession } from "@/lib/auth.client";
 import { Footer } from "./footer";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/auth.client";
 
 interface Nav {
   title: string;
   url: string;
   isActive?: boolean;
-  icon: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
   items: {
     title: string;
     url: string;
@@ -67,6 +61,10 @@ const data = {
         {
           title: "Productos",
           url: "/owner/products",
+        },
+        {
+          title: "Categorías",
+          url: "/owner/categories",
         },
       ],
     },

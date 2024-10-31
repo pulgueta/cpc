@@ -1,3 +1,5 @@
+import { CreateProduct } from "@/components/form/owner/products/create-product";
+import { SalesTable } from "@/components/owner/sales/sales-table";
 import { Heading, Paragraph } from "@/components/ui/typography";
 
 const Products = () => {
@@ -5,13 +7,15 @@ const Products = () => {
     <>
       <header className="my-3.5">
         <Heading>Productos</Heading>
-        <Paragraph muted>
-          Aquí podrás administrar los productos de tu tienda.
-        </Paragraph>
+        <Paragraph muted>Aquí podrás administrar los productos de tu tienda.</Paragraph>
       </header>
-      <section className="w-full">
-        <Heading as="h2">Productos (WIP)</Heading>
-        <Paragraph muted>Esta sección está en construcción.</Paragraph>
+      <section className="flex w-full flex-col justify-between gap-4 md:flex-row">
+        <article className="w-full max-w-3xl">
+          <CreateProduct />
+        </article>
+        <article className="w-full max-w-3xl">
+          <SalesTable />
+        </article>
       </section>
     </>
   );

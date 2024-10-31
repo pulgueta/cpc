@@ -12,7 +12,7 @@ export const purchases = pgTable("purchase", {
     .$defaultFn(() => createId()),
   purchasedBy: text()
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
