@@ -2,7 +2,13 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import { passkey, signIn, signUp, forgetPassword, resetPassword } from "@/lib/auth.client";
+import {
+  passkey,
+  signIn,
+  signUp,
+  forgetPassword,
+  resetPassword,
+} from "@/lib/auth.client";
 
 export const useAuth = () => {
   const { push } = useRouter();
@@ -47,7 +53,7 @@ export const useAuth = () => {
             toast.error("No se encontró una cuenta con ese correo electrónico");
           }
         },
-      },
+      }
     );
 
     return data;
@@ -79,7 +85,9 @@ export const useAuth = () => {
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
-              toast.error("No se encontró una cuenta con ese correo electrónico");
+              toast.error(
+                "No se encontró una cuenta con ese correo electrónico"
+              );
               break;
 
             case 401:
@@ -87,7 +95,7 @@ export const useAuth = () => {
               break;
           }
         },
-      },
+      }
     );
 
     return data;
@@ -104,17 +112,22 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const { data, error } = await signUp.email({
-      email,
-      password,
-      name,
-      role: roleToCreate,
-      callbackURL: "/dashboard",
-    });
-
-    if (error) {
-      return toast.error(error.message);
-    }
+    const { data } = await signUp.email(
+      {
+        email,
+        password,
+        name,
+        role: roleToCreate,
+        callbackURL: "/dashboard",
+      },
+      {
+        onError: (ctx) => {
+          if (ctx.error.status === 422) {
+            toast.error("El correo electrónico ya está en uso");
+          }
+        },
+      }
+    );
 
     if (data) {
       return toast.success("Cuenta creada exitosamente");

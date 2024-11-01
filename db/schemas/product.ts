@@ -16,21 +16,25 @@ export const products = pgTable(
     productName: text().notNull(),
     productDescription: text(),
     productPrice: integer().notNull(),
-    productImage: text().notNull(),
     productCategory: text()
       .notNull()
-      .references(() => categories.id, { onDelete: "cascade" }),
+      .references(() => categories.id),
+    productImageUrl: text().notNull(),
+    productImageCdnUrl: text().notNull(),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  }),
+  })
 );
 
 export const productRelations = relations(products, ({ one }) => ({
   storeOwner: one(user),
-  category: one(categories),
+  category: one(categories, {
+    fields: [products.productCategory],
+    references: [categories.id],
+  }),
 }));
 
 export type NewProduct = InferInsertModel<typeof products>;

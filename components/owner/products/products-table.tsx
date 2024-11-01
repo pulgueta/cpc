@@ -39,10 +39,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getCategories } from "@/lib/database/category";
 import { Paragraph } from "@/components/ui/typography";
+import { getProducts } from "@/lib/database/product";
+import { TableFooter } from "@/components/table/table-footer";
+import { formatPrice } from "@/lib/utils";
+import type { Category } from "@/db/schemas";
 
-export type Column = Awaited<ReturnType<typeof getCategories>>[0];
+export type Column = Awaited<ReturnType<typeof getProducts>>[0];
 
 export const columns: ColumnDef<Column>[] = [
   {
@@ -68,29 +71,69 @@ export const columns: ColumnDef<Column>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "categoryName",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          rightIcon={<ArrowUpDown size={16} />}
-        >
-          Nombre
-        </Button>
-      );
-    },
-    cell: ({ row }) => <Paragraph>{row.getValue("categoryName")}</Paragraph>,
+    accessorKey: "productName",
+    header: () => <div className="text-center">Nombre</div>,
+    cell: ({ row }) => <Paragraph>{row.getValue("productName")}</Paragraph>,
   },
   {
-    accessorKey: "categoryDescription",
+    accessorKey: "productDescription",
     header: () => <div className="text-center">Descripción</div>,
     cell: ({ row }) => (
       <Paragraph className="truncate">
-        {row.getValue("categoryDescription")}
+        {row.getValue("productDescription")}
       </Paragraph>
     ),
+  },
+  {
+    accessorKey: "category",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        rightIcon={<ArrowUpDown size={16} />}
+      >
+        Categoría
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const cat = row.getValue("category") as Category;
+
+      return <Paragraph>{cat.categoryName}</Paragraph>;
+    },
+  },
+  {
+    accessorKey: "productPrice",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        rightIcon={<ArrowUpDown size={16} />}
+      >
+        Precio
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const price = row.getValue("productPrice") as number;
+
+      const formattedPrice = formatPrice(price);
+
+      return <Paragraph>{formattedPrice}</Paragraph>;
+    },
+  },
+  {
+    accessorKey: "productImageCdnUrl",
+    header: () => <div className="text-center">Vista previa</div>,
+    cell: ({ row }) => {
+      return (
+        <img
+          src={row.getValue("productImageCdnUrl")}
+          alt="Vista previa"
+          className="size-16 object-cover mx-auto rounded"
+        />
+      );
+    },
   },
   {
     id: "actions",
@@ -124,11 +167,11 @@ export const columns: ColumnDef<Column>[] = [
   },
 ];
 
-interface CategoriesTableProps {
-  data: Awaited<ReturnType<typeof getCategories>>;
+interface ProductsTableProps {
+  data: Awaited<ReturnType<typeof getProducts>>;
 }
 
-export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
+export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -157,12 +200,12 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
     <div className="w-full">
       <div className="flex items-center gap-4 py-4">
         <Input
-          placeholder="Filtrar categorías..."
+          placeholder="Filtrar productos..."
           value={
-            (table.getColumn("categoryName")?.getFilterValue() as string) ?? ""
+            (table.getColumn("productName")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("categoryName")?.setFilterValue(event.target.value)
+            table.getColumn("productName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -197,6 +240,7 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -247,30 +291,14 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-muted-foreground text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} filas seleccionadas.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
-      </div>
+      <TableFooter
+        begin={table.getFilteredSelectedRowModel().rows.length}
+        end={table.getFilteredRowModel().rows.length}
+        canNextPage={table.getCanNextPage}
+        canPreviousPage={table.getCanPreviousPage}
+        nextPage={table.nextPage}
+        previousPage={table.previousPage}
+      />
     </div>
   );
 };

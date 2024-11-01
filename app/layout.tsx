@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
+import { NuqsAdapter } from "nuqs/adapters/react";
+
 import { ThemeProvider } from "@/providers/theme-provider";
 import { TanstackProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -19,7 +21,8 @@ const geistSans = localFont({
 export const metadata = {
   title: {
     template: "Centro Popular Comercial - %s",
-    default: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
+    default:
+      "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
   },
   description: "Adquiere los mejores productos en el Centro Popular Comercial",
   metadataBase: new URL(env.SITE_URL),
@@ -29,9 +32,11 @@ export const metadata = {
   applicationName: "Centro Popular Comercial",
   openGraph: {
     type: "website",
-    description: "Adquiere los mejores productos en el Centro Popular Comercial",
+    description:
+      "Adquiere los mejores productos en el Centro Popular Comercial",
     siteName: "Centro Popular Comercial",
-    title: "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
+    title:
+      "Centro Popular Comercial - El Centro Comercial de todos los Barramejos",
     url: new URL(env.SITE_URL),
   },
   twitter: {
@@ -47,10 +52,20 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableColorScheme
+          enableSystem
+        >
           <TanstackProvider>
-            <Toaster richColors position="top-center" pauseWhenPageIsHidden duration={1500} />
-            {children}
+            <Toaster
+              richColors
+              position="top-center"
+              pauseWhenPageIsHidden
+              duration={1500}
+            />
+            <NuqsAdapter>{children}</NuqsAdapter>
           </TanstackProvider>
         </ThemeProvider>
       </body>

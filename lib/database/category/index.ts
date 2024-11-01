@@ -19,13 +19,17 @@ export const createCategory = async (data: NewCategory) => {
   };
 };
 
-export const getCategoryByName = async (categoryName: Category["categoryName"]) => {
-  const category = await db.query.categories.findFirst({
-    where: (t, { eq }) => eq(t.categoryName, categoryName),
-  });
+export const getCategoryByName = cache(
+  async (categoryName: Category["categoryName"]) => {
+    const category = await db.query.categories.findFirst({
+      where: (t, { eq }) => eq(t.categoryName, categoryName),
+    });
 
-  return category;
-};
+    return category;
+  },
+  ["categories"],
+  { revalidate: 3600, tags: ["categories"] }
+);
 
 export const getCategories = cache(
   async (storeOwnerId: Category["storeOwnerId"]) => {
@@ -36,5 +40,5 @@ export const getCategories = cache(
     return categories;
   },
   ["categories"],
-  { revalidate: 3600, tags: ["categories"] },
+  { revalidate: 3600, tags: ["categories"] }
 );

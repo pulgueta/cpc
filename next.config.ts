@@ -21,6 +21,16 @@ const nextConfig = {
         hostname: "*.googleusercontent.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "centro-popular-comercial.s3.us-east-1.amazonaws.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "d3a4t9acvuthif.cloudfront.net",
+        pathname: "**",
+      },
     ],
   },
   rewrites: async () => {

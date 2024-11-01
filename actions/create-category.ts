@@ -15,7 +15,13 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
 
   const body = createCategorySchema.safeParse(Object.fromEntries(e.entries()));
 
-  const errors = Object.entries(body.error?.flatten().fieldErrors!).map(([_key, value]) => value);
+  let errors: string[][] = [];
+
+  if (!body.success) {
+    errors = Object.entries(body.error?.flatten().fieldErrors!).map(
+      ([_key, value]) => value
+    );
+  }
 
   if (!body.success) {
     return { error: errors };
@@ -23,21 +29,20 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
 
   const categoryData = body.data;
 
-  console.log(categoryData);
-
-  const existingCategory = await createCategory({
-    ...categoryData,
+  const category = await createCategory({
+    categoryName: categoryData.categoryName,
+    categoryDescription: categoryData.categoryDescription,
     storeOwnerId: sessionData.user.id,
   });
 
-  if (existingCategory.error) {
-    return { error: existingCategory.error };
+  if (category.error) {
+    return { error: category.error };
   }
 
   revalidateTag("categories");
 
   return {
-    message: existingCategory.message,
-    category: existingCategory.category,
+    message: category.message,
+    category: category.category,
   };
 };
