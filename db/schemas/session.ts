@@ -4,15 +4,15 @@ import { timestamp, pgTable, text } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
 export const session = pgTable("session", {
-  id: text("id").primaryKey(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  ipAddress: text("ipAddress"),
-  userAgent: text("userAgent"),
-  userId: text("userId")
+  id: text().primaryKey(),
+  expiresAt: timestamp().notNull(),
+  ipAddress: text(),
+  userAgent: text(),
+  userId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  impersonatedBy: text("impersonatedBy").references(() => user.id),
-  activeOrganizationId: text("activeOrganizationId"),
+  impersonatedBy: text().references(() => user.id, { onDelete: "cascade" }),
+  activeOrganizationId: text(),
 });
 
 export type Session = InferSelectModel<typeof session>;

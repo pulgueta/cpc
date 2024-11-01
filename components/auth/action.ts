@@ -1,22 +1,20 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { deleteSessionTokenCookie } from "@/lib/auth/cookies";
-import { getCurrentSession, invalidateSession } from "@/lib/auth/session";
+import { auth } from "@/lib/auth";
 
 export const logout = async () => {
-  const { session } = await getCurrentSession();
+  const out = await auth.api.signOut();
 
-  if (!session) {
+  if (!out) {
     return {
-      error: "Unauthorized",
+      error: "Failed to sign out",
     };
   }
 
-  await invalidateSession(session.id);
-
-  deleteSessionTokenCookie();
+  revalidatePath("/");
 
   return redirect("/login");
 };

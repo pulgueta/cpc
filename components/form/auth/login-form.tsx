@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import type { LoginSchema } from "@/schemas/user";
 import { loginSchema } from "@/schemas/user";
@@ -41,7 +42,17 @@ export const LoginForm = () => {
   const { onEmailLogin, onGoogleLogin, onPasskeyLogin } = useAuth();
 
   const onSubmit = form.handleSubmit(async ({ email, password }) => {
-    await onEmailLogin({ email, password: password ?? "", remember });
+    const { data, error } = await onEmailLogin({
+      email,
+      password: password ?? "",
+      remember,
+    });
+
+    if (error) {
+      return;
+    }
+
+    toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
   });
 
   return (
@@ -108,7 +119,7 @@ export const LoginForm = () => {
               id={rememberId}
             />
             <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
-              Recordar mi usuario
+              Recordarme
             </Label>
           </div>
 

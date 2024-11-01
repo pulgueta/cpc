@@ -7,22 +7,23 @@ import { createId } from "@paralleldrive/cuid2";
 import { stores } from "./store";
 
 export const user = pgTable("user", {
-  id: text("id")
+  id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  password: text("password"),
-  emailVerified: boolean("emailVerified"),
-  image: text("image"),
-  role: text("role").notNull(),
-  banned: boolean("banned"),
-  banReason: text("banReason"),
-  banExpires: integer("banExpires"),
-  document: text("document").unique(),
-  phone: text("phone").unique(),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt")
+  name: text().notNull(),
+  email: text().notNull().unique(),
+  password: text(),
+  emailVerified: boolean(),
+  image: text(),
+  role: text().notNull(),
+  banned: boolean(),
+  banReason: text(),
+  banExpires: integer(),
+  document: text().unique(),
+  plan: text({ enum: ["free", "pro"] }),
+  phone: text().unique(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp()
     .notNull()
     .$onUpdateFn(() => new Date()),
 });

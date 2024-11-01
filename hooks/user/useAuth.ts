@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
@@ -12,12 +12,11 @@ import {
 
 export const useAuth = () => {
   const { push } = useRouter();
-  const isStorePath = usePathname().includes("stores");
 
   const onGoogleLogin = async () => {
     const { data, error } = await signIn.social({
       provider: "google",
-      callbackURL: isStorePath ? "/stores" : "/",
+      callbackURL: "/dashboard",
     });
 
     if (error) {
@@ -75,27 +74,31 @@ export const useAuth = () => {
     password: string;
     remember: boolean;
   }) => {
-    const { data, error } = await signIn.email(
+    const data = await signIn.email(
       {
         email,
         password,
-        callbackURL: isStorePath ? "/stores" : "/",
+        callbackURL: "/dashboard",
         dontRememberMe: !remember,
       },
       {
         onError: (ctx) => {
-          if (ctx.error.status === 403) {
-            toast.error("Debes verificar tu correo electrónico");
+          switch (ctx.error.status) {
+            case 404:
+              toast.error(
+                "No se encontró una cuenta con ese correo electrónico"
+              );
+              break;
+
+            case 401:
+              toast.error("Credenciales incorrectas");
+              break;
           }
         },
       }
     );
 
-    if (error) {
-      return toast.error(error.message ?? error.statusText);
-    }
-
-    return toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
+    return data;
   };
 
   const onRegister = async ({
@@ -109,17 +112,22 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const { data, error } = await signUp.email({
-      email,
-      password,
-      name,
-      role: roleToCreate,
-      callbackURL: isStorePath ? "/stores" : "/",
-    });
-
-    if (error) {
-      return toast.error(error.message);
-    }
+    const { data } = await signUp.email(
+      {
+        email,
+        password,
+        name,
+        role: roleToCreate,
+        callbackURL: "/dashboard",
+      },
+      {
+        onError: (ctx) => {
+          if (ctx.error.status === 422) {
+            toast.error("El correo electrónico ya está en uso");
+          }
+        },
+      }
+    );
 
     if (data) {
       return toast.success("Cuenta creada exitosamente");

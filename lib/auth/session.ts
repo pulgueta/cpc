@@ -6,7 +6,7 @@ import { auth } from "../auth";
 
 export const getCurrentSession = cache(async () => {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
 
   return session;

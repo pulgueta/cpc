@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 
 import type { AnyZodObject, TypeOf } from "zod";
 
@@ -20,9 +21,11 @@ type RequestResult<T> =
 
 export const handleRequest = async <T extends AnyZodObject>(
   req: NextRequest,
-  schema: T,
+  schema: T
 ): Promise<RequestResult<TypeOf<T>>> => {
-  const exc = await checkRateLimit(req.ip ?? "localhost");
+  const ip = ipAddress(req);
+
+  const exc = await checkRateLimit(ip ?? "localhost");
 
   const _body = await req.json();
   const result = await schema.safeParseAsync(_body);
