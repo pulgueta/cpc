@@ -38,6 +38,16 @@ interface CreateProductProps {
 const PHOTO_UPLOAD_MAX_SIZE = 2000000;
 
 export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
+  if (categories.length === 0) {
+    return (
+      <div className="flex items-center justify-center w-full py-4">
+        <Paragraph>
+          Debes crear al menos una categoría para poder crear productos
+        </Paragraph>
+      </div>
+    );
+  }
+
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const { refresh } = useRouter();
