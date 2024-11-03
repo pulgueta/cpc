@@ -3,7 +3,7 @@
 import { revalidateTag } from "next/cache";
 
 import { getCurrentSession } from "@/lib/auth/session";
-import { createCategory } from "@/lib/database/category";
+import { createCategory, getCategoryByName } from "@/lib/database/category";
 import { createCategorySchema } from "@/schemas/category";
 
 export const createCategoryAction = async (_prev: unknown, e: FormData) => {
@@ -18,9 +18,7 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
   let errors: string[][] = [];
 
   if (!body.success) {
-    errors = Object.entries(body.error?.flatten().fieldErrors!).map(
-      ([_key, value]) => value
-    );
+    errors = Object.entries(body.error?.flatten().fieldErrors!).map(([_key, value]) => value);
   }
 
   if (!body.success) {
@@ -28,6 +26,12 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
   }
 
   const categoryData = body.data;
+
+  const existingCategory = await getCategoryByName(categoryData.categoryName);
+
+  if (existingCategory?.categoryName.toLowerCase() === categoryData.categoryName.toLowerCase()) {
+    return { error: "La categoría ya existe" };
+  }
 
   const category = await createCategory({
     categoryName: categoryData.categoryName,

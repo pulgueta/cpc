@@ -17,12 +17,16 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
 
   const { isPending, isRefetching } = useSession();
 
+  const onSignOut = async () => {
+    await signOut({ fetchOptions: { onSuccess: () => push("/login") } });
+  };
+
   return (
     <Button
       variant="destructive"
       size={isPending || isRefetching ? "icon" : "sm"}
       loading={isPending || isRefetching}
-      onClick={async () => await signOut({ fetchOptions: { onSuccess: () => push("/login") } })}
+      onClick={onSignOut}
       className={cn({
         "w-full": fullWidth,
       })}

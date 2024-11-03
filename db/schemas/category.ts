@@ -9,7 +9,7 @@ export const categories = pgTable("category", {
   id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
-  categoryName: text().notNull(),
+  categoryName: text().notNull().unique(),
   categoryDescription: text(),
   storeOwnerId: text()
     .notNull()

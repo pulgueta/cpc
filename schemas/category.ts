@@ -33,4 +33,11 @@ export const createCategorySchema = createInsertSchema(categories, {
     }),
 });
 
+export const updateCategorySchema = createCategorySchema.pick({
+  categoryName: true,
+  categoryDescription: true,
+  id: true,
+});
+
 export type CategorySchema = TypeOf<typeof createCategorySchema>;
+export type UpdateCategorySchema = TypeOf<typeof updateCategorySchema>;

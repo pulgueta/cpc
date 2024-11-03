@@ -28,16 +28,14 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
 
   const [categories, products] = await Promise.all([
     getCategories(owner?.user.id),
-    getProducts(page, maxResults),
+    getProducts(owner.user.id, page, maxResults),
   ]);
 
   return (
     <>
       <header className="my-3.5">
         <Heading>Productos</Heading>
-        <Paragraph muted>
-          Aquí podrás administrar los productos de tu tienda.
-        </Paragraph>
+        <Paragraph muted>Aquí podrás administrar los productos de tu tienda.</Paragraph>
       </header>
       <section className="flex w-full flex-col justify-between gap-4">
         <article className="w-full">
@@ -45,7 +43,7 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
             <CreateProduct categories={categories} />
           </Suspense>
         </article>
-        <article className="w-full">
+        <article className="w-full md:max-w-[480px] md:mx-auto lg:max-w-full">
           <Suspense fallback={<></>}>
             <ProductsTable data={products} />
           </Suspense>

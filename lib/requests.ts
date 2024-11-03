@@ -21,7 +21,7 @@ type RequestResult<T> =
 
 export const handleRequest = async <T extends AnyZodObject>(
   req: NextRequest,
-  schema: T
+  schema: T,
 ): Promise<RequestResult<TypeOf<T>>> => {
   const ip = ipAddress(req);
 

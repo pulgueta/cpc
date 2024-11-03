@@ -5,10 +5,7 @@ import { s3 } from "./s3.config";
 
 export const uploadToS3 = async (file: File, path: string) => {
   try {
-    const key = `${path}/${Date.now().toString()}-${file.name.replace(
-      /\s/g,
-      "-"
-    )}`;
+    const key = `${path}/${Date.now().toString()}-${file.name.replace(/\s/g, "-")}`;
 
     const params: PutObjectCommandInput = {
       Bucket: env.NEXT_PUBLIC_S3_BUCKET,

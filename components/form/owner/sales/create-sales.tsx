@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { FC, useActionState, useEffect, useState } from "react";
 
 import Form from "next/form";
 
@@ -22,74 +22,15 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { useSales } from "@/hooks/use-sale";
-import { Product } from "@/providers/sales-provider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getProducts } from "@/lib/database/product";
 
-const frameworks: Product[] = [
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 1",
-    price: 50000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 2",
-    price: 100000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 3",
-    price: 150000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 4",
-    price: 200000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 5",
-    price: 250000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 6",
-    price: 300000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 7",
-    price: 350000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 8",
-    price: 400000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 9",
-    price: 450000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 10",
-    price: 500000,
-  },
-];
+interface CreateSalesProps {
+  products: Awaited<ReturnType<typeof getProducts>>;
+}
 
-export const CreateSales = () => {
+export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [state, action, isPending] = useActionState(createSaleAction, undefined);
@@ -97,10 +38,8 @@ export const CreateSales = () => {
   const { products, addProduct } = useSales((state) => state);
 
   const onAddProduct = (str: string) => {
-    if (products.find((product) => product.name === str)) return;
-
     setValue(str === value ? "" : str);
-    addProduct(frameworks.find((framework) => framework.name === str)!);
+    addProduct(prods.find((p) => p.productName === str)!);
     setOpen(false);
   };
 
@@ -124,7 +63,7 @@ export const CreateSales = () => {
                 className="w-full justify-between"
               >
                 {value
-                  ? frameworks.find((framework) => framework.name === value)?.name
+                  ? prods.find((p) => p.productName === value)?.productName
                   : "Escoge los productos de la venta"}
                 <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
               </Button>
@@ -135,19 +74,15 @@ export const CreateSales = () => {
                 <CommandList>
                   <CommandEmpty>No se encontró el producto</CommandEmpty>
                   <CommandGroup>
-                    {frameworks.map((framework) => (
-                      <CommandItem
-                        key={framework.id}
-                        value={framework.name}
-                        onSelect={onAddProduct}
-                      >
+                    {prods.map((p) => (
+                      <CommandItem key={p.id} value={p.productName} onSelect={onAddProduct}>
                         <Check
                           className={cn(
                             "mr-2 size-4",
-                            value === framework.name ? "opacity-100" : "opacity-0",
+                            value === p.productName ? "opacity-100" : "opacity-0",
                           )}
                         />
-                        {framework.name}
+                        {p.productName}
                       </CommandItem>
                     ))}
                   </CommandGroup>

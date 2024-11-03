@@ -18,19 +18,25 @@ export const products = pgTable(
     productPrice: integer().notNull(),
     productCategory: text()
       .notNull()
-      .references(() => categories.id),
+      .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
     productImageCdnUrl: text().notNull(),
+    storeOwnerId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  })
+  }),
 );
 
 export const productRelations = relations(products, ({ one }) => ({
-  storeOwner: one(user),
+  storeOwner: one(user, {
+    fields: [products.storeOwnerId],
+    references: [user.id],
+  }),
   category: one(categories, {
     fields: [products.productCategory],
     references: [categories.id],

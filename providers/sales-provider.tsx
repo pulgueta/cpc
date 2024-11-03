@@ -6,12 +6,7 @@ import { createContext, useState } from "react";
 import type { StoreApi } from "zustand";
 import { createStore } from "zustand";
 
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
+import type { Product } from "@/db/schemas/product";
 
 export interface Sale {
   products: (Product & { quantity: number })[];
