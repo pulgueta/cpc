@@ -17,10 +17,12 @@ export const products = pgTable(
     productDescription: text(),
     productPrice: integer().notNull(),
     productCategory: text()
+      .unique()
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
     productImageCdnUrl: text().notNull(),
+    stock: integer().notNull(),
     storeOwnerId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -29,7 +31,7 @@ export const products = pgTable(
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  }),
+  })
 );
 
 export const productRelations = relations(products, ({ one }) => ({

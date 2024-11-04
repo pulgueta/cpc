@@ -1,3 +1,5 @@
+import type { User } from "@/db/schemas/user";
+
 export const authRoutes = [
   { href: "/contact", label: "Contacto" },
   { href: "/stores", label: "Tiendas" },
@@ -8,3 +10,15 @@ export const noAuthRoutes = [
   { href: "/sell", label: "Quiero vender" },
   { href: "/contact", label: "Contacto" },
 ] as const;
+
+export const urlToRedirect = (role: User["role"]) => {
+  switch (role) {
+    case "admin":
+      return "/admin";
+    case "storeOwner":
+      return "/owner";
+    case "user":
+    default:
+      return "/dashboard";
+  }
+};

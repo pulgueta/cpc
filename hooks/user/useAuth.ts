@@ -2,23 +2,42 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import { passkey, signIn, signUp, forgetPassword, resetPassword } from "@/lib/auth.client";
+import {
+  passkey,
+  signIn,
+  signUp,
+  forgetPassword,
+  resetPassword,
+  linkSocial,
+  useSession,
+} from "@/lib/auth.client";
+import { urlToRedirect } from "@/constants/routes";
+import type { User } from "@/db/schemas/user";
 
 export const useAuth = () => {
   const { push } = useRouter();
 
+  const sessionData = useSession();
+
+  const role = sessionData.data?.user.role as User["role"];
+
   const onGoogleLogin = async () => {
-    const { data, error } = await signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
+    const [{ data, error }] = await Promise.all([
+      await signIn.social({
+        provider: "google",
+        callbackURL: urlToRedirect(role),
+      }),
+      await linkSocial({
+        provider: "google",
+      }),
+    ]);
 
     if (error) {
       return toast.error(error.message);
     }
 
     if (data.redirect) {
-      toast.loading("Redirigiendo...");
+      toast.info("Redirigiendo...");
       return push(data.url);
     }
   };
@@ -47,7 +66,7 @@ export const useAuth = () => {
             toast.error("No se encontró una cuenta con ese correo electrónico");
           }
         },
-      },
+      }
     );
 
     return data;
@@ -72,14 +91,16 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: "/dashboard",
+        callbackURL: urlToRedirect(role),
         dontRememberMe: !remember,
       },
       {
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
-              toast.error("No se encontró una cuenta con ese correo electrónico");
+              toast.error(
+                "No se encontró una cuenta con ese correo electrónico"
+              );
               break;
 
             case 401:
@@ -87,7 +108,7 @@ export const useAuth = () => {
               break;
           }
         },
-      },
+      }
     );
 
     return data;
@@ -118,7 +139,7 @@ export const useAuth = () => {
             toast.error("El correo electrónico ya está en uso");
           }
         },
-      },
+      }
     );
 
     if (data) {

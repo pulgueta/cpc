@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Form, FormComponent } from "@/components/ui/form";
 import type { ProductSchema } from "@/schemas/product";
@@ -23,9 +24,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getCategories } from "@/lib/database/category";
 import { Dropzone } from "./dropzone";
-import { useDropzone } from "react-dropzone";
-import { toast } from "sonner";
-import { uploadToS3 } from "@/lib/aws/s3";
 import { useSession } from "@/lib/auth.client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Paragraph } from "@/components/ui/typography";
@@ -42,7 +40,9 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
   if (categories.length === 0) {
     return (
       <div className="flex w-full items-center justify-center py-4">
-        <Paragraph>Debes crear al menos una categoría para poder crear productos</Paragraph>
+        <Paragraph>
+          Debes crear al menos una categoría para poder crear productos
+        </Paragraph>
       </div>
     );
   }
@@ -59,6 +59,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
       productImageCdnUrl: "",
       productName: "",
       productPrice: 0,
+      stock: 0,
     },
   });
 
@@ -101,7 +102,9 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
             <FormComponent
               label="Nombre del producto"
               name="productName"
-              render={({ field }) => <Input placeholder="Audífonos Alta Calidad MX20" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Audífonos Alta Calidad MX20" {...field} />
+              )}
             />
 
             <FormComponent
@@ -138,7 +141,16 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
               <FormComponent
                 label="Precio del producto"
                 name="productPrice"
-                render={({ field }) => <Input placeholder="150000" type="number" {...field} />}
+                render={({ field }) => (
+                  <Input placeholder="150000" type="number" {...field} />
+                )}
+              />
+              <FormComponent
+                label="Disponibilidad del producto"
+                name="stock"
+                render={({ field }) => (
+                  <Input placeholder="40" type="number" {...field} />
+                )}
               />
             </div>
           </div>
@@ -180,7 +192,10 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
           </div>
         </div>
 
-        <Button loading={form.formState.isSubmitting} className="w-full lg:max-w-xs lg:mx-auto">
+        <Button
+          loading={form.formState.isSubmitting}
+          className="w-full lg:max-w-xs lg:mx-auto"
+        >
           Crear producto
         </Button>
       </form>

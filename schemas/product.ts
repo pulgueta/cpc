@@ -7,7 +7,8 @@ import { products } from "@/db/schemas/product";
 export const createProductSchema = createInsertSchema(products, {
   productName: string({
     required_error: "El nombre del producto no puede estar vacío",
-    invalid_type_error: "El nombre del producto debe ser una cadena de texto válida",
+    invalid_type_error:
+      "El nombre del producto debe ser una cadena de texto válida",
   })
     .min(4, {
       message: "El nombre del producto debe tener al menos 4 caracteres",
@@ -16,7 +17,8 @@ export const createProductSchema = createInsertSchema(products, {
       message: "El nombre del producto debe tener como máximo 255 caracteres",
     }),
   productDescription: string({
-    invalid_type_error: "La descripción del producto debe ser una cadena de texto válida",
+    invalid_type_error:
+      "La descripción del producto debe ser una cadena de texto válida",
   }).optional(),
   productPrice: coerce
     .number({
@@ -33,11 +35,13 @@ export const createProductSchema = createInsertSchema(products, {
       message: "El precio del producto debe ser mayor o igual a $1.000 pesos",
     })
     .lte(30000000, {
-      message: "El precio del producto debe ser menor o igual a $30'000.000 pesos",
+      message:
+        "El precio del producto debe ser menor o igual a $30'000.000 pesos",
     }),
   productImageUrl: string({
     required_error: "La imagen del producto no puede estar vacía",
-    invalid_type_error: "La imagen del producto debe ser una cadena de texto válida",
+    invalid_type_error:
+      "La imagen del producto debe ser una cadena de texto válida",
   })
     .url({
       message: "La imagen del producto debe ser una URL válida",
@@ -50,7 +54,8 @@ export const createProductSchema = createInsertSchema(products, {
     }),
   productImageCdnUrl: string({
     required_error: "La imagen del producto no puede estar vacía",
-    invalid_type_error: "La imagen del producto debe ser una cadena de texto válida",
+    invalid_type_error:
+      "La imagen del producto debe ser una cadena de texto válida",
   })
     .url({
       message: "La imagen del producto debe ser una URL válida",
@@ -60,6 +65,17 @@ export const createProductSchema = createInsertSchema(products, {
     })
     .startsWith("https://", {
       message: "La imagen del producto debe tener una URL segura (HTTPS)",
+    }),
+  stock: coerce
+    .number({
+      required_error: "La cantidad de stock no puede estar vacía",
+      invalid_type_error: "La cantidad de stock debe ser un número",
+    })
+    .int({
+      message: "La cantidad de stock debe ser un número entero",
+    })
+    .min(1, {
+      message: "La cantidad de stock debe ser mayor a 0",
     }),
 });
 

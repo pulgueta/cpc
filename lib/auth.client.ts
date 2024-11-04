@@ -23,7 +23,7 @@ const authClient = createAuthClient({
         const retry = ctx.response.headers.get("X-Retry-After");
 
         toast.info(
-          `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`,
+          `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`
         );
       }
     },
@@ -34,6 +34,7 @@ export const {
   sendVerificationEmail,
   verifyEmail,
   signIn,
+  linkSocial,
   $Infer,
   forgetPassword,
   resetPassword,

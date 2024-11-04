@@ -53,7 +53,8 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -78,7 +79,9 @@ export const columns: ColumnDef<Column>[] = [
     accessorKey: "productDescription",
     header: () => <div className="text-center">Descripción</div>,
     cell: ({ row }) => (
-      <Paragraph className="truncate">{row.getValue("productDescription")}</Paragraph>
+      <Paragraph className="truncate">
+        {row.getValue("productDescription")}
+      </Paragraph>
     ),
   },
   {
@@ -120,6 +123,13 @@ export const columns: ColumnDef<Column>[] = [
     },
   },
   {
+    accessorKey: "stock",
+    header: () => <div className="text-center">Stock</div>,
+    cell: ({ row }) => {
+      return <Paragraph>{row.getValue("stock")}</Paragraph>;
+    },
+  },
+  {
     accessorKey: "productImageCdnUrl",
     header: () => <div className="text-center">Vista previa</div>,
     cell: ({ row }) => {
@@ -149,7 +159,9 @@ export const columns: ColumnDef<Column>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
               Copy payment ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -196,13 +208,21 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
       <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filtrar productos..."
-          value={(table.getColumn("productName")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("productName")?.setFilterValue(event.target.value)}
+          value={
+            (table.getColumn("productName")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("productName")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto" rightIcon={<ChevronDown size={16} />}>
+            <Button
+              variant="outline"
+              className="ml-auto"
+              rightIcon={<ChevronDown size={16} />}
+            >
               Columnas
             </Button>
           </DropdownMenuTrigger>
@@ -216,7 +236,9 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -236,7 +258,10 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -246,17 +271,26 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Sin resultados
                 </TableCell>
               </TableRow>
