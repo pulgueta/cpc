@@ -19,7 +19,7 @@ export const getProductByName = cache(
     return product;
   },
   ["products"],
-  { revalidate: 3600, tags: ["products"] }
+  { revalidate: 3600, tags: ["products"] },
 );
 
 // export const getProductByCategory = cache(
@@ -35,17 +35,24 @@ export const getProductByName = cache(
 // );
 
 export const getProducts = cache(
-  async (page: number = 1, pageSize: number = 15) => {
+  async (storeOwnerId: Product["storeOwnerId"], page: number = 1, pageSize: number = 15) => {
     const products = await db.query.products.findMany({
+      where: (t, { eq }) => eq(t.storeOwnerId, storeOwnerId),
       with: {
         category: true,
+        // storeOwner: {
+        //   columns: {
+        //     id: true,
+        //   },
+        // },
       },
       limit: pageSize,
       offset: (page - 1) * pageSize,
+      orderBy: (t, { asc }) => [asc(t.createdAt)],
     });
 
     return products;
   },
   ["products"],
-  { revalidate: 3600, tags: ["products"] }
+  { revalidate: 3600, tags: ["products"] },
 );

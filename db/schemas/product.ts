@@ -17,10 +17,15 @@ export const products = pgTable(
     productDescription: text(),
     productPrice: integer().notNull(),
     productCategory: text()
+      .unique()
       .notNull()
-      .references(() => categories.id),
+      .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
     productImageCdnUrl: text().notNull(),
+    stock: integer().notNull(),
+    storeOwnerId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
@@ -30,7 +35,10 @@ export const products = pgTable(
 );
 
 export const productRelations = relations(products, ({ one }) => ({
-  storeOwner: one(user),
+  storeOwner: one(user, {
+    fields: [products.storeOwnerId],
+    references: [user.id],
+  }),
   category: one(categories, {
     fields: [products.productCategory],
     references: [categories.id],

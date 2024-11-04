@@ -17,7 +17,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,9 +25,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -41,6 +38,7 @@ import {
 } from "@/components/ui/table";
 import { getCategories } from "@/lib/database/category";
 import { Paragraph } from "@/components/ui/typography";
+import { TableActions } from "../table-actions";
 
 export type Column = Awaited<ReturnType<typeof getCategories>>[0];
 
@@ -50,8 +48,7 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -88,7 +85,9 @@ export const columns: ColumnDef<Column>[] = [
     header: () => <div className="text-center">Descripción</div>,
     cell: ({ row }) => (
       <Paragraph className="truncate">
-        {row.getValue("categoryDescription")}
+        {String(row.getValue("categoryDescription")).length
+          ? row.getValue("categoryDescription")
+          : "Sin descripción"}
       </Paragraph>
     ),
   },
@@ -96,31 +95,7 @@ export const columns: ColumnDef<Column>[] = [
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-center">Acciones</div>,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <TableActions category={row.original} />,
   },
 ];
 
@@ -158,21 +133,13 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
       <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filtrar categorías..."
-          value={
-            (table.getColumn("categoryName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("categoryName")?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("categoryName")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("categoryName")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="ml-auto"
-              rightIcon={<ChevronDown size={16} />}
-            >
+            <Button variant="outline" className="ml-auto">
               Columnas
             </Button>
           </DropdownMenuTrigger>
@@ -186,9 +153,7 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -207,10 +172,7 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -220,26 +182,17 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sin resultados
                 </TableCell>
               </TableRow>

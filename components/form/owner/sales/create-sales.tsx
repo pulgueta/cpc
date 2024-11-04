@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { FC, useActionState, useEffect, useState } from "react";
 
 import Form from "next/form";
 
@@ -9,98 +9,82 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createSaleAction } from "@/actions/create-sale";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { AlertCircle, Check, ChevronsUpDown } from "lucide-react";
+import { createSaleAction } from "@/actions/sales/create-sale";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  AlertCircle,
+  Minus,
+  Plus,
+  Search,
+  ShoppingCartIcon,
+} from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 import { useSales } from "@/hooks/use-sale";
-import { Product } from "@/providers/sales-provider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getProducts } from "@/lib/database/product";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Image from "next/image";
+import { Product } from "@/providers/sales-provider";
 
-const frameworks: Product[] = [
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 1",
-    price: 50000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 2",
-    price: 100000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 3",
-    price: 150000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 4",
-    price: 200000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 5",
-    price: 250000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 6",
-    price: 300000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 7",
-    price: 350000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 8",
-    price: 400000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 9",
-    price: 450000,
-  },
-  {
-    id: crypto.randomUUID(),
-    imageUrl: "https://via.placeholder.com/150",
-    name: "Producto 10",
-    price: 500000,
-  },
-];
+interface CreateSalesProps {
+  products: Awaited<ReturnType<typeof getProducts>>;
+}
 
-export const CreateSales = () => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
-  const [state, action, isPending] = useActionState(createSaleAction, undefined);
+export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
 
-  const { products, addProduct } = useSales((state) => state);
+  const [state, action, isPending] = useActionState(
+    createSaleAction,
+    undefined
+  );
+
+  const { products, addProduct, decrementProduct, incrementProduct } = useSales(
+    (state) => state
+  );
+
+  const filteredProducts = prods.filter((product) =>
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const updateQuantity = (productId: string, delta: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: Math.max(0, (prev[productId] || 0) + delta),
+    }));
+  };
+
+  const handleAddToInvoice = (product: Product) => {
+    const quantity = quantities[product.id] || 0;
+    for (let i = 0; i < quantity; i++) {
+      addProduct(product);
+    }
+    setQuantities((prev) => ({ ...prev, [product.id]: 0 }));
+  };
 
   const onAddProduct = (str: string) => {
-    if (products.find((product) => product.name === str)) return;
-
     setValue(str === value ? "" : str);
-    addProduct(frameworks.find((framework) => framework.name === str)!);
+    addProduct(prods.find((p) => p.productName === str)!);
     setOpen(false);
   };
 
@@ -112,47 +96,85 @@ export const CreateSales = () => {
 
   return (
     <>
-      <Form className="flex h-max flex-col justify-between gap-4" action={action}>
+      <Form
+        className="flex h-max flex-col justify-between gap-4"
+        action={action}
+      >
         <div className="flex flex-col gap-2">
           <Label>Producto(s)</Label>
-          <Popover open={open} onOpenChange={setOpen}>
+
+          <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between"
-              >
-                {value
-                  ? frameworks.find((framework) => framework.name === value)?.name
-                  : "Escoge los productos de la venta"}
-                <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+              <Button variant="outline" className="w-full justify-start">
+                <ShoppingCartIcon className="mr-2" size={16} />
+                Seleccionar productos
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-0">
-              <Command>
-                <CommandInput placeholder="Buscar producto..." />
-                <CommandList>
-                  <CommandEmpty>No se encontró el producto</CommandEmpty>
-                  <CommandGroup>
-                    {frameworks.map((framework) => (
-                      <CommandItem
-                        key={framework.id}
-                        value={framework.name}
-                        onSelect={onAddProduct}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 size-4",
-                            value === framework.name ? "opacity-100" : "opacity-0",
-                          )}
-                        />
-                        {framework.name}
-                      </CommandItem>
+            <PopoverContent className="w-80">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Search className="w-4 h-4 opacity-50" />
+                  <Input
+                    placeholder="Buscar productos..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Carousel>
+                  <CarouselContent>
+                    {filteredProducts.map((product) => (
+                      <CarouselItem key={product.id}>
+                        <Card>
+                          <CardHeader>
+                            <div className="aspect-square w-full relative overflow-hidden rounded-lg mb-2">
+                              <Image
+                                src={product.productImageCdnUrl}
+                                alt={product.productName}
+                                layout="fill"
+                                objectFit="cover"
+                              />
+                            </div>
+                            <CardTitle>{product.productName}</CardTitle>
+                            <CardDescription>
+                              {formatPrice(product.productPrice)}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center justify-between">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => updateQuantity(product.id, -1)}
+                                disabled={quantities[product.id] === 0}
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="tabular-nums">
+                                {quantities[product.id] ?? 0}
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => updateQuantity(product.id, 1)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                disabled={quantities[product.id] === 0}
+                                onClick={() => handleAddToInvoice(product)}
+                              >
+                                Agregar
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
                     ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </div>
             </PopoverContent>
           </Popover>
         </div>
@@ -186,6 +208,16 @@ export const CreateSales = () => {
       </Form>
 
       {state?.error &&
+        Array.isArray(state.error) &&
+        state.error.map((error) => (
+          <Alert variant="destructive" className="my-2" key={error}>
+            <AlertCircle className="size-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
+          </Alert>
+        ))}
+
+      {/* {state?.error &&
         state.error.buyerEmail &&
         state.error.buyerEmail.map((error) => (
           <Alert variant="destructive" className="my-2" key={error}>
@@ -220,7 +252,7 @@ export const CreateSales = () => {
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error || "Error desconocido"}</AlertDescription>
           </Alert>
-        ))}
+        ))} */}
     </>
   );
 };

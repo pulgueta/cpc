@@ -19,9 +19,7 @@ const Categories = async () => {
     <>
       <header className="my-3.5">
         <Heading>Categorías</Heading>
-        <Paragraph muted>
-          Aquí podrás administrar las categorías de tu tienda.
-        </Paragraph>
+        <Paragraph muted>Aquí podrás administrar las categorías de tu tienda.</Paragraph>
       </header>
 
       <section className="flex w-full flex-col justify-between gap-4 md:flex-row">

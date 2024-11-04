@@ -42,7 +42,6 @@ const nextConfig = {
     ];
   },
   serverExternalPackages: ["@node-rs/argon2"],
-  experimental: {},
 } satisfies NextConfig;
 
 export default nextConfig;

@@ -123,6 +123,13 @@ export const columns: ColumnDef<Column>[] = [
     },
   },
   {
+    accessorKey: "stock",
+    header: () => <div className="text-center">Stock</div>,
+    cell: ({ row }) => {
+      return <Paragraph>{row.getValue("stock")}</Paragraph>;
+    },
+  },
+  {
     accessorKey: "productImageCdnUrl",
     header: () => <div className="text-center">Vista previa</div>,
     cell: ({ row }) => {
@@ -130,7 +137,7 @@ export const columns: ColumnDef<Column>[] = [
         <img
           src={row.getValue("productImageCdnUrl")}
           alt="Vista previa"
-          className="size-16 object-cover mx-auto rounded"
+          className="mx-auto size-16 rounded object-cover aspect-square"
         />
       );
     },

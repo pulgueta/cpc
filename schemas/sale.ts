@@ -31,6 +31,10 @@ export const createSaleSchema = createInsertSchema(sales, {
       .max(10, {
         message: "El teléfono debe tener como máximo 10 dígitos",
       }),
+  documentType: () =>
+    string({
+      required_error: "El tipo de documento es requerido",
+    }),
   document: () =>
     string({
       required_error: "El documento es requerido",

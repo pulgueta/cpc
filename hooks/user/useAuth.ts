@@ -8,23 +8,36 @@ import {
   signUp,
   forgetPassword,
   resetPassword,
+  linkSocial,
+  useSession,
 } from "@/lib/auth.client";
+import { urlToRedirect } from "@/constants/routes";
+import type { User } from "@/db/schemas/user";
 
 export const useAuth = () => {
   const { push } = useRouter();
 
+  const sessionData = useSession();
+
+  const role = sessionData.data?.user.role as User["role"];
+
   const onGoogleLogin = async () => {
-    const { data, error } = await signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
+    const [{ data, error }] = await Promise.all([
+      await signIn.social({
+        provider: "google",
+        callbackURL: urlToRedirect(role),
+      }),
+      await linkSocial({
+        provider: "google",
+      }),
+    ]);
 
     if (error) {
       return toast.error(error.message);
     }
 
     if (data.redirect) {
-      toast.loading("Redirigiendo...");
+      toast.info("Redirigiendo...");
       return push(data.url);
     }
   };
@@ -78,7 +91,7 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: "/dashboard",
+        callbackURL: urlToRedirect(role),
         dontRememberMe: !remember,
       },
       {

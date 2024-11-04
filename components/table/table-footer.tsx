@@ -47,12 +47,7 @@ export const TableFooter: FC<TableFooterProps> = ({
         >
           Anterior
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleNextPage}
-          disabled={!canNextPage()}
-        >
+        <Button variant="outline" size="sm" onClick={handleNextPage} disabled={!canNextPage()}>
           Siguiente
         </Button>
       </div>

@@ -66,6 +66,17 @@ export const createProductSchema = createInsertSchema(products, {
     .startsWith("https://", {
       message: "La imagen del producto debe tener una URL segura (HTTPS)",
     }),
+  stock: coerce
+    .number({
+      required_error: "La cantidad de stock no puede estar vacía",
+      invalid_type_error: "La cantidad de stock debe ser un número",
+    })
+    .int({
+      message: "La cantidad de stock debe ser un número entero",
+    })
+    .min(1, {
+      message: "La cantidad de stock debe ser mayor a 0",
+    }),
 });
 
 export type ProductSchema = TypeOf<typeof createProductSchema>;
