@@ -1,9 +1,19 @@
 "use client";
 
-import { FC, useActionState, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useActionState, useEffect, useState } from "react";
 
+import Image from "next/image";
+import Link from "next/link";
 import Form from "next/form";
 
+import {
+  AlertCircle,
+  Minus,
+  Plus,
+  Search,
+  ShoppingCartIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -15,18 +25,10 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import {
-  AlertCircle,
-  Minus,
-  Plus,
-  Search,
-  ShoppingCartIcon,
-} from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { useSales } from "@/hooks/use-sale";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { getProducts } from "@/lib/database/product";
 import {
   Carousel,
   CarouselContent,
@@ -41,16 +43,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
 import { Product } from "@/providers/sales-provider";
+import { Paragraph } from "@/components/ui/typography";
+import type { Products } from "@/constants/db-types";
 
 interface CreateSalesProps {
-  products: Awaited<ReturnType<typeof getProducts>>;
+  products: Products;
 }
 
 export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [quantities, setQuantities] = useState<Record<string, number>>({});
 
@@ -59,9 +60,7 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
     undefined
   );
 
-  const { products, addProduct, decrementProduct, incrementProduct } = useSales(
-    (state) => state
-  );
+  const { products, addProduct } = useSales((state) => state);
 
   const filteredProducts = prods.filter((product) =>
     product.productName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -80,12 +79,6 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
       addProduct(product);
     }
     setQuantities((prev) => ({ ...prev, [product.id]: 0 }));
-  };
-
-  const onAddProduct = (str: string) => {
-    setValue(str === value ? "" : str);
-    addProduct(prods.find((p) => p.productName === str)!);
-    setOpen(false);
   };
 
   useEffect(() => {
@@ -122,54 +115,68 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
                 </div>
                 <Carousel>
                   <CarouselContent>
-                    {filteredProducts.map((product) => (
-                      <CarouselItem key={product.id}>
-                        <Card>
-                          <CardHeader>
-                            <div className="aspect-square w-full relative overflow-hidden rounded-lg mb-2">
-                              <Image
-                                src={product.productImageCdnUrl}
-                                alt={product.productName}
-                                layout="fill"
-                                objectFit="cover"
-                              />
-                            </div>
-                            <CardTitle>{product.productName}</CardTitle>
-                            <CardDescription>
-                              {formatPrice(product.productPrice)}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="flex items-center justify-between">
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => updateQuantity(product.id, -1)}
-                                disabled={quantities[product.id] === 0}
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <span className="tabular-nums">
-                                {quantities[product.id] ?? 0}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => updateQuantity(product.id, 1)}
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                disabled={quantities[product.id] === 0}
-                                onClick={() => handleAddToInvoice(product)}
-                              >
-                                Agregar
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </CarouselItem>
-                    ))}
+                    {filteredProducts.length < 0 ? (
+                      filteredProducts.map((product) => (
+                        <CarouselItem key={product.id}>
+                          <Card>
+                            <CardHeader>
+                              <div className="aspect-square w-full relative overflow-hidden rounded-lg mb-2">
+                                <Image
+                                  src={product.productImageCdnUrl}
+                                  alt={product.productName}
+                                  layout="fill"
+                                  objectFit="cover"
+                                />
+                              </div>
+                              <CardTitle>{product.productName}</CardTitle>
+                              <CardDescription>
+                                {formatPrice(product.productPrice)}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex items-center justify-between">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => updateQuantity(product.id, -1)}
+                                  disabled={quantities[product.id] === 0}
+                                >
+                                  <Minus className="h-4 w-4" />
+                                </Button>
+                                <span className="tabular-nums">
+                                  {quantities[product.id] ?? 0}
+                                </span>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => updateQuantity(product.id, 1)}
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  disabled={quantities[product.id] === 0}
+                                  onClick={() => handleAddToInvoice(product)}
+                                >
+                                  Agregar
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))
+                    ) : (
+                      <article className="flex items-center justify-center w-full">
+                        <Paragraph muted>
+                          No hay productos,{" "}
+                          <Link
+                            className="hover:underline hover:underline-offset-4"
+                            href="/owner/products"
+                          >
+                            agregar aquí
+                          </Link>
+                        </Paragraph>
+                      </article>
+                    )}
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
@@ -226,33 +233,7 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
             <AlertDescription>{error || "Error desconocido"}</AlertDescription>
           </Alert>
         ))}
-      {state?.error &&
-        state.error.buyerName &&
-        state.error.buyerName.map((error) => (
-          <Alert variant="destructive" className="my-2" key={error}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))}
-      {state?.error &&
-        state.error.buyerPhone &&
-        state.error.buyerPhone.map((error) => (
-          <Alert variant="destructive" className="my-2" key={error}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))}
-      {state?.error &&
-        state.error.document &&
-        state.error.document.map((error) => (
-          <Alert variant="destructive" className="my-2" key={error}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))} */}
+      */}
     </>
   );
 };

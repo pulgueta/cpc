@@ -40,16 +40,16 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
         </Paragraph>
       </header>
       <section className="flex w-full flex-col justify-between gap-4">
-        {/* <article className="w-full">
+        <article className="w-full">
           <Suspense fallback={<></>}>
             <CreateProduct categories={categories} />
           </Suspense>
-        </article> */}
-        {/* <article className="w-full md:max-w-[480px] md:mx-auto lg:max-w-full">
+        </article>
+        <article className="w-full md:max-w-[480px] md:mx-auto lg:max-w-full">
           <Suspense fallback={<></>}>
             <ProductsTable data={products} />
           </Suspense>
-        </article> */}
+        </article>
       </section>
     </>
   );

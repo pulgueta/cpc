@@ -36,11 +36,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getCategories } from "@/lib/database/category";
 import { Paragraph } from "@/components/ui/typography";
 import { TableActions } from "../table-actions";
+import type { Categories, Category } from "@/constants/db-types";
 
-export type Column = Awaited<ReturnType<typeof getCategories>>[0];
+export type Column = Category;
 
 export const columns: ColumnDef<Column>[] = [
   {
@@ -48,7 +48,8 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -100,7 +101,7 @@ export const columns: ColumnDef<Column>[] = [
 ];
 
 interface CategoriesTableProps {
-  data: Awaited<ReturnType<typeof getCategories>>;
+  data: Categories;
 }
 
 export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
@@ -133,8 +134,12 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
       <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filtrar categorías..."
-          value={(table.getColumn("categoryName")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("categoryName")?.setFilterValue(event.target.value)}
+          value={
+            (table.getColumn("categoryName")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("categoryName")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -153,7 +158,9 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -172,7 +179,10 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -182,17 +192,26 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Sin resultados
                 </TableCell>
               </TableRow>

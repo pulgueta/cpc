@@ -40,12 +40,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Paragraph } from "@/components/ui/typography";
-import { getProducts } from "@/lib/database/product";
 import { TableFooter } from "@/components/table/table-footer";
 import { formatPrice } from "@/lib/utils";
-import type { Category } from "@/db/schemas";
+import type { Category } from "@/db/schemas/category";
+import type { Product, Products } from "@/constants/db-types";
 
-export type Column = Awaited<ReturnType<typeof getProducts>>[0];
+export type Column = Product;
 
 export const columns: ColumnDef<Column>[] = [
   {
@@ -78,11 +78,13 @@ export const columns: ColumnDef<Column>[] = [
   {
     accessorKey: "productDescription",
     header: () => <div className="text-center">Descripción</div>,
-    cell: ({ row }) => (
-      <Paragraph className="truncate">
-        {row.getValue("productDescription")}
-      </Paragraph>
-    ),
+    cell: ({ row }) => {
+      const description = String(row.getValue("productDescription")).length
+        ? String(row.getValue("productDescription"))
+        : "Sin descripción";
+
+      return <Paragraph className="truncate">{description}</Paragraph>;
+    },
   },
   {
     accessorKey: "category",
@@ -126,7 +128,11 @@ export const columns: ColumnDef<Column>[] = [
     accessorKey: "stock",
     header: () => <div className="text-center">Stock</div>,
     cell: ({ row }) => {
-      return <Paragraph>{row.getValue("stock")}</Paragraph>;
+      return (
+        <Paragraph>
+          {Number(row.getValue("stock")) ? row.getValue("stock") : 0}
+        </Paragraph>
+      );
     },
   },
   {
@@ -175,7 +181,7 @@ export const columns: ColumnDef<Column>[] = [
 ];
 
 interface ProductsTableProps {
-  data: Awaited<ReturnType<typeof getProducts>>;
+  data: Products;
 }
 
 export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {

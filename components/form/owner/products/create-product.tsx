@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { useState } from "react";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,19 +23,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { getCategories } from "@/lib/database/category";
 import { Dropzone } from "./dropzone";
 import { useSession } from "@/lib/auth.client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Paragraph } from "@/components/ui/typography";
-import { useRouter } from "next/navigation";
 import { useFormDropzone } from "./use-dropzone";
+import type { Categories } from "@/constants/db-types";
 
 interface CreateProductProps {
-  categories: Readonly<Awaited<ReturnType<typeof getCategories>>>;
+  categories: Categories;
 }
-
-const PHOTO_UPLOAD_MAX_SIZE = 2000000;
 
 export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
   if (categories.length === 0) {
@@ -159,7 +157,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
             <div className="w-full lg:max-w-md">
               <FormComponent
                 label="Imagen del producto"
-                name="productImage"
+                name="productImageUrl"
                 render={({ field }) => (
                   <Input
                     placeholder="https://some-cdn.s3.us-east-2.amazonaws.com/uploads/product.jpg"
@@ -168,6 +166,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
                   />
                 )}
               />
+
               <Dropzone
                 getInputProps={getInputProps}
                 getRootProps={getRootProps}

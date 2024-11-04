@@ -77,6 +77,11 @@ export const createProductSchema = createInsertSchema(products, {
     .min(1, {
       message: "La cantidad de stock debe ser mayor a 0",
     }),
+  productCategory: string({
+    required_error: "La categoría del producto no puede estar vacía",
+    invalid_type_error:
+      "La categoría del producto debe ser una cadena de texto válida",
+  }),
 });
 
 export type ProductSchema = TypeOf<typeof createProductSchema>;
