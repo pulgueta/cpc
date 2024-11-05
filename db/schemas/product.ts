@@ -31,7 +31,7 @@ export const products = pgTable(
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  })
+  }),
 );
 
 export const productRelations = relations(products, ({ one }) => ({

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 import { Form, FormComponent } from "@/components/ui/form";
 import type { ProductSchema } from "@/schemas/product";
-import { createProductSchema } from "@/schemas/product";
+import { updateProductSchema } from "@/schemas/product";
 import {
   Select,
   SelectContent,
@@ -28,14 +28,17 @@ import { useSession } from "@/lib/auth.client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Paragraph } from "@/components/ui/typography";
 import { useFormDropzone } from "./use-dropzone";
-import type { Categories } from "@/constants/db-types";
+import type { Product } from "@/constants/db-types";
+import { useCategories } from "@/hooks/use-categories";
 
-interface CreateProductProps {
-  categories: Categories;
+interface EditProductProps {
+  product: Product;
 }
 
-export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
-  if (categories.length === 0) {
+export const EditProduct: FC<EditProductProps> = ({ product }) => {
+  const { data: categories } = useCategories();
+
+  if (categories?.length === 0) {
     return (
       <div className="flex w-full items-center justify-center py-4">
         <Paragraph>Debes crear al menos una categoría para poder crear productos</Paragraph>
@@ -48,14 +51,15 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
   const { refresh } = useRouter();
 
   const form = useForm<ProductSchema>({
-    resolver: zodResolver(createProductSchema),
+    resolver: zodResolver(updateProductSchema),
     defaultValues: {
-      productDescription: "",
-      productImageUrl: "",
-      productImageCdnUrl: "",
-      productName: "",
-      productPrice: 0,
-      stock: 0,
+      productDescription: product.productDescription,
+      productImageUrl: product.productImageUrl,
+      productImageCdnUrl: product.productImageCdnUrl,
+      productName: product.productName,
+      productPrice: product.productPrice,
+      stock: product.stock,
+      productCategory: product.productCategory,
     },
   });
 
@@ -65,7 +69,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
 
   const onSubmit = form.handleSubmit(async (data) => {
     const req = await fetch("/api/owner/products", {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify(data),
     });
 
@@ -87,7 +91,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="flex w-full flex-col gap-12">
-        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="grid w-full grid-cols-1 gap-4">
           <div className="grid w-full grid-cols-1 gap-4">
             <Input
               className="hidden"
@@ -112,7 +116,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
                 />
               )}
             />
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4">
               <FormComponent
                 label="Categoría del producto"
                 name="productCategory"
@@ -123,7 +127,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
                     </SelectTrigger>
 
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories?.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.categoryName}
                         </SelectItem>
@@ -132,20 +136,22 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
                   </Select>
                 )}
               />
-              <FormComponent
-                label="Precio del producto"
-                name="productPrice"
-                render={({ field }) => <Input placeholder="150000" type="number" {...field} />}
-              />
-              <FormComponent
-                label="Disponibilidad del producto"
-                name="stock"
-                render={({ field }) => <Input placeholder="40" type="number" {...field} />}
-              />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormComponent
+                  label="Precio del producto"
+                  name="productPrice"
+                  render={({ field }) => <Input placeholder="150000" type="number" {...field} />}
+                />
+                <FormComponent
+                  label="Disponibilidad del producto"
+                  name="stock"
+                  render={({ field }) => <Input placeholder="40" type="number" {...field} />}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex w-full flex-col items-center justify-start gap-4 lg:flex-row lg:items-start">
+          <div className="flex w-full flex-col items-center justify-start gap-4">
             <div className="w-full lg:max-w-md">
               <FormComponent
                 label="Imagen del producto"
@@ -183,8 +189,8 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
           </div>
         </div>
 
-        <Button loading={form.formState.isSubmitting} className="w-full lg:mx-auto lg:max-w-xs">
-          Crear producto
+        <Button loading={form.formState.isSubmitting} className="w-full">
+          Actualizar producto
         </Button>
       </form>
     </Form>

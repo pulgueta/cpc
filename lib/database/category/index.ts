@@ -13,7 +13,18 @@ export const createCategory = async (data: NewCategory) => {
     return { error: "La categoría ya existe" };
   }
 
-  const [category] = await db.insert(categories).values(data).onConflictDoNothing().returning();
+  const [category] = await db
+    .insert(categories)
+    .values(data)
+    .onConflictDoUpdate({
+      target: categories.categoryName,
+      set: {
+        categoryDescription: data.categoryDescription,
+        storeOwnerId: data.storeOwnerId,
+        categoryName: data.categoryName,
+      },
+    })
+    .returning();
 
   return {
     message: "Categoría creada exitosamente",
@@ -48,6 +59,18 @@ export const getCategoryByName = cache(
   { revalidate: 3600, tags: ["categories"] },
 );
 
+export const getCategoryById = cache(
+  async (categoryId: Category["id"]) => {
+    const category = await db.query.categories.findFirst({
+      where: (t, { eq }) => eq(t.id, categoryId),
+    });
+
+    return category;
+  },
+  ["categories"],
+  { revalidate: 3600, tags: ["categories"] },
+);
+
 export const getCategories = cache(
   async (storeOwnerId: Category["storeOwnerId"]) => {
     const categories = await db.query.categories.findMany({
@@ -60,3 +83,12 @@ export const getCategories = cache(
   ["categories"],
   { revalidate: 3600, tags: ["categories"] },
 );
+
+export const deleteCategory = async (id: Category["id"]) => {
+  const category = await db.delete(categories).where(eq(categories.id, id)).returning();
+
+  return {
+    message: "Categoría eliminada exitosamente",
+    category,
+  };
+};

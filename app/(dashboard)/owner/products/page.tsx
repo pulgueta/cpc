@@ -6,12 +6,12 @@ import { redirect } from "next/navigation";
 import { SearchParams } from "nuqs/server";
 
 import { CreateProduct } from "@/components/form/owner/products/create-product";
-import { Heading, Paragraph } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
 import { getCategories } from "@/lib/database/category";
 import { getProducts } from "@/lib/database/product";
 import { ProductsTable } from "@/components/owner/products/products-table";
 import { searchParamsCache } from "@/lib/search-params";
+import { OwnerHeader } from "@/components/owner-header";
 
 interface ProductsProps {
   searchParams: Promise<SearchParams>;
@@ -33,19 +33,18 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
 
   return (
     <>
-      <header className="my-3.5">
-        <Heading>Productos</Heading>
-        <Paragraph muted>
-          Aquí podrás administrar los productos de tu tienda.
-        </Paragraph>
-      </header>
+      <OwnerHeader
+        title="Productos"
+        description="Aquí podrás administrar los productos de tu tienda."
+      />
+
       <section className="flex w-full flex-col justify-between gap-4">
         <article className="w-full">
           <Suspense fallback={<></>}>
             <CreateProduct categories={categories} />
           </Suspense>
         </article>
-        <article className="w-full md:max-w-[480px] md:mx-auto lg:max-w-full">
+        <article className="w-full md:mx-auto md:max-w-[480px] lg:max-w-full">
           <Suspense fallback={<></>}>
             <ProductsTable data={products} />
           </Suspense>

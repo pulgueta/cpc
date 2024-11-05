@@ -1,5 +1,5 @@
 import { betterAuth, RateLimit } from "better-auth";
-import { passkey, admin, organization } from "better-auth/plugins";
+import { passkey, admin, organization, oAuthProxy } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { hashValue, verifyValue } from "./crypto";
@@ -7,6 +7,7 @@ import { db } from "@/db/config";
 import * as schema from "@/db/schemas";
 import { cache } from "./cache";
 import { sendPasswordResetEmail, sendWelcomeEmail } from "./email";
+import { env } from "@/env/server";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -29,6 +30,7 @@ export const auth = betterAuth({
     enabled: true,
     maxPasswordLength: 100,
     minPasswordLength: 4,
+    autoSignIn: true,
     password: {
       hash: async (a) => await hashValue(a),
       verify: async (a, b) => await verifyValue(a, b),
@@ -107,9 +109,10 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       enabled: true,
+      redirectURL: `${env.BETTER_AUTH_URL}/api/auth/google/callback`,
     },
   },
-  plugins: [passkey(), admin(), organization()],
+  plugins: [passkey(), admin(), organization(), oAuthProxy()],
   account: {
     accountLinking: {
       enabled: true,

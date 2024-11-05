@@ -4,6 +4,7 @@ import {
   adminClient,
   inferAdditionalFields,
   organizationClient,
+  oneTapClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
@@ -23,7 +24,7 @@ const authClient = createAuthClient({
         const retry = ctx.response.headers.get("X-Retry-After");
 
         toast.info(
-          `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`
+          `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`,
         );
       }
     },

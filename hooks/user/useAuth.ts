@@ -66,7 +66,7 @@ export const useAuth = () => {
             toast.error("No se encontró una cuenta con ese correo electrónico");
           }
         },
-      }
+      },
     );
 
     return data;
@@ -98,9 +98,7 @@ export const useAuth = () => {
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
-              toast.error(
-                "No se encontró una cuenta con ese correo electrónico"
-              );
+              toast.error("No se encontró una cuenta con ese correo electrónico");
               break;
 
             case 401:
@@ -108,7 +106,7 @@ export const useAuth = () => {
               break;
           }
         },
-      }
+      },
     );
 
     return data;
@@ -139,7 +137,7 @@ export const useAuth = () => {
             toast.error("El correo electrónico ya está en uso");
           }
         },
-      }
+      },
     );
 
     if (data) {

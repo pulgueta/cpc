@@ -39,5 +39,9 @@ export const updateCategorySchema = createCategorySchema.pick({
   id: true,
 });
 
+export const deleteCategorySchema = createCategorySchema.pick({
+  id: true,
+});
+
 export type CategorySchema = TypeOf<typeof createCategorySchema>;
 export type UpdateCategorySchema = TypeOf<typeof updateCategorySchema>;

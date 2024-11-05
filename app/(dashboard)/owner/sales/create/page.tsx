@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Heading, Paragraph } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
 import { getProducts } from "@/lib/database/product";
+import { OwnerHeader } from "@/components/owner-header";
 
 const CreateSale = async () => {
   const owner = await getCurrentSession();
@@ -18,10 +19,11 @@ const CreateSale = async () => {
 
   return (
     <>
-      <header className="my-3.5">
-        <Heading>Crear una nueva venta</Heading>
-        <Paragraph muted>Llena el formulario con los datos de la venta.</Paragraph>
-      </header>
+      <OwnerHeader
+        title="Crear una nueva venta"
+        description="Llena el formulario con los datos de la venta."
+      />
+
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded border p-4">
           <CreateSales products={products} />

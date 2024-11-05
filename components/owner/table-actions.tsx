@@ -1,5 +1,6 @@
-import type { FC } from "react";
-import { useState } from "react";
+import type { FC, PropsWithChildren, SetStateAction } from "react";
+
+import { MoreHorizontalIcon, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -10,19 +11,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { MoreHorizontalIcon } from "lucide-react";
-import { Actions } from "../modal/actions";
-import type { Category } from "@/db/schemas/category";
 
-interface TableActionsProps {
-  category: Category;
+interface TableActionsProps extends PropsWithChildren {
+  setOpenEdit: (value: SetStateAction<boolean>) => void;
+  setOpenDelete: (value: SetStateAction<boolean>) => void;
 }
 
-export const TableActions: FC<TableActionsProps> = ({ category }) => {
-  const [open, setOpen] = useState<boolean>(false);
+export const TableActions: FC<TableActionsProps> = ({ children, setOpenEdit, setOpenDelete }) => {
+  const handleEdit = () => {
+    setOpenEdit((prev) => !prev);
+  };
 
-  const handleOpen = () => {
-    setOpen((prev) => !prev);
+  const handleDelete = () => {
+    setOpenDelete((prev) => !prev);
   };
 
   return (
@@ -31,25 +32,23 @@ export const TableActions: FC<TableActionsProps> = ({ category }) => {
         <DropdownMenuTrigger asChild>
           <Button size="icon" variant="outline" className="size-8">
             <span className="sr-only">Abrir menú</span>
-            <MoreHorizontalIcon className="h-4 w-4" />
+            <MoreHorizontalIcon size={16} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-          <DropdownMenuItem asChild>
-            <Button variant="secondary" className="w-full" onClick={handleOpen}>
-              Editar
-            </Button>
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleEdit}>Editar</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Button variant="destructive" className="w-full">
-              Eliminar
-            </Button>
+          <DropdownMenuItem
+            onClick={handleDelete}
+            className="font-semibold text-destructive dark:text-red-600"
+          >
+            <Trash2 className="mr-2" size={16} />
+            Eliminar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Actions open={open} setOpen={setOpen} category={category} />
+      {children}
     </>
   );
 };

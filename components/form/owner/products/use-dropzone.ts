@@ -7,8 +7,8 @@ import { useSession } from "@/lib/auth.client";
 
 const PHOTO_UPLOAD_MAX_SIZE = 2000000;
 
-interface UseFormDropzoneProps<T> {
-  // TODO: Define the form type
+interface UseFormDropzoneProps<_T> {
+  // biome-ignore lint: later
   form: any;
   owner: ReturnType<typeof useSession>;
 }

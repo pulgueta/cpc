@@ -20,7 +20,6 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Footer } from "./footer";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/auth.client";
 
@@ -120,7 +119,6 @@ export const StoreOwnerSidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <Footer user={sessionData} />
       <SidebarRail />
     </Sidebar>
   );

@@ -2,9 +2,9 @@ import { redirect } from "next/navigation";
 
 import { CreateCategory } from "@/components/form/owner/categories/create-category";
 import { CategoriesTable } from "@/components/owner/categoies/categories-table";
-import { Heading, Paragraph } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
 import { getCategories } from "@/lib/database/category";
+import { OwnerHeader } from "@/components/owner-header";
 
 const Categories = async () => {
   const owner = await getCurrentSession();
@@ -17,12 +17,12 @@ const Categories = async () => {
 
   return (
     <>
-      <header className="my-3.5">
-        <Heading>Categorías</Heading>
-        <Paragraph muted>Aquí podrás administrar las categorías de tu tienda.</Paragraph>
-      </header>
+      <OwnerHeader
+        title="Categorías"
+        description="Aquí podrás administrar las categorías de tu tienda."
+      />
 
-      <section className="flex w-full flex-col justify-between gap-4 md:flex-row">
+      <section className="flex w-full flex-col justify-between gap-4 lg:flex-row">
         <article className="w-full max-w-3xl">
           <CreateCategory />
         </article>

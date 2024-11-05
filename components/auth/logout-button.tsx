@@ -15,7 +15,7 @@ interface LogoutButtonProps {
 export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
   const { push } = useRouter();
 
-  const { isPending, isRefetching } = useSession();
+  const { isPending } = useSession();
 
   const onSignOut = async () => {
     await signOut({ fetchOptions: { onSuccess: () => push("/login") } });
@@ -24,14 +24,14 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
   return (
     <Button
       variant="destructive"
-      size={isPending || isRefetching ? "icon" : "sm"}
-      loading={isPending || isRefetching}
+      size={isPending ? "icon" : "sm"}
+      loading={isPending}
       onClick={onSignOut}
       className={cn({
         "w-full": fullWidth,
       })}
     >
-      {(!isPending || !isRefetching) && "Cerrar sesión"}
+      Cerrar sesión
     </Button>
   );
 };

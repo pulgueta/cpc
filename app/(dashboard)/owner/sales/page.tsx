@@ -1,14 +1,16 @@
 import { Heading, Paragraph } from "@/components/ui/typography";
 import { SalesChart } from "@/components/owner/sales/sales-chart";
 import { SalesTable } from "@/components/owner/sales/sales-table";
+import { OwnerHeader } from "@/components/owner-header";
 
 const Sales = () => {
   return (
     <>
-      <header className="my-3.5">
-        <Heading>Ventas</Heading>
-        <Paragraph muted>Aquí podrás visualizar y administrar las ventas de tu tienda.</Paragraph>
-      </header>
+      <OwnerHeader
+        title="Ventas"
+        description="Aquí podrás visualizar y administrar las ventas de tu tienda."
+      />
+
       <section className="w-full">
         <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
           <article className="w-full rounded border p-4 shadow">
