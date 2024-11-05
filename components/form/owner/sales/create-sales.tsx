@@ -115,7 +115,7 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
                 </div>
                 <Carousel>
                   <CarouselContent>
-                    {filteredProducts.length < 0 ? (
+                    {filteredProducts.length > 0 ? (
                       filteredProducts.map((product) => (
                         <CarouselItem key={product.id}>
                           <Card>
