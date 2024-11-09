@@ -14,7 +14,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useSession } from "@/lib/auth.client";
 import { Skeleton } from "./ui/skeleton";
 import { Paragraph } from "./ui/typography";
@@ -26,6 +30,15 @@ export const DashboardBreadcrumbs = () => {
   const pathname = usePathname();
 
   const session = useSession();
+
+  const separatedName = session.isPending
+    ? ""
+    : session.data.user.name.split(" ");
+
+  const initials = [
+    separatedName[0].charAt(0),
+    separatedName[1] ? separatedName[1].charAt(0) : "",
+  ];
 
   const paths = pathname
     .split("/")
@@ -48,7 +61,9 @@ export const DashboardBreadcrumbs = () => {
             return (
               <div key={path} className="flex items-center gap-x-1">
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/${path.toLowerCase()}`}>{path}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/${path.toLowerCase()}`}>
+                    {path}
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
               </div>
@@ -57,7 +72,11 @@ export const DashboardBreadcrumbs = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center gap-4">
-        <Button variant="outline" leftIcon={<Plus size={16} />} className="hidden md:inline-flex">
+        <Button
+          variant="outline"
+          leftIcon={<Plus size={16} />}
+          className="hidden md:inline-flex"
+        >
           Crear cuenta
         </Button>
         <Popover>
@@ -66,11 +85,11 @@ export const DashboardBreadcrumbs = () => {
               <Skeleton className="size-10 rounded-full" />
             ) : (
               <Avatar className="cursor-pointer">
-                <AvatarImage src={session.data.user.image} alt={session.data.user.name} />
-                <AvatarFallback className="text-sm">
-                  {session.data.user.name.charAt(0).toUpperCase()}
-                  {session.data.user.name.charAt(1).toUpperCase()}
-                </AvatarFallback>
+                <AvatarImage
+                  src={session.data.user.image}
+                  alt={session.data.user.name}
+                />
+                <AvatarFallback className="text-sm">{initials}</AvatarFallback>
               </Avatar>
             )}
           </PopoverTrigger>
