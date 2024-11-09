@@ -134,12 +134,12 @@ export const columns: ColumnDef<Column>[] = [
     },
   },
   {
-    accessorKey: "productImageCdnUrl",
+    accessorKey: "productImageUrl",
     header: () => <div className="text-center">Vista previa</div>,
     cell: ({ row }) => {
       return (
         <img
-          src={row.getValue("productImageCdnUrl")}
+          src={row.getValue("productImageUrl")}
           alt="Vista previa"
           className="mx-auto aspect-square size-16 rounded object-cover"
         />

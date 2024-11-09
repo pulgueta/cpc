@@ -68,16 +68,17 @@ export const PUT = async (req: NextRequest) => {
     return NextResponse.json({ message: request.error }, { status: 400 });
   }
 
+  const productData = request.data;
+
   const product = await getProductByName(request.data.productName);
 
   const isProductNotUpdated =
-    product?.productCategory === request.data.productCategory &&
-    product.productDescription === request.data.productDescription &&
-    product.productImageUrl === request.data.productImageUrl &&
-    product.productImageCdnUrl === request.data.productImageCdnUrl &&
-    product.productName === request.data.productName &&
-    product.productPrice === request.data.productPrice &&
-    product.stock === request.data.stock;
+    product?.productCategory === productData.productCategory &&
+    product.productDescription === productData.productDescription &&
+    product.productImageUrl === productData.productImageUrl &&
+    product.productName === productData.productName &&
+    product.productPrice === productData.productPrice &&
+    product.stock === productData.stock;
 
   if (isProductNotUpdated) {
     return NextResponse.json(

@@ -31,6 +31,11 @@ const nextConfig = {
         hostname: "d3a4t9acvuthif.cloudfront.net",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "c-p-c.2b40aceba757bc0bb19264ff9f0b763e.r2.cloudflarestorage.com",
+        pathname: "**",
+      },
     ],
   },
   rewrites: async () => {

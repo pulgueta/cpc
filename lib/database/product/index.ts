@@ -81,7 +81,11 @@ export const deleteProduct = async (productId: Product["id"]) => {
 };
 
 export const updateProduct = async (productId: Product["id"], data: NewProduct) => {
-  const product = await db.update(products).set(data).where(eq(products.id, productId)).returning();
+  const [product] = await db
+    .update(products)
+    .set(data)
+    .where(eq(products.id, productId))
+    .returning();
 
   return product;
 };

@@ -23,7 +23,7 @@ export const Product: FC<ProductCardProps> = (product) => {
       <div className="flex items-center space-x-4">
         <div className="relative size-24 overflow-hidden rounded-md">
           <Image
-            src={product.productImageCdnUrl}
+            src={product.productImageUrl}
             alt={product.productName}
             layout="fill"
             objectFit="cover"

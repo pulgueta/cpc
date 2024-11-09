@@ -122,6 +122,7 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production",
   },
+  trustedOrigins: [env.BETTER_AUTH_URL],
 });
 
 export type Session = typeof auth.$Infer.Session;

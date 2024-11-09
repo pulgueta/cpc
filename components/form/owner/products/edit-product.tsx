@@ -55,7 +55,6 @@ export const EditProduct: FC<EditProductProps> = ({ product }) => {
     defaultValues: {
       productDescription: product.productDescription,
       productImageUrl: product.productImageUrl,
-      productImageCdnUrl: product.productImageCdnUrl,
       productName: product.productName,
       productPrice: product.productPrice,
       stock: product.stock,
@@ -176,7 +175,7 @@ export const EditProduct: FC<EditProductProps> = ({ product }) => {
               <Paragraph muted>Previsualización de la imagen</Paragraph>
               {form.watch("productImageUrl") ? (
                 <Image
-                  src={form.getValues("productImageCdnUrl")}
+                  src={form.getValues("productImageUrl")}
                   alt={form.getValues("productName")}
                   width={600}
                   height={600}

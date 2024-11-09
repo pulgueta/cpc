@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Settings, Sparkle } from "lucide-react";
+import { Plus, Settings, Sparkle } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -20,6 +20,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Paragraph } from "./ui/typography";
 import { Separator } from "./ui/separator";
 import { LogoutButton } from "./auth/logout-button";
+import { Button } from "./ui/button";
 
 export const DashboardBreadcrumbs = () => {
   const pathname = usePathname();
@@ -55,54 +56,69 @@ export const DashboardBreadcrumbs = () => {
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      <Popover>
-        <PopoverTrigger asChild>
-          {session.isPending ? (
-            <Skeleton className="size-10 rounded-full" />
-          ) : (
-            <Avatar className="cursor-pointer">
-              <AvatarImage src={session.data.user.image} alt={session.data.user.name} />
-              <AvatarFallback className="text-sm">
-                {session.data.user.name.charAt(0).toUpperCase()}
-                {session.data.user.name.charAt(1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </PopoverTrigger>
-        <PopoverContent>
-          {session.isPending ? (
-            <Skeleton className="h-10 w-full" />
-          ) : (
-            <div>
-              <Paragraph variant="body" weight="bold">
-                {session.data.user.name}
-              </Paragraph>
-              <Separator className="mt-2 mb-4" />
-              <div className="space-y-2">
-                {session.data.user.plan === "free" && (
+      <div className="flex items-center gap-4">
+        <Button variant="outline" leftIcon={<Plus size={16} />} className="hidden md:inline-flex">
+          Crear cuenta
+        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            {session.isPending ? (
+              <Skeleton className="size-10 rounded-full" />
+            ) : (
+              <Avatar className="cursor-pointer">
+                <AvatarImage src={session.data.user.image} alt={session.data.user.name} />
+                <AvatarFallback className="text-sm">
+                  {session.data.user.name.charAt(0).toUpperCase()}
+                  {session.data.user.name.charAt(1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            )}
+          </PopoverTrigger>
+          <PopoverContent>
+            {session.isPending ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <div>
+                <Paragraph variant="body" weight="bold">
+                  {session.data.user.name}
+                </Paragraph>
+                <Separator className="mt-2 mb-4" />
+                <div className="space-y-4">
+                  {session.data.user.plan === "free" && (
+                    <Link
+                      href="/"
+                      className="flex items-center hover:underline hover:underline-offset-4"
+                    >
+                      <Sparkle size={16} className="mr-2" />
+                      Actualizar a Pro
+                    </Link>
+                  )}
                   <Link
-                    href="/"
+                    href="/settings"
                     className="flex items-center hover:underline hover:underline-offset-4"
                   >
-                    <Sparkle size={16} className="mr-2" />
-                    Actualizar a Pro
+                    <Settings size={16} className="mr-2" />
+                    Ajustes
                   </Link>
-                )}
-                <Link
-                  href="/settings"
-                  className="flex items-center hover:underline hover:underline-offset-4"
-                >
-                  <Settings size={16} className="mr-2" />
-                  Ajustes
-                </Link>
-              </div>
 
-              <Separator className="my-4" />
-              <LogoutButton fullWidth />
-            </div>
-          )}
-        </PopoverContent>
-      </Popover>
+                  <Separator className="block md:hidden" />
+
+                  <Button
+                    variant="outline"
+                    leftIcon={<Plus size={16} />}
+                    className="inline-flex w-full md:hidden"
+                  >
+                    Crear cuenta
+                  </Button>
+                </div>
+
+                <Separator className="my-4" />
+                <LogoutButton fullWidth />
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
     </nav>
   );
 };

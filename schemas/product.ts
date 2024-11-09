@@ -48,19 +48,6 @@ export const createProductSchema = createInsertSchema(products, {
     .startsWith("https://", {
       message: "La imagen del producto debe tener una URL segura (HTTPS)",
     }),
-  productImageCdnUrl: string({
-    required_error: "La imagen del producto no puede estar vacía",
-    invalid_type_error: "La imagen del producto debe ser una cadena de texto válida",
-  })
-    .url({
-      message: "La imagen del producto debe ser una URL válida",
-    })
-    .min(10, {
-      message: "La imagen del producto debe tener al menos 10 caracteres",
-    })
-    .startsWith("https://", {
-      message: "La imagen del producto debe tener una URL segura (HTTPS)",
-    }),
   stock: coerce
     .number({
       required_error: "La cantidad de stock no puede estar vacía",

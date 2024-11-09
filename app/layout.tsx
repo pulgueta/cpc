@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist } from "next/font/google";
 
 import { NuqsAdapter } from "nuqs/adapters/react";
 
@@ -12,11 +12,7 @@ import { env } from "@/env/server";
 
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+const geistSans = Geist();
 
 export const metadata = {
   title: {

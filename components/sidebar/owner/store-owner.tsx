@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/auth.client";
+import { ThemeSwitcher } from "@/components/theme-switch";
 
 interface Nav {
   title: string;
@@ -116,6 +117,9 @@ export const StoreOwnerSidebar = () => {
                 </SidebarMenuItem>
               </Collapsible>
             ))}
+            <div className="mt-4">
+              <ThemeSwitcher />
+            </div>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

@@ -1,10 +1,13 @@
 "use client";
 
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import type { ChartConfig } from "@/components/ui/chart";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -12,6 +15,12 @@ const chartData = [
   { month: "April", desktop: 73, mobile: 190 },
   { month: "May", desktop: 209, mobile: 130 },
   { month: "June", desktop: 214, mobile: 140 },
+  { month: "July", desktop: 160, mobile: 150 },
+  { month: "August", desktop: 140, mobile: 180 },
+  { month: "September", desktop: 180, mobile: 200 },
+  { month: "October", desktop: 250, mobile: 220 },
+  { month: "November", desktop: 270, mobile: 240 },
+  { month: "December", desktop: 300, mobile: 260 },
 ];
 
 const chartConfig = {
@@ -27,12 +36,12 @@ const chartConfig = {
 
 export const SalesLines = () => {
   return (
-    <ChartContainer config={chartConfig}>
-      <LineChart
+    <ChartContainer config={chartConfig} className="max-h-80 w-full">
+      <AreaChart
         accessibilityLayer
         data={chartData}
         margin={{
-          left: 12,
+          left: -20,
           right: 12,
         }}
       >
@@ -44,20 +53,25 @@ export const SalesLines = () => {
           tickMargin={8}
           tickFormatter={(value) => value.slice(0, 3)}
         />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-        <Line
+        <YAxis tickLine={false} axisLine={false} tickMargin={8} tickCount={3} />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Area
+          dataKey="mobile"
+          type="natural"
+          fill="var(--color-mobile)"
+          fillOpacity={0.4}
+          stroke="var(--color-mobile)"
+          stackId="a"
+        />
+        <Area
           dataKey="desktop"
           type="natural"
+          fill="var(--color-desktop)"
+          fillOpacity={0.4}
           stroke="var(--color-desktop)"
-          strokeWidth={2}
-          dot={{
-            fill: "var(--color-desktop)",
-          }}
-          activeDot={{
-            r: 6,
-          }}
+          stackId="a"
         />
-      </LineChart>
+      </AreaChart>
     </ChartContainer>
   );
 };

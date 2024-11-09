@@ -62,7 +62,7 @@ export const ProductsCarousel: FC<ProductsCarouselProps> = ({ products }) => {
                       <CardHeader>
                         <div className="relative mb-2 aspect-square w-full overflow-hidden rounded-lg">
                           <Image
-                            src={product.productImageCdnUrl}
+                            src={product.productImageUrl}
                             alt={product.productName}
                             layout="fill"
                             objectFit="cover"

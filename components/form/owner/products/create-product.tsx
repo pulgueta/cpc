@@ -52,7 +52,6 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
     defaultValues: {
       productDescription: "",
       productImageUrl: "",
-      productImageCdnUrl: "",
       productName: "",
       productPrice: 0,
       stock: 0,
@@ -170,7 +169,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
               <Paragraph muted>Previsualización de la imagen</Paragraph>
               {form.watch("productImageUrl") ? (
                 <Image
-                  src={form.getValues("productImageCdnUrl")}
+                  src={form.getValues("productImageUrl")}
                   alt={form.getValues("productName")}
                   width={600}
                   height={600}

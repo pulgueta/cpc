@@ -21,7 +21,6 @@ export const products = pgTable(
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
-    productImageCdnUrl: text().notNull(),
     stock: integer().notNull(),
     storeOwnerId: text()
       .notNull()
