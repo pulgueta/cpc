@@ -17,13 +17,13 @@ export const deleteProductAction = async (_prev: unknown, e: FormData) => {
 
   if (!existingProduct) {
     return {
-      error: "La categoría no existe",
+      error: "El producto no existe",
     };
   }
 
   const deletedProduct = await deleteProduct(existingProduct.id);
 
-  revalidateTag("categories");
+  revalidateTag("products");
 
   return {
     message: deletedProduct.message,

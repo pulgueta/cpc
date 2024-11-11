@@ -33,7 +33,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "c-p-c.2b40aceba757bc0bb19264ff9f0b763e.r2.cloudflarestorage.com",
+        hostname: "2b40aceba757bc0bb19264ff9f0b763e.r2.cloudflarestorage.com",
         pathname: "**",
       },
     ],
@@ -46,7 +46,15 @@ const nextConfig = {
       },
     ];
   },
-  serverExternalPackages: ["@node-rs/argon2"],
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
+  serverExternalPackages: ["@node-rs/argon2", "argon2"],
+  webpack: (config) => {
+    config.externals = [...config.externals, "@node-rs/argon2"];
+
+    return config;
+  },
 } satisfies NextConfig;
 
 export default nextConfig;

@@ -1,9 +1,8 @@
-"use client";
-
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 import Link from "next/link";
 
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { LucideProps } from "lucide-react";
 import { ChevronRight, DollarSign, Store } from "lucide-react";
 
@@ -20,8 +19,6 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import { useSession } from "@/lib/auth.client";
 import { ThemeSwitcher } from "@/components/theme-switch";
 
 interface Nav {
@@ -72,10 +69,6 @@ const data = {
 };
 
 export const StoreOwnerSidebar = () => {
-  const sessionData = useSession();
-
-  const freeTier = sessionData.data?.user.plan === "free";
-
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -99,12 +92,7 @@ export const StoreOwnerSidebar = () => {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
-                        <SidebarMenuSubItem
-                          key={subItem.title}
-                          className={cn({
-                            "pointer-events-none": freeTier,
-                          })}
-                        >
+                        <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <Link href={`${subItem.url}`}>
                               <span>{subItem.title}</span>

@@ -1,67 +1,101 @@
-import { S3Client } from "@aws-sdk/client-s3";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Upload } from "@aws-sdk/lib-storage";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { lookup } from "mime-types";
+import { extname } from "path";
 
 import { env } from "@/env/client";
 
-export const r2 = new S3Client({
-  endpoint: env.NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET,
-  region: "auto",
-  credentials: {
-    accountId: env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID,
-    accessKeyId: env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID,
-    secretAccessKey: env.NEXT_PUBLIC_CLOUDFLARE_SECRET_ACCESS_KEY,
-  },
-});
+interface R2Config {
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  publicUrl: string;
+}
 
-const getDownloadUrl = (obj: string) =>
-  getSignedUrl(
-    r2,
-    new GetObjectCommand({
-      Bucket: env.NEXT_PUBLIC_CLOUDFLARE_BUCKET,
-      Key: obj,
-    }),
-    { expiresIn: 3600 },
-  );
+interface UploadResult {
+  success: boolean;
+  url: string | null;
+  error?: string;
+}
 
-export const uploadToR2 = async (file: File, path: string) => {
-  if (file.size > 1024 * 1024 * 10) {
-    return;
+type UploadInput = {
+  file: Buffer | Blob | ArrayBuffer | { arrayBuffer(): Promise<ArrayBuffer> };
+  fileName?: string;
+  contentType?: string;
+};
+
+export class R2UploadService {
+  private client: S3Client;
+  private config: R2Config;
+
+  constructor(config: R2Config) {
+    this.config = config;
+    this.client = new S3Client({
+      region: "auto",
+      endpoint: env.NEXT_PUBLIC_CLOUDFLARE_R2_ENDPOINT,
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
+    });
   }
 
-  const Key = `uploads/${path}/${Date.now().toString()}-${file.name.replace(/ /g, "-")}`;
+  private async toBuffer(input: UploadInput["file"]): Promise<Buffer> {
+    if (Buffer.isBuffer(input)) return input;
 
-  const cmd = new Upload({
-    client: r2,
-    params: {
-      Bucket: env.NEXT_PUBLIC_CLOUDFLARE_BUCKET,
-      Key,
-      Body: file.stream(),
-      ContentType: file.type,
-    },
-    queueSize: 4,
-    leavePartsOnError: false,
-  });
+    if (input instanceof ArrayBuffer) return Buffer.from(input);
 
-  await cmd.done();
+    if ("arrayBuffer" in input && typeof input.arrayBuffer === "function") {
+      return Buffer.from(await input.arrayBuffer());
+    }
 
-  const uploadUrl = getDownloadUrl(Key);
+    throw new Error("Unsupported file type");
+  }
 
-  return {
-    url: uploadUrl,
-  };
-};
+  private getFileDetails(input: UploadInput): {
+    uniqueFileName: string;
+    contentType: string;
+  } {
+    const timestamp = Date.now();
+    const fileName = input.fileName || `file-${timestamp}`;
+    const extension = extname(fileName);
 
-export const getFileUrl = async (key: string) => {
-  const url = await getSignedUrl(
-    r2,
-    new GetObjectCommand({
-      Bucket: env.NEXT_PUBLIC_CLOUDFLARE_BUCKET,
-      Key: key,
-    }),
-    { expiresIn: 3600 },
-  );
+    return {
+      uniqueFileName: `${timestamp}-${fileName}`,
+      contentType: input.contentType || lookup(extension) || "application/octet-stream",
+    };
+  }
 
-  return url;
-};
+  async upload(input: UploadInput | UploadInput["file"], path: string): Promise<UploadResult> {
+    try {
+      const normalizedInput: UploadInput = "file" in input ? input : { file: input };
+
+      const { uniqueFileName, contentType } = this.getFileDetails(normalizedInput);
+
+      const buffer = await this.toBuffer(normalizedInput.file);
+
+      const Key = `uploads/${path}/${Date.now().toString()}-${uniqueFileName}`;
+
+      await this.client.send(
+        new PutObjectCommand({
+          Bucket: this.config.bucketName,
+          Key,
+          Body: buffer,
+          ContentType: contentType,
+          CacheControl: "public, max-age=31536000",
+        }),
+      );
+
+      return {
+        success: true,
+        url: `${this.config.publicUrl}/${uniqueFileName}`,
+      };
+    } catch (error) {
+      console.error("Error uploading to R2:", error);
+      return {
+        success: false,
+        url: null,
+        error: error instanceof Error ? error.message : "Unknown error occurred",
+      };
+    }
+  }
+}

@@ -13,6 +13,7 @@ import {
 } from "@/lib/auth.client";
 import { urlToRedirect } from "@/constants/routes";
 import type { User } from "@/db/schemas/user";
+import { env } from "@/env/client";
 
 export const useAuth = () => {
   const { push } = useRouter();
@@ -91,8 +92,8 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: urlToRedirect(role),
-        dontRememberMe: !remember,
+        callbackURL: urlToRedirect(role, env.NEXT_PUBLIC_SITE_URL),
+        rememberMe: remember,
       },
       {
         onError: (ctx) => {
@@ -103,6 +104,10 @@ export const useAuth = () => {
 
             case 401:
               toast.error("Credenciales incorrectas");
+              break;
+
+            case 500:
+              toast.error("Ha ocurrido un error. Por favor, intenta nuevamente más tarde.");
               break;
           }
         },
@@ -129,7 +134,7 @@ export const useAuth = () => {
         password,
         name,
         role: roleToCreate,
-        callbackURL: "/dashboard",
+        callbackURL: "/settings",
       },
       {
         onError: (ctx) => {

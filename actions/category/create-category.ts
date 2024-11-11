@@ -22,7 +22,10 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
 
   const existingCategory = await getCategoryByName(categoryData.categoryName);
 
-  if (existingCategory?.categoryName.toLowerCase() === categoryData.categoryName.toLowerCase()) {
+  if (
+    existingCategory?.categoryName.toLowerCase() ===
+    categoryData.categoryName.toLowerCase()
+  ) {
     return { error: "La categoría ya existe" };
   }
 

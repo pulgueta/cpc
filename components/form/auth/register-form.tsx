@@ -91,7 +91,7 @@ export const RegisterForm = () => {
                     size="icon"
                     variant="ghost"
                     type="button"
-                    className="absolute top-0 right-0"
+                    className="absolute top-1 right-1"
                     onClick={() => setShow(!show)}
                     aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >

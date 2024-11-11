@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import type { NextPage } from "next";
-import { redirect } from "next/navigation";
 
 import { SearchParams } from "nuqs/server";
 
@@ -20,15 +19,11 @@ interface ProductsProps {
 const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
   const owner = await getCurrentSession();
 
-  if (!owner?.user.id) {
-    return redirect("/login");
-  }
-
   const { q: page, maxResults } = searchParamsCache.parse(await searchParams);
 
   const [categories, products] = await Promise.all([
-    getCategories(owner?.user.id),
-    getProducts(owner.user.id, page, maxResults),
+    getCategories(owner?.user.id ?? ""),
+    getProducts(owner?.user.id ?? "", page, maxResults),
   ]);
 
   return (

@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 import { CreateCategory } from "@/components/form/owner/categories/create-category";
 import { CategoriesTable } from "@/components/owner/categoies/categories-table";
 import { getCurrentSession } from "@/lib/auth/session";
@@ -9,11 +7,7 @@ import { OwnerHeader } from "@/components/owner-header";
 const Categories = async () => {
   const owner = await getCurrentSession();
 
-  if (!owner?.user.id) {
-    return redirect("/login");
-  }
-
-  const categories = await getCategories(owner?.user.id);
+  const categories = await getCategories(owner?.user.id ?? "");
 
   return (
     <>

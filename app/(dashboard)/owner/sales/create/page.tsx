@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 import { CreateSales } from "@/components/form/owner/sales/create-sales";
 import { Products } from "@/components/owner/sales/products";
 import { Separator } from "@/components/ui/separator";
@@ -11,11 +9,7 @@ import { OwnerHeader } from "@/components/owner-header";
 const CreateSale = async () => {
   const owner = await getCurrentSession();
 
-  if (!owner?.user.id) {
-    return redirect("/login");
-  }
-
-  const products = await getProducts(owner.user.id);
+  const products = await getProducts(owner?.user.id ?? "");
 
   return (
     <>

@@ -1,20 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
-export const logout = async () => {
-  const out = await auth.api.signOut();
-
-  if (!out) {
-    return {
-      error: "Failed to sign out",
-    };
-  }
-
-  revalidatePath("/");
+export const logout = async (_e: FormData) => {
+  await auth.api.signOut({ headers: await headers() });
 
   return redirect("/login");
 };

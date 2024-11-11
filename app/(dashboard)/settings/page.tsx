@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { Camera, User, LogOut, Menu } from "lucide-react";
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,10 +11,10 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeSwitcher } from "@/components/theme-switch";
-
 import { Heading, Paragraph } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentSession } from "@/lib/auth/session";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 const Settings = async () => {
   const session = await getCurrentSession();
@@ -24,8 +25,7 @@ const Settings = async () => {
         <Link
           href="/settings"
           className={buttonVariants({
-            className: "w-full justify-start",
-            variant: "outline",
+            variant: "link",
           })}
         >
           <User className="mr-2" size={16} />
@@ -34,10 +34,7 @@ const Settings = async () => {
 
         <Separator className="my-4 w-full" />
 
-        <Button variant="destructive" className="w-full">
-          <LogOut className="mr-2" size={16} />
-          Cerrar sesión
-        </Button>
+        <LogoutButton fullWidth />
       </div>
 
       <ThemeSwitcher />
@@ -86,13 +83,22 @@ const Settings = async () => {
                     <Skeleton className="size-32 rounded-full" />
                   )}
 
-                  <label
-                    htmlFor="profile-upload"
-                    className="absolute right-0 bottom-0 cursor-pointer rounded-full bg-primary p-2 text-primary-foreground"
-                  >
-                    <Camera size={16} />
-                    <span className="sr-only">Subir nueva foto</span>
-                  </label>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={150}>
+                      <TooltipTrigger asChild>
+                        <label
+                          htmlFor="profile-upload"
+                          className="absolute right-0 bottom-0 cursor-pointer rounded-full bg-primary p-2 text-primary-foreground"
+                        >
+                          <Camera size={16} />
+                          <span className="sr-only">Subir nueva foto</span>
+                        </label>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Subir nueva foto</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <input id="profile-upload" type="file" accept="image/*" className="hidden" />
                 </div>
                 <div className="text-center sm:text-left">
