@@ -13,13 +13,14 @@ import {
 } from "@/lib/auth.client";
 import { urlToRedirect } from "@/constants/routes";
 import type { User } from "@/db/schemas/user";
+import { env } from "@/env/client";
 
 export const useAuth = () => {
   const { push } = useRouter();
 
-  const sessionData = useSession();
+  const { data, isPending } = useSession();
 
-  const role = sessionData.data?.user.role as User["role"];
+  const role = isPending ? "user" : data?.user?.role;
 
   const onGoogleLogin = async () => {
     const [{ data, error }] = await Promise.all([
@@ -66,7 +67,7 @@ export const useAuth = () => {
             toast.error("No se encontró una cuenta con ese correo electrónico");
           }
         },
-      }
+      },
     );
 
     return data;
@@ -91,24 +92,29 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: urlToRedirect(role),
-        dontRememberMe: !remember,
+        callbackURL: urlToRedirect(role, env.NEXT_PUBLIC_SITE_URL),
+        rememberMe: remember,
       },
       {
+        onSuccess: async (ctx) => {
+          console.log({ ctx: ctx.data });
+        },
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
-              toast.error(
-                "No se encontró una cuenta con ese correo electrónico"
-              );
+              toast.error("No se encontró una cuenta con ese correo electrónico");
               break;
 
             case 401:
               toast.error("Credenciales incorrectas");
               break;
+
+            case 500:
+              toast.error("Ha ocurrido un error. Por favor, intenta nuevamente más tarde.");
+              break;
           }
         },
-      }
+      },
     );
 
     return data;
@@ -125,26 +131,27 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const { data } = await signUp.email(
+    const base64 = btoa(email);
+
+    await signUp.email(
       {
         email,
         password,
         name,
         role: roleToCreate,
-        callbackURL: "/dashboard",
+        callbackURL: `/settings?q=${base64}`,
       },
       {
+        onSuccess: () => {
+          toast.success("Cuenta creada exitosamente");
+        },
         onError: (ctx) => {
           if (ctx.error.status === 422) {
             toast.error("El correo electrónico ya está en uso");
           }
         },
-      }
+      },
     );
-
-    if (data) {
-      return toast.success("Cuenta creada exitosamente");
-    }
   };
 
   return {

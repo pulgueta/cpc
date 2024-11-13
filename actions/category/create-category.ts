@@ -5,27 +5,20 @@ import { revalidateTag } from "next/cache";
 import { getCurrentSession } from "@/lib/auth/session";
 import { createCategory, getCategoryByName } from "@/lib/database/category";
 import { createCategorySchema } from "@/schemas/category";
+import { handleAction } from "../handle-action";
 
 export const createCategoryAction = async (_prev: unknown, e: FormData) => {
   const sessionData = await getCurrentSession();
 
-  if (!sessionData?.session) {
-    return { error: "No tienes permisos para realizar esta acción" };
+  if (!sessionData) {
+    return { error: "No hay una sesión activa" };
   }
 
-  const body = createCategorySchema.safeParse(Object.fromEntries(e.entries()));
+  const categoryData = await handleAction(createCategorySchema, e);
 
-  let errors: string[][] = [];
-
-  if (!body.success) {
-    errors = Object.entries(body.error?.flatten().fieldErrors!).map(([_key, value]) => value);
+  if ("error" in categoryData) {
+    return { error: categoryData.error };
   }
-
-  if (!body.success) {
-    return { error: errors };
-  }
-
-  const categoryData = body.data;
 
   const existingCategory = await getCategoryByName(categoryData.categoryName);
 
@@ -47,6 +40,5 @@ export const createCategoryAction = async (_prev: unknown, e: FormData) => {
 
   return {
     message: category.message,
-    category: category.category,
   };
 };

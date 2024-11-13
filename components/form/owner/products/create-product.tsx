@@ -38,9 +38,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
   if (categories.length === 0) {
     return (
       <div className="flex w-full items-center justify-center py-4">
-        <Paragraph>
-          Debes crear al menos una categoría para poder crear productos
-        </Paragraph>
+        <Paragraph>Debes crear al menos una categoría para poder crear productos</Paragraph>
       </div>
     );
   }
@@ -54,7 +52,6 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
     defaultValues: {
       productDescription: "",
       productImageUrl: "",
-      productImageCdnUrl: "",
       productName: "",
       productPrice: 0,
       stock: 0,
@@ -88,7 +85,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="w-full flex flex-col gap-12">
+      <form onSubmit={onSubmit} className="flex w-full flex-col gap-12">
         <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
           <div className="grid w-full grid-cols-1 gap-4">
             <Input
@@ -100,9 +97,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
             <FormComponent
               label="Nombre del producto"
               name="productName"
-              render={({ field }) => (
-                <Input placeholder="Audífonos Alta Calidad MX20" {...field} />
-              )}
+              render={({ field }) => <Input placeholder="Audífonos Alta Calidad MX20" {...field} />}
             />
 
             <FormComponent
@@ -139,16 +134,12 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
               <FormComponent
                 label="Precio del producto"
                 name="productPrice"
-                render={({ field }) => (
-                  <Input placeholder="150000" type="number" {...field} />
-                )}
+                render={({ field }) => <Input placeholder="150000" type="number" {...field} />}
               />
               <FormComponent
                 label="Disponibilidad del producto"
                 name="stock"
-                render={({ field }) => (
-                  <Input placeholder="40" type="number" {...field} />
-                )}
+                render={({ field }) => <Input placeholder="40" type="number" {...field} />}
               />
             </div>
           </div>
@@ -178,7 +169,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
               <Paragraph muted>Previsualización de la imagen</Paragraph>
               {form.watch("productImageUrl") ? (
                 <Image
-                  src={form.getValues("productImageCdnUrl")}
+                  src={form.getValues("productImageUrl")}
                   alt={form.getValues("productName")}
                   width={600}
                   height={600}
@@ -191,10 +182,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories }) => {
           </div>
         </div>
 
-        <Button
-          loading={form.formState.isSubmitting}
-          className="w-full lg:max-w-xs lg:mx-auto"
-        >
+        <Button loading={form.formState.isSubmitting} className="w-full lg:mx-auto lg:max-w-xs">
           Crear producto
         </Button>
       </form>

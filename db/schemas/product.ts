@@ -21,7 +21,6 @@ export const products = pgTable(
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
-    productImageCdnUrl: text().notNull(),
     stock: integer().notNull(),
     storeOwnerId: text()
       .notNull()
@@ -31,7 +30,7 @@ export const products = pgTable(
   },
   (t) => ({
     productIdx: index("product_idx").on(t.productName),
-  })
+  }),
 );
 
 export const productRelations = relations(products, ({ one }) => ({

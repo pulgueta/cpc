@@ -4,6 +4,7 @@ import {
   adminClient,
   inferAdditionalFields,
   organizationClient,
+  twoFactorClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
@@ -15,16 +16,23 @@ const authClient = createAuthClient({
     passkeyClient(),
     adminClient(),
     organizationClient(),
+    twoFactorClient({ twoFactorPage: "/settings" }),
     inferAdditionalFields<typeof auth>(),
   ],
   fetchOptions: {
     onError: async (ctx) => {
-      if (ctx.response.status === 429) {
-        const retry = ctx.response.headers.get("X-Retry-After");
+      switch (ctx.response.status) {
+        case 429:
+          const retry = ctx.response.headers.get("X-Retry-After");
 
-        toast.info(
-          `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`
-        );
+          toast.info(
+            `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`,
+          );
+          break;
+
+        case 500:
+          toast.error("Ocurrió un error. Intenta nuevamente más tarde.");
+          break;
       }
     },
   },
@@ -44,6 +52,7 @@ export const {
   useListPasskeys,
   signUp,
   signOut,
+  twoFactor,
 } = authClient;
 
 export type Session = typeof $Infer.Session;

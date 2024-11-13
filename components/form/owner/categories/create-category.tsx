@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useId } from "react";
+import { useActionState, useEffect, useId } from "react";
 
 import Form from "next/form";
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,12 @@ export const CreateCategory = () => {
   const [state, action, isPending] = useActionState(createCategoryAction, undefined);
 
   const sessionData = useSession();
+
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state.message, { id: crypto.randomUUID() });
+    }
+  }, [state]);
 
   return (
     <div>
@@ -46,17 +53,26 @@ export const CreateCategory = () => {
           hidden
         />
 
-        <Button loading={isPending}>Crear categoría</Button>
+        <Button leftIcon={<Plus size={16} />} loading={isPending}>
+          Crear categoría
+        </Button>
       </Form>
 
-      {Array.isArray(state?.error) &&
-        state.error.map((err, idx) => (
-          <Alert variant="destructive" className="my-4" key={idx}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{err || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))}
+      {Array.isArray(state?.error)
+        ? state.error.map((err, idx) => (
+            <Alert variant="destructive" className="my-4" key={idx}>
+              <AlertCircle className="size-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{err || "Error desconocido"}</AlertDescription>
+            </Alert>
+          ))
+        : state?.error && (
+            <Alert variant="destructive" className="my-4">
+              <AlertCircle className="size-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{state.error ?? "Error desconocido"}</AlertDescription>
+            </Alert>
+          )}
     </div>
   );
 };

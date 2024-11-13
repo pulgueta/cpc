@@ -17,7 +17,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,9 +25,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -44,6 +41,12 @@ import { TableFooter } from "@/components/table/table-footer";
 import { formatPrice } from "@/lib/utils";
 import type { Category } from "@/db/schemas/category";
 import type { Product, Products } from "@/constants/db-types";
+import { TableActions } from "../table-actions";
+import { EditActions } from "@/components/modal/edit-actions";
+import { DeleteActions } from "@/components/modal/delete-actions";
+import { updateCategoryAction } from "@/actions/category/update-category";
+import { EditProduct } from "@/components/form/owner/products/edit-product";
+import { deleteProductAction } from "@/actions/product/delete-product";
 
 export type Column = Product;
 
@@ -53,8 +56,7 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -128,22 +130,18 @@ export const columns: ColumnDef<Column>[] = [
     accessorKey: "stock",
     header: () => <div className="text-center">Stock</div>,
     cell: ({ row }) => {
-      return (
-        <Paragraph>
-          {Number(row.getValue("stock")) ? row.getValue("stock") : 0}
-        </Paragraph>
-      );
+      return <Paragraph>{Number(row.getValue("stock")) ? row.getValue("stock") : 0}</Paragraph>;
     },
   },
   {
-    accessorKey: "productImageCdnUrl",
+    accessorKey: "productImageUrl",
     header: () => <div className="text-center">Vista previa</div>,
     cell: ({ row }) => {
       return (
         <img
-          src={row.getValue("productImageCdnUrl")}
+          src={row.getValue("productImageUrl")}
           alt="Vista previa"
-          className="mx-auto size-16 rounded object-cover aspect-square"
+          className="mx-auto aspect-square size-16 rounded object-cover"
         />
       );
     },
@@ -153,28 +151,30 @@ export const columns: ColumnDef<Column>[] = [
     enableHiding: false,
     header: () => <div className="text-center">Acciones</div>,
     cell: ({ row }) => {
-      const payment = row.original;
+      const [edit, setEdit] = useState<boolean>(false);
+      const [del, setDel] = useState<boolean>(false);
+
+      const [key, value] = [Object.keys(row.original)[0], row.original.id];
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TableActions setOpenDelete={setDel} setOpenEdit={setEdit}>
+          <EditActions
+            isServerAction={false}
+            initialState={undefined}
+            open={edit}
+            setOpen={setEdit}
+            serverAction={updateCategoryAction}
+          >
+            {() => <EditProduct product={row.original} />}
+          </EditActions>
+          <DeleteActions
+            name={key}
+            value={value}
+            open={del}
+            setOpen={setDel}
+            serverAction={deleteProductAction}
+          />
+        </TableActions>
       );
     },
   },
@@ -214,21 +214,13 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
       <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filtrar productos..."
-          value={
-            (table.getColumn("productName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("productName")?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("productName")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("productName")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="ml-auto"
-              rightIcon={<ChevronDown size={16} />}
-            >
+            <Button variant="outline" className="ml-auto" rightIcon={<ChevronDown size={16} />}>
               Columnas
             </Button>
           </DropdownMenuTrigger>
@@ -242,9 +234,7 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -264,10 +254,7 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -277,26 +264,17 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sin resultados
                 </TableCell>
               </TableRow>

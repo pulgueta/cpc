@@ -1,5 +1,7 @@
 import { unstable_cache as cache } from "next/cache";
 
+import { eq } from "drizzle-orm";
+
 import type { NewProduct, Product } from "@/db/schemas/product";
 import { products } from "@/db/schemas/product";
 import { db } from "@/db/config";
@@ -22,17 +24,29 @@ export const getProductByName = cache(
   { revalidate: 3600, tags: ["products"] },
 );
 
-// export const getProductByCategory = cache(
-//   async (productCategory: Product["productCategory"]) => {
-//     const product = await db.query.products.findFirst({
-//       where: (t, { eq }) => eq(t.productCategory, productCategory),
-//     });
+export const getProductById = cache(
+  async (productId: Product["id"]) => {
+    const product = await db.query.products.findFirst({
+      where: (t, { eq }) => eq(t.id, productId),
+    });
 
-//     return product;
-//   },
-//   ["products"],
-//   { revalidate: 3600, tags: ["products"] }
-// );
+    return product;
+  },
+  ["products"],
+  { revalidate: 3600, tags: ["products"] },
+);
+
+export const getProductByCategory = cache(
+  async (productCategory: Product["productCategory"]) => {
+    const product = await db.query.products.findFirst({
+      where: (t, { eq }) => eq(t.productCategory, productCategory),
+    });
+
+    return product;
+  },
+  ["products"],
+  { revalidate: 3600, tags: ["products"] },
+);
 
 export const getProducts = cache(
   async (storeOwnerId: Product["storeOwnerId"], page: number = 1, pageSize: number = 15) => {
@@ -56,3 +70,22 @@ export const getProducts = cache(
   ["products"],
   { revalidate: 3600, tags: ["products"] },
 );
+
+export const deleteProduct = async (productId: Product["id"]) => {
+  const product = await db.delete(products).where(eq(products.id, productId)).returning();
+
+  return {
+    message: "Producto eliminado exitosamente",
+    product,
+  };
+};
+
+export const updateProduct = async (productId: Product["id"], data: NewProduct) => {
+  const [product] = await db
+    .update(products)
+    .set(data)
+    .where(eq(products.id, productId))
+    .returning();
+
+  return product;
+};

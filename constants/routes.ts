@@ -11,14 +11,29 @@ export const noAuthRoutes = [
   { href: "/contact", label: "Contacto" },
 ] as const;
 
-export const urlToRedirect = (role: User["role"]) => {
-  switch (role) {
+export type Role = User["role"];
+
+export const urlToRedirect = (role: string, url?: string | undefined) => {
+  const parsedRole = role as Role;
+
+  if (url && url.length > 0)
+    switch (parsedRole) {
+      case "admin":
+        return `${url}/admin`;
+      case "storeOwner":
+        return `${url}/owner`;
+      case "user":
+        return `${url}/dashboard`;
+    }
+
+  switch (parsedRole) {
     case "admin":
       return "/admin";
     case "storeOwner":
       return "/owner";
     case "user":
-    default:
       return "/dashboard";
+    default:
+      return "/login";
   }
 };

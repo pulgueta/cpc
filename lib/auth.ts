@@ -1,12 +1,13 @@
 import { betterAuth, RateLimit } from "better-auth";
-import { passkey, admin, organization } from "better-auth/plugins";
+import { passkey, admin, organization, oAuthProxy, twoFactor } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { hashValue, verifyValue } from "./crypto";
 import { db } from "@/db/config";
 import * as schema from "@/db/schemas";
 import { cache } from "./cache";
-import { sendPasswordResetEmail, sendWelcomeEmail } from "./email";
+import { sendOtpEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./email";
+import { env } from "@/env/server";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -17,6 +18,8 @@ export const auth = betterAuth({
       passkey: schema.passkey,
       account: schema.account,
       verification: schema.verification,
+      organization: schema.organization,
+      twoFactor: schema.twoFactor,
     },
   }),
   emailVerification: {
@@ -29,6 +32,7 @@ export const auth = betterAuth({
     enabled: true,
     maxPasswordLength: 100,
     minPasswordLength: 4,
+    autoSignIn: true,
     password: {
       hash: async (a) => await hashValue(a),
       verify: async (a, b) => await verifyValue(a, b),
@@ -107,9 +111,23 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       enabled: true,
+      redirectURL: `${env.BETTER_AUTH_URL}/api/auth/google/callback`,
     },
   },
-  plugins: [passkey(), admin(), organization()],
+  plugins: [
+    passkey(),
+    admin(),
+    organization(),
+    oAuthProxy(),
+    twoFactor({
+      issuer: "Centro Popular Comercial",
+      otpOptions: {
+        sendOTP: async (user, otp) => {
+          await sendOtpEmail({ email: user.email, name: user.name }, otp);
+        },
+      },
+    }),
+  ],
   account: {
     accountLinking: {
       enabled: true,
@@ -119,6 +137,7 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production",
   },
+  trustedOrigins: [env.BETTER_AUTH_URL],
 });
 
 export type Session = typeof auth.$Infer.Session;

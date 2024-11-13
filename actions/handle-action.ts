@@ -12,13 +12,13 @@ type Action<T extends AnyZodObject> = ActionSuccess<T> | ActionError;
 
 export const handleAction = async <T extends AnyZodObject>(
   schema: T,
-  formData: FormData
+  formData: FormData,
 ): Promise<Action<T>> => {
   const sessionData = await getCurrentSession();
 
   if (!sessionData?.session) {
     return {
-      error: "No tienes permisos para realizar esta acción",
+      error: "No tienes permisos para realizar esta acción, inicia sesión primero.",
     };
   }
 

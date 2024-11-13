@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,8 @@ import { CREATE_USER } from "@/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/user/useAuth";
+import type { Role } from "@/constants/routes";
+import { urlToRedirect } from "@/constants/routes";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -28,9 +30,9 @@ export const LoginForm = () => {
 
   const rememberId = useId();
 
-  const registerHref = usePathname().includes("stores")
-    ? "/stores/register"
-    : "/register";
+  const { push } = useRouter();
+
+  const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
   const isStorePath = usePathname().includes("stores");
 
   const form = useForm<LoginSchema>({
@@ -55,6 +57,7 @@ export const LoginForm = () => {
     }
 
     toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
+    push(urlToRedirect(data?.user.role as Role));
   });
 
   return (
@@ -99,10 +102,8 @@ export const LoginForm = () => {
                     size="icon"
                     variant="ghost"
                     type="button"
-                    className="absolute top-0 right-0"
-                    aria-label={
-                      show ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
+                    className="absolute top-1 right-1"
+                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
                     onClick={() => setShow(!show)}
                   >
                     {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
@@ -122,11 +123,7 @@ export const LoginForm = () => {
               onCheckedChange={() => setRemember((prev) => !prev)}
               id={rememberId}
             />
-            <Label
-              htmlFor={rememberId}
-              id={rememberId}
-              className="text-muted-foreground"
-            >
+            <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
               Recordarme
             </Label>
           </div>

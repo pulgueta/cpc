@@ -39,6 +39,11 @@ import {
 import { Paragraph } from "@/components/ui/typography";
 import { TableActions } from "../table-actions";
 import type { Categories, Category } from "@/constants/db-types";
+import { EditActions } from "@/components/modal/edit-actions";
+import { EditCategory } from "@/components/form/owner/categories/edit-category";
+import { DeleteActions } from "@/components/modal/delete-actions";
+import { updateCategoryAction } from "@/actions/category/update-category";
+import { deleteCategoryAction } from "@/actions/category/delete-category";
 
 export type Column = Category;
 
@@ -48,8 +53,7 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -71,7 +75,6 @@ export const columns: ColumnDef<Column>[] = [
       return (
         <Button
           variant="ghost"
-          size="sm"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           rightIcon={<ArrowUpDown size={16} />}
         >
@@ -96,7 +99,32 @@ export const columns: ColumnDef<Column>[] = [
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-center">Acciones</div>,
-    cell: ({ row }) => <TableActions category={row.original} />,
+    cell: ({ row }) => {
+      const [edit, setEdit] = useState<boolean>(false);
+      const [del, setDel] = useState<boolean>(false);
+
+      const [key, value] = [Object.keys(row.original)[0], row.original.id];
+
+      return (
+        <TableActions setOpenDelete={setDel} setOpenEdit={setEdit}>
+          <EditActions
+            initialState={undefined}
+            open={edit}
+            setOpen={setEdit}
+            serverAction={updateCategoryAction}
+          >
+            {(isPending) => <EditCategory isPending={isPending} category={row.original} />}
+          </EditActions>
+          <DeleteActions
+            name={key}
+            value={value}
+            open={del}
+            setOpen={setDel}
+            serverAction={deleteCategoryAction}
+          />
+        </TableActions>
+      );
+    },
   },
 ];
 
@@ -134,12 +162,8 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
       <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filtrar categorías..."
-          value={
-            (table.getColumn("categoryName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("categoryName")?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("categoryName")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("categoryName")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -158,9 +182,7 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -179,10 +201,7 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -192,26 +211,17 @@ export const CategoriesTable: FC<CategoriesTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sin resultados
                 </TableCell>
               </TableRow>

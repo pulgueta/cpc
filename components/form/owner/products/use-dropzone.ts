@@ -2,13 +2,13 @@ import { toast } from "sonner";
 import { useDropzone } from "react-dropzone";
 // import type { FieldValues, UseFormReturn } from "react-hook-form";
 
-import { uploadToS3 } from "@/lib/aws/s3";
+import { uploadProductImage } from "@/lib/aws/s3";
 import { useSession } from "@/lib/auth.client";
 
 const PHOTO_UPLOAD_MAX_SIZE = 2000000;
 
-interface UseFormDropzoneProps<T> {
-  // TODO: Define the form type
+interface UseFormDropzoneProps<_T> {
+  // biome-ignore lint: later
   form: any;
   owner: ReturnType<typeof useSession>;
 }
@@ -45,14 +45,15 @@ export const useFormDropzone = <T>({ form, owner }: UseFormDropzoneProps<T>) => 
     onDropAccepted: (upload) => {
       toast.promise(
         async () => {
-          const res = await uploadToS3(upload[0], `stores/${owner.data?.user.id}/products`);
+          const productImage = await uploadProductImage(upload[0], owner.data?.user.id).then(
+            (res) => res?.url,
+          );
 
-          if (!res.key || !res.name) {
+          if (!productImage) {
             toast.error("Error al subir la imagen");
           }
 
-          form.setValue("productImageUrl", res.url.imageUrl);
-          form.setValue("productImageCdnUrl", res.url.cdnUrl);
+          form.setValue("productImageUrl", productImage);
         },
         {
           loading: "Subiendo tu foto...",

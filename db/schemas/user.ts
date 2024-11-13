@@ -1,12 +1,6 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import {
-  timestamp,
-  pgTable,
-  text,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
+import { timestamp, pgTable, text, boolean, integer } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
@@ -27,6 +21,7 @@ export const user = pgTable("user", {
   banExpires: integer(),
   document: text().unique(),
   plan: text({ enum: ["free", "pro"] }),
+  twoFactorEnabled: boolean().default(false),
   phone: text().unique(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp()

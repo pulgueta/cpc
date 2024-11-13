@@ -4,9 +4,11 @@ import type { FC } from "react";
 
 import { useRouter } from "next/navigation";
 
+import { LogOutIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "@/lib/auth.client";
 
 interface LogoutButtonProps {
   fullWidth?: boolean;
@@ -15,23 +17,19 @@ interface LogoutButtonProps {
 export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
   const { push } = useRouter();
 
-  const { isPending, isRefetching } = useSession();
-
-  const onSignOut = async () => {
-    await signOut({ fetchOptions: { onSuccess: () => push("/login") } });
-  };
+  const { isPending } = useSession();
 
   return (
     <Button
       variant="destructive"
-      size={isPending || isRefetching ? "icon" : "sm"}
-      loading={isPending || isRefetching}
-      onClick={onSignOut}
+      loading={isPending}
+      leftIcon={<LogOutIcon size={16} />}
+      onClick={() => signOut({ fetchOptions: { onSuccess: () => push("/login") } })}
       className={cn({
         "w-full": fullWidth,
       })}
     >
-      {(!isPending || !isRefetching) && "Cerrar sesión"}
+      Cerrar sesión
     </Button>
   );
 };

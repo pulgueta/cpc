@@ -14,16 +14,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        expandIcon:
-          "group relative bg-primary text-primary-foreground hover:bg-primary/90",
+        expandIcon: "group relative bg-primary text-primary-foreground hover:bg-primary/90",
         ringHover:
           "bg-primary text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:ring-2 hover:ring-primary/90 hover:ring-offset-2",
         shine:
@@ -48,7 +44,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "sm",
     },
-  }
+  },
 );
 
 interface IconProps {
@@ -87,7 +83,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
       leftIcon,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : "button";
 
@@ -114,13 +110,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
             )}
 
             <Slottable>
-              {leftIcon && (
-                <span className="inline-block mr-2">{leftIcon}</span>
-              )}
+              {leftIcon && <span className="mr-2 inline-block">{leftIcon}</span>}
               {children}
-              {rightIcon && (
-                <span className="inline-block ml-2">{rightIcon}</span>
-              )}
+              {rightIcon && <span className="ml-2 inline-block">{rightIcon}</span>}
             </Slottable>
             {icon && iconPlacement === "right" && (
               <div className="w-0 translate-x-[100%] pl-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
@@ -131,7 +123,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

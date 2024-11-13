@@ -2,35 +2,21 @@
 
 import { revalidateTag } from "next/cache";
 
-import { getCurrentSession } from "@/lib/auth/session";
 import { getCategoryByName, updateCategory } from "@/lib/database/category";
 import { updateCategorySchema } from "@/schemas/category";
+import { handleAction } from "../handle-action";
 
 export const updateCategoryAction = async (_prev: unknown, e: FormData) => {
-  const sessionData = await getCurrentSession();
+  const categoryData = await handleAction(updateCategorySchema, e);
 
-  if (!sessionData?.session) {
-    return { error: "No tienes permisos para realizar esta acción" };
+  if ("error" in categoryData) {
+    return { error: categoryData.error };
   }
-
-  const body = updateCategorySchema.safeParse(Object.fromEntries(e.entries()));
-
-  let errors: string[][] = [];
-
-  if (!body.success) {
-    errors = Object.entries(body.error?.flatten().fieldErrors!).map(([_key, value]) => value);
-  }
-
-  if (!body.success) {
-    return { error: errors };
-  }
-
-  const categoryData = body.data;
 
   const existingCategory = await getCategoryByName(categoryData.categoryName);
 
   if (
-    categoryData.categoryName === existingCategory?.categoryName ||
+    categoryData.categoryName === existingCategory?.categoryName &&
     categoryData.categoryDescription === existingCategory?.categoryDescription
   ) {
     return {
@@ -54,6 +40,5 @@ export const updateCategoryAction = async (_prev: unknown, e: FormData) => {
 
   return {
     message: category.message,
-    category: category.category,
   };
 };

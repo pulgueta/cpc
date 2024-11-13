@@ -78,11 +78,16 @@ const paragraphVariants = cva("text-pretty font-medium", {
       italic: "italic",
       normal: "normal",
     },
+    tracking: {
+      tight: "tracking-tight",
+      tighter: "tracking-tighter",
+    },
   },
   defaultVariants: {
     variant: "sm",
     weight: "medium",
     fontStyle: "normal",
+    tracking: "tight",
   },
 });
 

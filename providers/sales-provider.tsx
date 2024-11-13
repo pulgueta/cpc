@@ -6,9 +6,7 @@ import { createContext, useState } from "react";
 import type { StoreApi } from "zustand";
 import { createStore } from "zustand";
 
-import { getProducts } from "@/lib/database/product";
-
-export type Product = Awaited<ReturnType<typeof getProducts>>[0];
+import type { Product } from "@/constants/db-types";
 
 export interface Sale {
   products: (Product & { quantity: number })[];
@@ -16,11 +14,10 @@ export interface Sale {
   incrementProduct: (productId: string) => void;
   decrementProduct: (productId: string) => void;
   removeProduct: (productId: string) => void;
+  clearProducts: () => void;
 }
 
-export const SalesContext = createContext<StoreApi<Sale> | undefined>(
-  undefined
-);
+export const SalesContext = createContext<StoreApi<Sale> | undefined>(undefined);
 
 interface SalesProviderProps extends PropsWithChildren {}
 
@@ -30,13 +27,11 @@ export const SalesProvider: FC<SalesProviderProps> = ({ children }) => {
       products: [],
       addProduct: (product: Product) =>
         set((state) => {
-          const existingProduct = state.products.find(
-            (p) => p.id === product.id
-          );
+          const existingProduct = state.products.find((p) => p.id === product.id);
           if (existingProduct) {
             return {
               products: state.products.map((p) =>
-                p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+                p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p,
               ),
             };
           }
@@ -47,9 +42,7 @@ export const SalesProvider: FC<SalesProviderProps> = ({ children }) => {
       incrementProduct: (productId: string) =>
         set((state) => ({
           products: state.products.map((product) =>
-            product.id === productId
-              ? { ...product, quantity: product.quantity + 1 }
-              : product
+            product.id === productId ? { ...product, quantity: product.quantity + 1 } : product,
           ),
         })),
       decrementProduct: (productId: string) =>
@@ -57,19 +50,16 @@ export const SalesProvider: FC<SalesProviderProps> = ({ children }) => {
           products: state.products.map((product) =>
             product.id === productId && product.quantity > 1
               ? { ...product, quantity: product.quantity - 1 }
-              : product
+              : product,
           ),
         })),
       removeProduct: (productId: string) =>
         set((state) => ({
-          products: state.products.filter(
-            (product) => product.id !== productId
-          ),
+          products: state.products.filter((product) => product.id !== productId),
         })),
-    }))
+      clearProducts: () => set(() => ({ products: [] })),
+    })),
   );
 
-  return (
-    <SalesContext.Provider value={store}>{children}</SalesContext.Provider>
-  );
+  return <SalesContext.Provider value={store}>{children}</SalesContext.Provider>;
 };
