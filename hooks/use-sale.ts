@@ -2,8 +2,9 @@ import { useContext, useState } from "react";
 
 import { useStore } from "zustand";
 
-import type { Sale, Product } from "@/providers/sales-provider";
+import type { Sale } from "@/providers/sales-provider";
 import { SalesContext } from "@/providers/sales-provider";
+import type { Product } from "@/constants/db-types";
 
 export const useSales = <const T>(selector: (state: Sale) => T) => {
   const ctx = useContext(SalesContext);

@@ -56,6 +56,10 @@ export const resetPasswordSchema = registerSchema.pick({
   password: true,
 });
 
+export const generate2FAQr = registerSchema.pick({
+  password: true,
+});
+
 export type RegisterSchema = TypeOf<typeof registerSchema>;
 export type LoginSchema = TypeOf<typeof loginSchema>;
 export type ForgotPasswordSchema = TypeOf<typeof forgotPasswordSchema>;

@@ -18,9 +18,9 @@ import { env } from "@/env/client";
 export const useAuth = () => {
   const { push } = useRouter();
 
-  const sessionData = useSession();
+  const { data, isPending } = useSession();
 
-  const role = sessionData.data?.user.role as User["role"];
+  const role = isPending ? "user" : data?.user?.role;
 
   const onGoogleLogin = async () => {
     const [{ data, error }] = await Promise.all([
@@ -96,6 +96,9 @@ export const useAuth = () => {
         rememberMe: remember,
       },
       {
+        onSuccess: async (ctx) => {
+          console.log({ ctx: ctx.data });
+        },
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
@@ -128,15 +131,20 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const { data } = await signUp.email(
+    const base64 = btoa(email);
+
+    await signUp.email(
       {
         email,
         password,
         name,
         role: roleToCreate,
-        callbackURL: "/settings",
+        callbackURL: `/settings?q=${base64}`,
       },
       {
+        onSuccess: () => {
+          toast.success("Cuenta creada exitosamente");
+        },
         onError: (ctx) => {
           if (ctx.error.status === 422) {
             toast.error("El correo electrónico ya está en uso");
@@ -144,10 +152,6 @@ export const useAuth = () => {
         },
       },
     );
-
-    if (data) {
-      return toast.success("Cuenta creada exitosamente");
-    }
   };
 
   return {

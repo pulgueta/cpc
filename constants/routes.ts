@@ -33,5 +33,7 @@ export const urlToRedirect = (role: string, url?: string | undefined) => {
       return "/owner";
     case "user":
       return "/dashboard";
+    default:
+      return "/login";
   }
 };

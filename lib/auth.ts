@@ -1,12 +1,12 @@
 import { betterAuth, RateLimit } from "better-auth";
-import { passkey, admin, organization, oAuthProxy } from "better-auth/plugins";
+import { passkey, admin, organization, oAuthProxy, twoFactor } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { hashValue, verifyValue } from "./crypto";
 import { db } from "@/db/config";
 import * as schema from "@/db/schemas";
 import { cache } from "./cache";
-import { sendPasswordResetEmail, sendWelcomeEmail } from "./email";
+import { sendOtpEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./email";
 import { env } from "@/env/server";
 
 export const auth = betterAuth({
@@ -18,6 +18,8 @@ export const auth = betterAuth({
       passkey: schema.passkey,
       account: schema.account,
       verification: schema.verification,
+      organization: schema.organization,
+      twoFactor: schema.twoFactor,
     },
   }),
   emailVerification: {
@@ -112,7 +114,20 @@ export const auth = betterAuth({
       redirectURL: `${env.BETTER_AUTH_URL}/api/auth/google/callback`,
     },
   },
-  plugins: [passkey(), admin(), organization(), oAuthProxy()],
+  plugins: [
+    passkey(),
+    admin(),
+    organization(),
+    oAuthProxy(),
+    twoFactor({
+      issuer: "Centro Popular Comercial",
+      otpOptions: {
+        sendOTP: async (user, otp) => {
+          await sendOtpEmail({ email: user.email, name: user.name }, otp);
+        },
+      },
+    }),
+  ],
   account: {
     accountLinking: {
       enabled: true,

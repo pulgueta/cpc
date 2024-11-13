@@ -10,3 +10,4 @@ export * from "./sale";
 export * from "./account";
 export * from "./passkey";
 export * from "./verification";
+export * from "./two-factor";

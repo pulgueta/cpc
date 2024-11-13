@@ -1,9 +1,11 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { env } from "@/env/server";
 import type { CurrentSession } from "@/constants/db-types";
-import { authRoutes } from "@/constants";
+import { appHeaderKeys, authRoutes } from "@/constants";
 import { urlToRedirect } from "@/constants/routes";
+import { getUserInformation } from "@/lib/middleware";
 
 const OWNER_URL_PREFIX = "/owner" as const;
 const ADMIN_URL_PREFIX = "/admin" as const;
@@ -11,14 +13,23 @@ const USER_URL_PREFIX = "/dashboard" as const;
 
 const isAuthRoute = (pathname: string) => authRoutes.some((route) => pathname.startsWith(route));
 
-export default async function middleware(request: Request) {
+const isProtectedRoute = (pathname: string) =>
+  pathname.startsWith(OWNER_URL_PREFIX) ||
+  pathname.startsWith(ADMIN_URL_PREFIX) ||
+  pathname.startsWith(USER_URL_PREFIX);
+
+export default async function middleware(request: NextRequest) {
   const headers = new Headers(request.headers);
 
-  headers.set("x-url", request.url);
+  const [geo, ip] = getUserInformation(request);
+
+  headers.set(appHeaderKeys.url, request.url);
+  headers.set(appHeaderKeys.ip, ip);
+  headers.set(appHeaderKeys.geo, JSON.stringify(geo));
 
   const req = await fetch(`${env.BETTER_AUTH_URL}/api/auth/get-session`, {
     headers: {
-      cookie: request.headers.get("cookie") || "",
+      cookie: request.headers.get("cookie") ?? "",
     },
   });
 
@@ -30,18 +41,14 @@ export default async function middleware(request: Request) {
 
   const pathname = decodedURL?.pathname;
 
-  if (typeof session === null) {
-    if (!isAuthRoute(pathname)) {
-      return NextResponse.redirect("/login");
-    }
-
-    return NextResponse.next();
+  if (session === null && req.status === 401 && isProtectedRoute(pathname)) {
+    return NextResponse.rewrite(new URL("/login", request.url));
   }
 
   const userRole = session?.user.role ?? "";
   const correctBasePath = urlToRedirect(userRole);
 
-  if (session && isAuthRoute(pathname)) {
+  if (session !== null && isAuthRoute(pathname)) {
     return NextResponse.redirect(new URL(correctBasePath, request.url));
   }
 

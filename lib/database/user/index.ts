@@ -1,5 +1,8 @@
+import { headers } from "next/headers";
+
 import { db } from "@/db/config";
 import type { NewUser, User } from "@/db/schemas";
+import { auth } from "@/lib/auth";
 import { cache } from "@/lib/cache";
 
 export const getUserByEmail = async (email: NewUser["email"], getCached: boolean = false) => {
@@ -26,4 +29,18 @@ export const getUserById = async (id: User["id"]) => {
   });
 
   return user;
+};
+
+export const generateQrCode = async (pwd: string) => {
+  const verification = await auth.api.enableTwoFactor({
+    headers: await headers(),
+    body: {
+      password: pwd,
+    },
+  });
+
+  return {
+    message: "Código QR generado",
+    verification,
+  };
 };

@@ -44,3 +44,9 @@ export const CREATE_USER = {
 } as const;
 
 export const authRoutes = ["/login", "/register", "/verify", "forgot-password"];
+
+export const appHeaderKeys = {
+  geo: "x-geo",
+  ip: "x-ip",
+  url: "x-url",
+} as const;

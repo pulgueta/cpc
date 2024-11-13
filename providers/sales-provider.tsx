@@ -6,9 +6,7 @@ import { createContext, useState } from "react";
 import type { StoreApi } from "zustand";
 import { createStore } from "zustand";
 
-import { getProducts } from "@/lib/database/product";
-
-export type Product = Awaited<ReturnType<typeof getProducts>>[0];
+import type { Product } from "@/constants/db-types";
 
 export interface Sale {
   products: (Product & { quantity: number })[];

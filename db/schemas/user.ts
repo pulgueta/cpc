@@ -21,6 +21,7 @@ export const user = pgTable("user", {
   banExpires: integer(),
   document: text().unique(),
   plan: text({ enum: ["free", "pro"] }),
+  twoFactorEnabled: boolean().default(false),
   phone: text().unique(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp()

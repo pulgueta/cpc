@@ -56,8 +56,6 @@ export const LoginForm = () => {
       return;
     }
 
-    console.log(data.user.role);
-
     toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
     push(urlToRedirect(data?.user.role as Role));
   });

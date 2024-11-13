@@ -4,7 +4,7 @@ import { OwnerHeader } from "@/components/owner-header";
 import { SalesLines } from "@/components/owner/sales/sales-lines";
 import { SalesBars } from "@/components/owner/sales/sales-bars";
 
-const Sales = () => {
+const Sales = async () => {
   return (
     <>
       <OwnerHeader
@@ -37,9 +37,7 @@ const Sales = () => {
           </article>
           <article className="w-full rounded border p-4 shadow md:col-span-3 lg:col-span-2">
             <Heading as="h2">Ingresos</Heading>
-            <Paragraph muted>
-              Mira el comportamiento de tus ventas en el tiempo.
-            </Paragraph>
+            <Paragraph muted>Mira el comportamiento de tus ventas en el tiempo.</Paragraph>
             <SalesLines />
           </article>
         </section>

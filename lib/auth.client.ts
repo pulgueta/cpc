@@ -4,6 +4,7 @@ import {
   adminClient,
   inferAdditionalFields,
   organizationClient,
+  twoFactorClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
@@ -15,6 +16,7 @@ const authClient = createAuthClient({
     passkeyClient(),
     adminClient(),
     organizationClient(),
+    twoFactorClient({ twoFactorPage: "/settings" }),
     inferAdditionalFields<typeof auth>(),
   ],
   fetchOptions: {
@@ -50,6 +52,7 @@ export const {
   useListPasskeys,
   signUp,
   signOut,
+  twoFactor,
 } = authClient;
 
 export type Session = typeof $Infer.Session;

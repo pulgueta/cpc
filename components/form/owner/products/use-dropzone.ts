@@ -2,9 +2,8 @@ import { toast } from "sonner";
 import { useDropzone } from "react-dropzone";
 // import type { FieldValues, UseFormReturn } from "react-hook-form";
 
-import { uploadToS3 } from "@/lib/aws/s3";
+import { uploadProductImage } from "@/lib/aws/s3";
 import { useSession } from "@/lib/auth.client";
-import { uploadProductImage } from "@/lib/cloudlfare/r2";
 
 const PHOTO_UPLOAD_MAX_SIZE = 2000000;
 

@@ -31,10 +31,7 @@ const chartConfig = {
 
 export const SalesBars = () => {
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="max-h-96 min-h-full min-w-full lg:max-w-full"
-    >
+    <ChartContainer config={chartConfig} className="max-h-96 min-h-full min-w-full lg:max-w-full">
       <BarChart accessibilityLayer data={chartData}>
         <XAxis
           dataKey="date"
@@ -47,18 +44,8 @@ export const SalesBars = () => {
             });
           }}
         />
-        <Bar
-          dataKey="running"
-          stackId="a"
-          fill="var(--color-running)"
-          radius={[0, 0, 4, 4]}
-        />
-        <Bar
-          dataKey="swimming"
-          stackId="a"
-          fill="var(--color-swimming)"
-          radius={[4, 4, 0, 0]}
-        />
+        <Bar dataKey="running" stackId="a" fill="var(--color-running)" radius={[0, 0, 4, 4]} />
+        <Bar dataKey="swimming" stackId="a" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} />
         <ChartTooltip
           content={
             <ChartTooltipContent
