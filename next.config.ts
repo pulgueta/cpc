@@ -38,18 +38,10 @@ const nextConfig = {
       },
     ],
   },
-  rewrites: async () => {
-    return [
-      {
-        source: "/owner",
-        destination: "/owner/sales",
-      },
-    ];
-  },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
   },
-  serverExternalPackages: ["@node-rs/argon2", "argon2"],
+  serverExternalPackages: ["@node-rs/argon2"],
   webpack: (config) => {
     config.externals = [...config.externals, "@node-rs/argon2"];
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -8,6 +9,7 @@ import { NuqsAdapter } from "nuqs/adapters/react";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { TanstackProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { PostHogProvider } from "@/providers/posthog-provider";
 import { env } from "@/env/server";
 
 import "./globals.css";
@@ -51,8 +53,12 @@ export default function RootLayout({
       <body className={`${geistSans.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme enableSystem>
           <TanstackProvider>
-            <Toaster richColors position="top-center" pauseWhenPageIsHidden />
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <Suspense>
+              <PostHogProvider>
+                <Toaster richColors position="top-center" pauseWhenPageIsHidden />
+                <NuqsAdapter>{children}</NuqsAdapter>
+              </PostHogProvider>
+            </Suspense>
           </TanstackProvider>
         </ThemeProvider>
       </body>

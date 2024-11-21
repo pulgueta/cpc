@@ -96,9 +96,6 @@ export const useAuth = () => {
         rememberMe: remember,
       },
       {
-        onSuccess: async (ctx) => {
-          console.log({ ctx: ctx.data });
-        },
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:

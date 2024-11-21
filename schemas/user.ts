@@ -1,5 +1,5 @@
 import type { TypeOf } from "zod";
-import { string } from "zod";
+import { boolean, string } from "zod";
 import { createInsertSchema } from "drizzle-zod";
 
 import { user } from "@/db/schemas";
@@ -43,10 +43,14 @@ export const registerSchema = createInsertSchema(user, {
   role: (s) => s.role.optional(),
 });
 
-export const loginSchema = registerSchema.pick({
-  email: true,
-  password: true,
-});
+export const loginSchema = registerSchema
+  .pick({
+    email: true,
+    password: true,
+  })
+  .extend({
+    remember: boolean().optional().default(false),
+  });
 
 export const forgotPasswordSchema = registerSchema.pick({
   email: true,

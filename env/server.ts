@@ -13,7 +13,6 @@ export const env = createEnv({
     UPSTASH_REDIS_TOKEN: string(),
     SITE_URL: string().url(),
     FROM_EMAIL: string().email(),
-    GOOGLE_CLIENT_ID: string(),
     GOOGLE_CLIENT_SECRET: string(),
   },
   runtimeEnv: {
@@ -25,7 +24,6 @@ export const env = createEnv({
     UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN,
     SITE_URL: process.env.SITE_URL,
     FROM_EMAIL: process.env.FROM_EMAIL,
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,

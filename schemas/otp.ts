@@ -1,5 +1,5 @@
 import type { TypeOf } from "zod";
-import { object, string } from "zod";
+import { boolean, object, string } from "zod";
 
 export const twoFactorSchema = object({
   code: string({ required_error: "El código es requerido" })
@@ -9,6 +9,7 @@ export const twoFactorSchema = object({
     .max(6, {
       message: "El código debe tener como máximo 6 caracteres",
     }),
+  trustDevice: boolean().default(false),
 });
 
 export const twoFactorDisableSchema = object({

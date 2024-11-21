@@ -11,6 +11,8 @@ export const noAuthRoutes = [
   { href: "/contact", label: "Contacto" },
 ] as const;
 
+export const settingsRoutes = [{}] as const;
+
 export type Role = User["role"];
 
 export const urlToRedirect = (role: string, url?: string | undefined) => {

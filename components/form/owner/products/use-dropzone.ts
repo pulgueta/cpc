@@ -45,9 +45,9 @@ export const useFormDropzone = <T>({ form, owner }: UseFormDropzoneProps<T>) => 
     onDropAccepted: (upload) => {
       toast.promise(
         async () => {
-          const productImage = await uploadProductImage(upload[0], owner.data?.user.id).then(
-            (res) => res?.url,
-          );
+          const productImage = await uploadProductImage(upload[0], owner.data?.user.id);
+
+          console.log(productImage);
 
           if (!productImage) {
             toast.error("Error al subir la imagen");

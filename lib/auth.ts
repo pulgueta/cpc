@@ -1,5 +1,7 @@
-import { betterAuth, RateLimit } from "better-auth";
-import { passkey, admin, organization, oAuthProxy, twoFactor } from "better-auth/plugins";
+import type { RateLimit } from "better-auth";
+import { betterAuth } from "better-auth";
+import { passkey, admin, organization, oAuthProxy, twoFactor, oneTap } from "better-auth/plugins";
+import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { hashValue, verifyValue } from "./crypto";
@@ -7,7 +9,8 @@ import { db } from "@/db/config";
 import * as schema from "@/db/schemas";
 import { cache } from "./cache";
 import { sendOtpEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./email";
-import { env } from "@/env/server";
+import { env, env as server } from "@/env/server";
+import { env as client } from "@/env/client";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -23,7 +26,7 @@ export const auth = betterAuth({
     },
   }),
   emailVerification: {
-    sendVerificationEmail: async (user, url) => {
+    sendVerificationEmail: async ({ user, url }) => {
       await sendWelcomeEmail(user, url);
     },
     sendOnSignUp: true,
@@ -38,7 +41,7 @@ export const auth = betterAuth({
       verify: async (a, b) => await verifyValue(a, b),
     },
     resetPasswordTokenExpiresIn: 3600 * 2,
-    sendResetPassword: async (user, url) => {
+    sendResetPassword: async ({ user, url }) => {
       await sendPasswordResetEmail(user, url);
     },
     requireEmailVerification: true,
@@ -48,6 +51,7 @@ export const auth = betterAuth({
       plan: {
         type: "string",
         required: false,
+        input: false,
         defaultValue: "free",
       },
       password: {
@@ -87,13 +91,9 @@ export const auth = betterAuth({
     storeSessionInDatabase: true,
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
-    cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60,
-    },
   },
-  baseURL: process.env.BETTER_AUTH_URL ?? "",
-  secret: process.env.BETTER_AUTH_SECRET ?? "",
+  baseURL: env.BETTER_AUTH_URL,
+  secret: env.BETTER_AUTH_SECRET,
   rateLimit: {
     enabled: true,
     window: 30,
@@ -108,10 +108,10 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      clientId: client.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientSecret: server.GOOGLE_CLIENT_SECRET,
       enabled: true,
-      redirectURL: `${env.BETTER_AUTH_URL}/api/auth/google/callback`,
+      redirectURI: `${server.BETTER_AUTH_URL}/api/auth/google/callback`,
     },
   },
   plugins: [
@@ -119,14 +119,16 @@ export const auth = betterAuth({
     admin(),
     organization(),
     oAuthProxy(),
+    oneTap(),
     twoFactor({
       issuer: "Centro Popular Comercial",
       otpOptions: {
-        sendOTP: async (user, otp) => {
+        sendOTP: async ({ user, otp }) => {
           await sendOtpEmail({ email: user.email, name: user.name }, otp);
         },
       },
     }),
+    nextCookies(),
   ],
   account: {
     accountLinking: {
@@ -137,7 +139,7 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production",
   },
-  trustedOrigins: [env.BETTER_AUTH_URL],
+  trustedOrigins: [server.BETTER_AUTH_URL],
 });
 
 export type Session = typeof auth.$Infer.Session;

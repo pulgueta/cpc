@@ -8,6 +8,8 @@ import { createStore } from "zustand";
 
 import type { Product } from "@/constants/db-types";
 
+export { Product };
+
 export interface Sale {
   products: (Product & { quantity: number })[];
   addProduct: (product: Product) => void;

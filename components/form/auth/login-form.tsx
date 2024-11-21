@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,26 +26,23 @@ import { urlToRedirect } from "@/constants/routes";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
-  const [remember, setRemember] = useState<boolean>(false);
 
   const rememberId = useId();
 
   const { push } = useRouter();
-
-  const registerHref = usePathname().includes("stores") ? "/stores/register" : "/register";
-  const isStorePath = usePathname().includes("stores");
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
+      remember: false,
     },
   });
 
   const { onEmailLogin, onGoogleLogin, onPasskeyLogin } = useAuth();
 
-  const onSubmit = form.handleSubmit(async ({ email, password }) => {
+  const onSubmit = form.handleSubmit(async ({ email, password, remember }) => {
     const { data, error } = await onEmailLogin({
       email,
       password: password ?? "",
@@ -117,53 +114,50 @@ export const LoginForm = () => {
             </Button>
           </form>
 
-          <div className="flex items-center gap-x-2">
-            <Checkbox
-              checked={remember}
-              onCheckedChange={() => setRemember((prev) => !prev)}
-              id={rememberId}
-            />
-            <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
-              Recordarme
-            </Label>
+          <FormComponent
+            name="remember"
+            render={({ field }) => (
+              <div className="flex items-center gap-x-2">
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} id={rememberId} />
+                <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
+                  Recordarme
+                </Label>
+              </div>
+            )}
+          />
+
+          <div className="relative py-2 pb-4">
+            <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
+              O inicia sesión con:
+            </span>
+            <Separator />
           </div>
 
-          {!isStorePath && (
-            <>
-              <div className="relative py-2 pb-4">
-                <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
-                  O inicia sesión con:
-                </span>
-                <Separator />
-              </div>
-
-              <section className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                <Button
-                  aria-label="Iniciar sesión con Google"
-                  variant="outline"
-                  onClick={onGoogleLogin}
-                >
-                  <GoogleIcon className="mr-2 size-[18px]" />
-                  Google
-                </Button>
-                <Button
-                  aria-label="Iniciar sesión con Google"
-                  variant="outline"
-                  onClick={onPasskeyLogin}
-                >
-                  <FingerprintIcon className="mr-2" size={16} />
-                  Biometría
-                </Button>
-              </section>
-            </>
-          )}
+          <section className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <Button
+              aria-label="Iniciar sesión con Google"
+              variant="outline"
+              onClick={onGoogleLogin}
+            >
+              <GoogleIcon className="mr-2 size-[18px]" />
+              Google
+            </Button>
+            <Button
+              aria-label="Iniciar sesión con Google"
+              variant="outline"
+              onClick={onPasskeyLogin}
+            >
+              <FingerprintIcon className="mr-2" size={16} />
+              Biometría
+            </Button>
+          </section>
         </section>
       </Form>
 
       <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿No tienes cuenta?{" "}
         <Link
-          href={registerHref}
+          href="/register"
           className="mt-2 font-medium text-black text-sm underline-offset-4 hover:underline dark:text-white"
         >
           Regístrate

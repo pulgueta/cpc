@@ -1,16 +1,29 @@
 import type { FC, PropsWithChildren } from "react";
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { cookies } from "next/headers";
 
-const OwnerLayout: FC<PropsWithChildren> = ({ children }) => {
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { UserSidebar } from "@/components/sidebar/user/user-sidebar";
+
+const DashboardLayout: FC<PropsWithChildren> = async ({ children }) => {
+  const sidebarState = (await cookies()).get("sidebar:state");
+
+  let _defaultOpen = true;
+
+  if (sidebarState) {
+    _defaultOpen = sidebarState.value === "true";
+  }
+
   return (
     <SidebarProvider>
-      {/* <StoreOwnerSidebar /> */}
-      <main className="min-h-dvh p-4">
-        <SidebarTrigger className="size-6" />
+      <UserSidebar />
+      <main className="min-h-dvh w-full border p-4">
+        <header className="flex shrink-0 items-center gap-2 border-b pb-4">
+          <SidebarTrigger className="size-4" />
+        </header>
         {children}
       </main>
     </SidebarProvider>
   );
 };
-export default OwnerLayout;
+export default DashboardLayout;

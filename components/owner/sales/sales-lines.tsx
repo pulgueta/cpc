@@ -154,7 +154,7 @@ export const SalesLines = () => {
     <>
       <Select value={timeRange} onValueChange={setTimeRange}>
         <SelectTrigger
-          className="mb-4 w-[160px] sm:ml-auto"
+          className="my-4 w-[160px] sm:ml-auto md:mb-4"
           aria-label="Seleccionar rango de tiempo"
         >
           <SelectValue placeholder="Last 3 months" />

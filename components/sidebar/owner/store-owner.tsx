@@ -2,7 +2,6 @@ import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 import Link from "next/link";
 
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { LucideProps } from "lucide-react";
 import { ChevronRight, DollarSign, Store } from "lucide-react";
 
