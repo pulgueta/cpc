@@ -1,6 +1,6 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { timestamp, pgTable, text, index } from "drizzle-orm/pg-core";
+import { timestamp, pgTable, text, index, integer } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
@@ -20,6 +20,7 @@ export const stores = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     mainContactPhone: text().notNull(),
     image: text(),
+    salesGoal: integer().notNull(),
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }).$onUpdateFn(() => new Date()),
   },

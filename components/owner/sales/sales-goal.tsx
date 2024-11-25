@@ -17,8 +17,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const SalesGoal = () => {
-  const currentSales = 15020000;
-  const salesGoal = 50000000;
+  const currentSales = 100000;
+  const salesGoal = 1000000;
 
   const percentCompleted = (currentSales / salesGoal) * 100;
   const endAngle = (percentCompleted * 360) / 100;
@@ -52,7 +52,7 @@ export const SalesGoal = () => {
                       y={viewBox.cy! - 10}
                       className="fill-foreground font-bold text-xl"
                     >
-                      {formatPrice(currentSales)}
+                      {formatPrice(currentSales, true)}
                     </tspan>
                     <tspan
                       x={viewBox.cx}

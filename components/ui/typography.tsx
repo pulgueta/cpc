@@ -6,33 +6,36 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const headingVariants = cva("scroll-m-20 text-balance tracking-tighter", {
-  variants: {
-    as: {
-      h1: "text-3xl md:text-4xl lg:text-5xl",
-      h2: "text-2xl md:text-3xl lg:text-4xl",
-      h3: "text-xl md:text-2xl lg:text-3xl",
-      h4: "text-lg md:text-xl lg:text-2xl",
+const headingVariants = cva(
+  "inline-flex scroll-m-20 items-center gap-x-2 text-balance tracking-tighter",
+  {
+    variants: {
+      as: {
+        h1: "text-3xl md:text-4xl lg:text-5xl",
+        h2: "text-2xl md:text-3xl lg:text-4xl",
+        h3: "text-xl md:text-2xl lg:text-3xl",
+        h4: "text-lg md:text-xl lg:text-2xl",
+      },
+      weight: {
+        black: "font-black",
+        extraBold: "font-extrabold",
+        bold: "font-bold",
+        semibold: "font-semibold",
+        normal: "font-normal",
+        light: "font-light",
+      },
+      fontStyle: {
+        italic: "italic",
+        normal: "normal",
+      },
     },
-    weight: {
-      black: "font-black",
-      extraBold: "font-extrabold",
-      bold: "font-bold",
-      semibold: "font-semibold",
-      normal: "font-normal",
-      light: "font-light",
-    },
-    fontStyle: {
-      italic: "italic",
-      normal: "normal",
+    defaultVariants: {
+      weight: "bold",
+      as: "h1",
+      fontStyle: "normal",
     },
   },
-  defaultVariants: {
-    weight: "bold",
-    as: "h1",
-    fontStyle: "normal",
-  },
-});
+);
 
 interface HeadingProps
   extends HTMLAttributes<HTMLHeadingElement>,

@@ -26,10 +26,11 @@ export const useAuth = () => {
     const [{ data, error }] = await Promise.all([
       await signIn.social({
         provider: "google",
-        callbackURL: urlToRedirect(role),
+        callbackURL: urlToRedirect(role ?? ""),
       }),
       await linkSocial({
         provider: "google",
+        callbackURL: urlToRedirect(role ?? ""),
       }),
     ]);
 
@@ -92,7 +93,7 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: urlToRedirect(role, env.NEXT_PUBLIC_SITE_URL),
+        callbackURL: urlToRedirect(role ?? "", env.NEXT_PUBLIC_SITE_URL),
         rememberMe: remember,
       },
       {
@@ -141,6 +142,7 @@ export const useAuth = () => {
       {
         onSuccess: () => {
           toast.success("Cuenta creada exitosamente");
+          push(`/settings?q=${base64}`);
         },
         onError: (ctx) => {
           if (ctx.error.status === 422) {

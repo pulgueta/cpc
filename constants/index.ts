@@ -43,7 +43,7 @@ export const CREATE_USER = {
   },
 } as const;
 
-export const authRoutes = ["/login", "/register", "/verify", "forgot-password", "/settings"];
+export const authRoutes = ["/login", "/register", "/verify", "forgot-password"];
 
 export const appHeaderKeys = {
   geo: "x-geo",

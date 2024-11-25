@@ -12,8 +12,8 @@ import { Heading } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getUserByEmail } from "@/lib/database/user";
-import type { User } from "@/constants/db-types";
 import { ProfileSettings } from "@/components/settings/profile-settings";
+import { StoresDropdown } from "@/components/owner/stores-dropdown";
 
 interface SettingsProps {
   searchParams: Promise<{ q: string }>;
@@ -22,7 +22,7 @@ interface SettingsProps {
 const Settings: NextPage<SettingsProps> = async ({ searchParams }) => {
   const { q } = await searchParams;
 
-  let user: User | null = null;
+  let user = null;
 
   if (q) {
     user = await getUserByEmail(atob(decodeURIComponent(q)));
@@ -53,19 +53,23 @@ const Settings: NextPage<SettingsProps> = async ({ searchParams }) => {
 
         {session && !user && (
           <>
-            <Link
-              href="/settings/seller"
-              className={buttonVariants({
-                variant: "shine",
-                className:
-                  "w-full bg-[length:400%_100%] bg-gradient-to-r from-emerald-400 to-violet-600 text-white dark:from-emerald-600",
-              })}
-            >
-              <ShoppingBagIcon className="mr-2" size={16} />
-              Quiero vender
-            </Link>
+            {session.user.role === "user" && (
+              <Link
+                href="/settings/seller"
+                className={buttonVariants({
+                  variant: "shine",
+                  className:
+                    "w-full animate-shine bg-[length:400%_100%] bg-gradient-to-r from-violet-600 via-violet-400 to-emerald-600 text-white",
+                })}
+              >
+                <ShoppingBagIcon className="mr-2" size={16} />
+                Quiero vender
+              </Link>
+            )}
 
-            <Separator className="my-4 w-full" />
+            {session?.user.role === "storeOwner" && <StoresDropdown />}
+
+            <Separator className="m-4 w-full" />
 
             <LogoutButton fullWidth />
           </>
@@ -114,7 +118,7 @@ const Settings: NextPage<SettingsProps> = async ({ searchParams }) => {
                 href="/login"
                 className={buttonVariants({
                   variant: "link",
-                  className: "mb-4",
+                  className: "mb-4 w-full",
                 })}
               >
                 Iniciar sesión

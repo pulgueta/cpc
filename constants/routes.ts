@@ -32,7 +32,7 @@ export const urlToRedirect = (role: string, url?: string | undefined) => {
     case "admin":
       return "/admin";
     case "storeOwner":
-      return "/owner";
+      return "/settings";
     case "user":
       return "/dashboard";
     default:

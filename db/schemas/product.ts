@@ -6,6 +6,7 @@ import { createId } from "@paralleldrive/cuid2";
 
 import { user } from "./user";
 import { categories } from "./category";
+import { stores } from "./store";
 
 export const products = pgTable(
   "product",
@@ -17,7 +18,6 @@ export const products = pgTable(
     productDescription: text(),
     productPrice: integer().notNull(),
     productCategory: text()
-      .unique()
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
     productImageUrl: text().notNull(),
@@ -25,6 +25,9 @@ export const products = pgTable(
     storeOwnerId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    storeId: text()
+      .notNull()
+      .references(() => stores.id, { onDelete: "cascade" }),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
@@ -34,6 +37,10 @@ export const products = pgTable(
 );
 
 export const productRelations = relations(products, ({ one }) => ({
+  store: one(stores, {
+    fields: [products.storeId],
+    references: [stores.id],
+  }),
   storeOwner: one(user, {
     fields: [products.storeOwnerId],
     references: [user.id],

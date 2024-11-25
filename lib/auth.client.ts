@@ -58,6 +58,7 @@ export const {
   twoFactor,
   oneTap,
   getSession,
+  useListOrganizations,
 } = authClient;
 
 export type Session = typeof $Infer.Session;

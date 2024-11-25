@@ -20,6 +20,7 @@ export const user = pgTable("user", {
   banReason: text(),
   banExpires: integer(),
   document: text().unique(),
+  documentType: text({ enum: ["CC", "CE", "NIT", "TI"] }),
   plan: text({ enum: ["free", "pro"] }),
   twoFactorEnabled: boolean().default(false),
   phone: text().unique(),

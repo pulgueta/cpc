@@ -9,7 +9,7 @@ export const twoFactor = pgTable("twoFactor", {
   backupCodes: text().notNull(),
   userId: text()
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export type NewTwoFactor = InferInsertModel<typeof twoFactor>;

@@ -19,6 +19,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ThemeSwitcher } from "@/components/theme-switch";
+import { StoresDropdown } from "@/components/owner/stores-dropdown";
 
 interface Nav {
   title: string;
@@ -73,12 +74,14 @@ export const StoreOwnerSidebar = () => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <StoresDropdown />
+
             {data.navMain.map((item) => (
               <Collapsible
                 key={item.title}
                 asChild
                 defaultOpen={item.isActive}
-                className="group/collapsible"
+                className="group/collapsible mt-2"
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -104,7 +107,7 @@ export const StoreOwnerSidebar = () => {
                 </SidebarMenuItem>
               </Collapsible>
             ))}
-            <div className="mt-4">
+            <div className="m-4">
               <ThemeSwitcher />
             </div>
           </SidebarMenu>

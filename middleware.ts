@@ -6,16 +6,18 @@ import { urlToRedirect } from "@/constants/routes";
 import { getUserInformation } from "@/lib/middleware";
 import { getSession } from "./lib/auth.client";
 
-const OWNER_URL_PREFIX = "/owner" as const;
+const OWNER_URL_PREFIX = /^\/[^/]+\/owner/;
 const ADMIN_URL_PREFIX = "/admin" as const;
 const USER_URL_PREFIX = "/dashboard" as const;
+const SELLER_URL_PREFIX = "/settings/seller" as const;
 
 const isAuthRoute = (pathname: string) => authRoutes.some((route) => pathname.startsWith(route));
 
 const isProtectedRoute = (pathname: string) =>
-  pathname.startsWith(OWNER_URL_PREFIX) ||
+  pathname.match(OWNER_URL_PREFIX) ||
   pathname.startsWith(ADMIN_URL_PREFIX) ||
-  pathname.startsWith(USER_URL_PREFIX);
+  pathname.startsWith(USER_URL_PREFIX) ||
+  pathname.startsWith(SELLER_URL_PREFIX);
 
 export default async function middleware(request: NextRequest) {
   const headers = new Headers(request.headers);
@@ -47,7 +49,7 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(correctBasePath, request.url));
   }
 
-  if (pathname.startsWith(OWNER_URL_PREFIX) && userRole !== "storeOwner") {
+  if (pathname.match(OWNER_URL_PREFIX) && userRole !== "storeOwner") {
     return NextResponse.redirect(new URL(correctBasePath, request.url));
   }
 
