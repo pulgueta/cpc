@@ -12,7 +12,6 @@ import {
   useSession,
 } from "@/lib/auth.client";
 import { urlToRedirect } from "@/constants/routes";
-import type { User } from "@/db/schemas/user";
 import { env } from "@/env/client";
 
 export const useAuth = () => {
@@ -103,6 +102,10 @@ export const useAuth = () => {
               toast.error("No se encontró una cuenta con ese correo electrónico");
               break;
 
+            case 403:
+              toast.error("Debes verificar tu correo electrónico para poder iniciar sesión");
+              break;
+
             case 401:
               toast.error("Credenciales incorrectas");
               break;
@@ -129,20 +132,18 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const base64 = btoa(email);
-
     await signUp.email(
       {
         email,
         password,
         name,
         role: roleToCreate,
-        callbackURL: `/settings?q=${base64}`,
+        callbackURL: "/login",
       },
       {
         onSuccess: () => {
           toast.success("Cuenta creada exitosamente");
-          push(`/settings?q=${base64}`);
+          push("/login");
         },
         onError: (ctx) => {
           if (ctx.error.status === 422) {

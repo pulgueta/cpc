@@ -1,16 +1,11 @@
 import { createInsertSchema } from "drizzle-zod";
 import type { TypeOf } from "zod";
-import { string } from "zod";
+import { any, coerce, number, object, string, enum as zodEnum } from "zod";
 
-import { sales } from "@/db/schemas/sale";
+import { sale } from "@/db/schemas/sale";
 
-export const createSaleSchema = createInsertSchema(sales, {
-  buyerEmail: ({ buyerEmail }) =>
-    buyerEmail
-      .email({
-        message: "Ingrese un correo electrónico válido",
-      })
-      .optional(),
+export const createSaleSchema = createInsertSchema(sale, {
+  buyerEmail: string().optional(),
   buyerName: () =>
     string({
       required_error: "El nombre es requerido",
@@ -32,8 +27,8 @@ export const createSaleSchema = createInsertSchema(sales, {
         message: "El teléfono debe tener como máximo 10 dígitos",
       }),
   documentType: () =>
-    string({
-      required_error: "El tipo de documento es requerido",
+    zodEnum(["CC", "CE", "NIT", "TI"], {
+      message: "El tipo de documento no es válido",
     }),
   document: () =>
     string({
@@ -45,6 +40,11 @@ export const createSaleSchema = createInsertSchema(sales, {
       .max(32, {
         message: "El documento debe tener como máximo 32 caracteres",
       }),
+  ownerId: () => string({ required_error: "El propietario es requerido" }),
+  storeId: () => string({ required_error: "La tienda es requerida" }),
+  total: () => coerce.number().positive(),
+}).extend({
+  products: any().optional(),
 });
 
 export const sendInvoiceSchema = createSaleSchema.pick({ buyerEmail: true });

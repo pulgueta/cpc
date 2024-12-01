@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 
 import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/neon-serverless";
 
 import { db } from "@/db/config";
 import type { NewUser, User } from "@/db/schemas/user";
@@ -99,35 +100,34 @@ export const convertToSeller = async (data: ConvertToSellerSchema) => {
     };
   }
 
-  const store = await db.transaction(async ({ insert, update }) => {
-    const [store] = await insert(stores)
+  const [[store]] = await db.batch([
+    db
+      .insert(stores)
       .values({
         name: data.storeName,
         ownerId: data.ownerId,
         mainContactPhone: data.mainContactPhone,
         image: data.logo,
         salesGoal: data.salesGoal,
+        orgId: createdOrg.id,
+        slug,
       })
-      .returning();
-
-    // I update the member email manually as on the first insert is set as null, although I'm logged in.
-    await update(member)
+      .returning(),
+    db
+      .update(member)
       .set({
         email: data.email,
       })
-      .where(eq(member.email, data.email));
-
-    await update(user)
+      .where(eq(member.userId, data.ownerId)),
+    db
+      .update(user)
       .set({
         document: data.document,
         documentType: data.documentType,
         role: "storeOwner",
       })
-      .where(eq(user.id, data.ownerId))
-      .returning();
-
-    return store;
-  });
+      .where(eq(user.id, data.ownerId)),
+  ]);
 
   return {
     message: "Tu tienda se ha creado con éxito. ¡A vender!",

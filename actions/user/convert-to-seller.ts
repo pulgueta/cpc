@@ -7,10 +7,11 @@ import { handleAction } from "../handle-action";
 import { convertToSeller } from "@/lib/database/user";
 
 export const convertToSellerAction = async (_prev: unknown, e: FormData) => {
+  debugger;
   const user = await handleAction(converToSellerSchema, e);
 
   if ("error" in user) {
-    console.log(user.error);
+    console.log({ error: user.error });
 
     return {
       error: user.error,
@@ -34,5 +35,5 @@ export const convertToSellerAction = async (_prev: unknown, e: FormData) => {
     };
   }
 
-  return redirect(`/${seller.store?.id}/owner/sales`);
+  return redirect(`/${seller.store?.slug}/owner/sales`);
 };

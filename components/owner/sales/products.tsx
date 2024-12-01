@@ -1,45 +1,30 @@
 "use client";
 
+import { memo } from "react";
+
 import { useSales } from "@/hooks/use-sale";
+import { PaperReceipt } from "./paper-receipt";
 import { Product } from "./product";
-import { Paragraph } from "@/components/ui/typography";
-import { formatPrice } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
+
+const MemoizedProduct = memo(Product);
+const MemoizedPaperReceipt = memo(PaperReceipt);
 
 export const Products = () => {
   const { products } = useSales((state) => state);
 
-  const totalPrice = products.reduce((acc, product) => {
-    return acc + product.productPrice * product.quantity;
-  }, 0);
-
-  const priceWithTax = totalPrice * 0.19;
+  const items = products.map((product) => ({
+    name: product.productName,
+    quantity: product.quantity,
+    price: product.productPrice,
+  }));
 
   return (
-    <div className="space-y-8">
-      {products.map((product, idx) => (
-        <>
-          <Product key={product.id} {...product} />
-          {idx < products.length - 1 && <Separator key={`sep-${product.id}`} />}
-        </>
-      ))}
+    <div className="space-y-4">
+      <MemoizedPaperReceipt items={items} date={new Date().toLocaleDateString()} />
 
-      {products.length > 0 ? (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Paragraph variant="body">Valor total:</Paragraph>
-            <Paragraph>{formatPrice(totalPrice)}</Paragraph>
-          </div>
-          <div className="flex items-center justify-between">
-            <Paragraph>IVA (19%):</Paragraph>
-            <Paragraph>{formatPrice(priceWithTax)}</Paragraph>
-          </div>
-        </div>
-      ) : (
-        <Paragraph muted center>
-          No hay productos en la factura
-        </Paragraph>
-      )}
+      {products.map((product) => (
+        <MemoizedProduct key={product.id} {...product} />
+      ))}
     </div>
   );
 };

@@ -23,6 +23,7 @@ export const sale = pgTable("sale", {
   buyerEmail: text(),
   buyerName: text().notNull(),
   buyerPhone: text().notNull(),
+  total: integer().notNull(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });

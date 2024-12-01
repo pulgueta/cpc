@@ -19,6 +19,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: string(),
     NEXT_PUBLIC_POSTHOG_KEY: string(),
     NEXT_PUBLIC_POSTHOG_HOST: string().url(),
+    NEXT_PUBLIC_CLOUDFLARE_R2: string().url(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_CAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
@@ -37,6 +38,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_CLOUDFLARE_R2: process.env.NEXT_PUBLIC_CLOUDFLARE_R2,
   },
   emptyStringAsUndefined: true,
 });

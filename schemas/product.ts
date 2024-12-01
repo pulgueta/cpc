@@ -1,6 +1,6 @@
 import { createInsertSchema } from "drizzle-zod";
 import type { TypeOf } from "zod";
-import { coerce, string } from "zod";
+import { any, coerce, string } from "zod";
 
 import { products } from "@/db/schemas/product";
 
@@ -35,19 +35,7 @@ export const createProductSchema = createInsertSchema(products, {
     .lte(30000000, {
       message: "El precio del producto debe ser menor o igual a $30'000.000 pesos",
     }),
-  productImageUrl: string({
-    required_error: "La imagen del producto no puede estar vacía",
-    invalid_type_error: "La imagen del producto debe ser una cadena de texto válida",
-  })
-    .url({
-      message: "La imagen del producto debe ser una URL válida",
-    })
-    .min(10, {
-      message: "La imagen del producto debe tener al menos 10 caracteres",
-    })
-    .startsWith("https://", {
-      message: "La imagen del producto debe tener una URL segura (HTTPS)",
-    }),
+  productImageUrl: any(),
   stock: coerce
     .number({
       required_error: "La cantidad de stock no puede estar vacía",

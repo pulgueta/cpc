@@ -6,6 +6,7 @@ import { handleRequest } from "@/lib/requests";
 import { createProductSchema } from "@/schemas/product";
 import { createProduct, getProductByName, updateProduct } from "@/lib/database/product";
 import { getCurrentSession } from "@/lib/auth/session";
+import { getStoreByOrgId, getStoreBySlug } from "@/lib/database/store";
 
 export const POST = async (req: NextRequest) => {
   const owner = await getCurrentSession();
@@ -29,8 +30,11 @@ export const POST = async (req: NextRequest) => {
 
   const product = request.data;
 
+  const store = await getStoreByOrgId(product.storeId);
+
   const savedProduct = await createProduct({
     ...product,
+    storeId: store?.id ?? "",
     storeOwnerId: owner.user.id,
   });
 

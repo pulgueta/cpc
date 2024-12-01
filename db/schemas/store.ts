@@ -7,6 +7,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { user } from "./user";
 import { products } from "./product";
 import { categories } from "./category";
+import { organization } from "./organization";
 
 export const stores = pgTable(
   "store",
@@ -15,9 +16,13 @@ export const stores = pgTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     name: text().notNull(),
+    slug: text().notNull().unique(),
     ownerId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    orgId: text()
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
     mainContactPhone: text().notNull(),
     image: text(),
     salesGoal: integer().notNull(),
@@ -30,6 +35,7 @@ export const stores = pgTable(
 );
 
 export const storesRelations = relations(stores, ({ one, many }) => ({
+  organization: one(organization),
   owner: one(user),
   products: many(products),
   categories: many(categories),

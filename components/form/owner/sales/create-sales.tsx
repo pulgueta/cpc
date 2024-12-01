@@ -5,27 +5,42 @@ import { useActionState, useEffect } from "react";
 
 import Form from "next/form";
 
-import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createSaleAction } from "@/actions/sales/create-sale";
-import { useSales } from "@/hooks/use-sale";
+import { useInvoice, useSales } from "@/hooks/use-sale";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Products } from "@/constants/db-types";
 import { ProductsCarousel } from "@/components/owner/products/products-carousel";
+import { FormErros } from "../../form-alert-errors";
 
 interface CreateSalesProps {
   products: Products;
+  storeId: string | undefined;
+  storeOwnerId: string | undefined;
 }
 
-export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
-  const [state, action, isPending] = useActionState(createSaleAction, undefined);
+export const CreateSales: FC<CreateSalesProps> = ({
+  products: prods,
+  storeId,
+  storeOwnerId,
+}) => {
+  const [state, action, isPending] = useActionState(
+    createSaleAction,
+    undefined
+  );
 
   const { products, clearProducts } = useSales((state) => state);
+  const { total } = useInvoice();
+
+  const parsedProducts = products.map((product) => ({
+    productId: product.id,
+    quantity: product.quantity,
+    price: product.productPrice,
+  }));
 
   useEffect(() => {
     if (state?.message) {
@@ -36,7 +51,10 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
 
   return (
     <>
-      <Form className="flex h-max flex-col justify-between gap-4" action={action}>
+      <Form
+        className="flex h-max flex-col justify-between gap-4"
+        action={action}
+      >
         <div className="flex flex-col gap-2">
           <Label>Producto(s)</Label>
           <ProductsCarousel products={prods} />
@@ -44,56 +62,87 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods }) => {
         <div className="grid grid-cols-1 gap-4">
           <div className="flex flex-col gap-2">
             <Label>Nombre del comprador</Label>
-            <Input placeholder="Juan Egea" name="buyerName" required />
+            <Input
+              placeholder="Juan Egea"
+              name="buyerName"
+              defaultValue={state?.defaultValues?.buyerName}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label>Correo electrónico del comprador (opcional)</Label>
-            <Input placeholder="correo@default.com" name="buyerEmail" type="email" />
+            <Input
+              placeholder="correo@default.com"
+              name="buyerEmail"
+              type="email"
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label>Documento de identidad</Label>
-            <RadioGroup defaultValue="CC" name="documentType" className="my-1 flex gap-4" required>
+            <RadioGroup
+              defaultValue={state?.defaultValues?.documentType ?? "CC"}
+              name="documentType"
+              className="my-1 flex gap-4"
+            >
               {["CC", "CE", "TI", "NIT"].map((document) => (
-                <div className="flex flex-row items-center space-x-2" key={document}>
+                <div
+                  className="flex flex-row items-center space-x-2"
+                  key={document}
+                >
                   <RadioGroupItem value={document} id={document} />
                   <Label htmlFor={document}>{document}</Label>
                 </div>
               ))}
             </RadioGroup>
-            <Input placeholder="647281291" type="number" name="document" required />
+            <Input
+              placeholder="647281291"
+              type="number"
+              name="document"
+              defaultValue={state?.defaultValues?.document}
+            />
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label>Teléfono del comprador</Label>
-          <Input placeholder="3013224540" type="tel" name="buyerPhone" required />
+          <Input
+            placeholder="3013224540"
+            type="tel"
+            name="buyerPhone"
+            defaultValue={state?.defaultValues?.buyerPhone}
+          />
         </div>
 
-        <Button loading={isPending} disabled={products.length <= 0}>
-          Generar venta
-        </Button>
+        <input
+          name="ownerId"
+          defaultValue={storeOwnerId}
+          type="hidden"
+          className="hidden"
+        />
+        <input
+          name="storeId"
+          defaultValue={storeId}
+          type="hidden"
+          className="hidden"
+        />
+
+        <input
+          name="products"
+          defaultValue={JSON.stringify(parsedProducts)}
+          type="hidden"
+          className="hidden"
+        />
+
+        <input
+          name="total"
+          defaultValue={total}
+          type="hidden"
+          className="hidden"
+        />
+
+        <Button loading={isPending}>Generar venta</Button>
       </Form>
 
-      {state?.error &&
-        Array.isArray(state.error) &&
-        state.error.map((error) => (
-          <Alert variant="destructive" className="my-2" key={error}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))}
-
-      {/* {state?.error &&
-        state.error.buyerEmail &&
-        state.error.buyerEmail.map((error) => (
-          <Alert variant="destructive" className="my-2" key={error}>
-            <AlertCircle className="size-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error || "Error desconocido"}</AlertDescription>
-          </Alert>
-        ))}
-      */}
+      <FormErros error={state?.error} />
     </>
   );
 };

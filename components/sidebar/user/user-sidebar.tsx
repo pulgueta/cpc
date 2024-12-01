@@ -1,15 +1,16 @@
+import type { ComponentProps, FC } from "react";
+
 import Link from "next/link";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ThemeSwitcher } from "@/components/theme-switch";
@@ -33,37 +34,29 @@ const data = {
   ],
 };
 
-export const UserSidebar = () => {
+export const UserSidebar: FC<ComponentProps<typeof Sidebar>> = (props) => {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar {...props}>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link href={item.url} className="font-medium">
-                    {item.title}
-                  </Link>
-                </SidebarMenuButton>
-                {item.items?.length ? (
-                  <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild>
-                          <Link href={item.url}>{item.title}</Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null}
-              </SidebarMenuItem>
-            ))}
-            <div className="m-4">
-              <ThemeSwitcher />
-            </div>
-          </SidebarMenu>
-        </SidebarGroup>
+        {data.navMain.map((item) => (
+          <SidebarGroup key={item.title}>
+            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {item.items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>{item.title}</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+        <div className="ml-4">
+          <ThemeSwitcher />
+        </div>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

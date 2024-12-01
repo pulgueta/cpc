@@ -8,7 +8,7 @@ export const useCategories = () => {
   const categories = useQuery<Categories>({
     queryKey: ["categories"],
     queryFn: async () => {
-      const res = await fetch("/api/categories");
+      const res = await fetch("/api/owner/categories");
 
       if (!res.ok) {
         throw new Error("An error occurred while fetching categories");

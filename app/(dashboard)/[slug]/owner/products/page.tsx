@@ -11,6 +11,7 @@ import { getProducts } from "@/lib/database/product";
 import { ProductsTable } from "@/components/owner/products/products-table";
 import { searchParamsCache } from "@/lib/search-params";
 import { OwnerHeader } from "@/components/owner-header";
+import { getStoreByOrgId } from "@/lib/database/store";
 
 interface ProductsProps {
   searchParams: Promise<SearchParams>;
@@ -18,6 +19,8 @@ interface ProductsProps {
 
 const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
   const owner = await getCurrentSession();
+
+  const storeId = await getStoreByOrgId(owner?.session.activeOrganizationId ?? "");
 
   const { q: page, maxResults } = searchParamsCache.parse(await searchParams);
 
@@ -36,7 +39,11 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
       <section className="flex w-full flex-col justify-between gap-4">
         <article className="w-full">
           <Suspense fallback={<></>}>
-            <CreateProduct categories={categories} />
+            <CreateProduct
+              categories={categories}
+              storeOwnerId={owner?.user.id}
+              storeId={storeId?.id}
+            />
           </Suspense>
         </article>
         <article className="w-full md:mx-auto md:max-w-[480px] lg:max-w-full">

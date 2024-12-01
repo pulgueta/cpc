@@ -2,7 +2,8 @@ import { toast } from "sonner";
 import { useDropzone } from "react-dropzone";
 // import type { FieldValues, UseFormReturn } from "react-hook-form";
 
-import { uploadProductImage } from "@/lib/aws/s3";
+// import { uploadProductImage } from "@/lib/aws/s3";
+import { uploadProductImage } from "@/lib/cloudlfare/r2";
 import { useSession } from "@/lib/auth.client";
 
 const PHOTO_UPLOAD_MAX_SIZE = 2000000;
@@ -13,7 +14,7 @@ interface UseFormDropzoneProps<_T> {
   owner: ReturnType<typeof useSession>;
 }
 
-export const useFormDropzone = <T>({ form, owner }: UseFormDropzoneProps<T>) => {
+export const useFormDropzone = <const T>({ form, owner }: UseFormDropzoneProps<T>) => {
   const dropzone = useDropzone({
     accept: { "image/*": [] },
     maxFiles: 1,

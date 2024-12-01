@@ -1,7 +1,16 @@
-export const bucketFolders = {
+const bucketFolders = {
   profilePictures: "profpics",
   products: "stores/products",
 } as const;
+
+export const folders = (folder: keyof typeof bucketFolders, data: string | undefined) => {
+  switch (folder) {
+    case "profilePictures":
+      return bucketFolders.profilePictures;
+    case "products":
+      return bucketFolders.products.replace("/", `/${data}/`);
+  }
+};
 
 const baseMb = 1024 * 1024;
 

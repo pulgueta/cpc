@@ -1,5 +1,7 @@
 "use client";
 
+import type { FC } from "react";
+
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 import type { ChartConfig } from "@/components/ui/chart";
@@ -16,9 +18,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const SalesGoal = () => {
-  const currentSales = 100000;
-  const salesGoal = 1000000;
+interface SalesGoalProps {
+  salesGoal: number;
+}
+
+export const SalesGoal: FC<SalesGoalProps> = ({ salesGoal }) => {
+  const currentSales = 4000000;
 
   const percentCompleted = (currentSales / salesGoal) * 100;
   const endAngle = (percentCompleted * 360) / 100;

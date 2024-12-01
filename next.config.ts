@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+import { env } from "@/env/server";
+import { env as client } from "@/env/client";
+
 const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
@@ -23,17 +26,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "centro-popular-comercial.s3.us-east-1.amazonaws.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "d3a4t9acvuthif.cloudfront.net",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "2b40aceba757bc0bb19264ff9f0b763e.r2.cloudflarestorage.com",
+        hostname: client.NEXT_PUBLIC_CLOUDFLARE_R2.replace("https://", ""),
         pathname: "**",
       },
     ],
@@ -46,6 +39,12 @@ const nextConfig = {
     config.externals = [...config.externals, "@node-rs/argon2"];
 
     return config;
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+      allowedOrigins: [env.SITE_URL, "http://localhost:3000", `https://${env.VERCEL_URL}`],
+    },
   },
 } satisfies NextConfig;
 

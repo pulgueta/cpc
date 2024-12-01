@@ -21,16 +21,20 @@ interface DashboardBreadcrumbsProps extends CurrentSession {
 export const DashboardBreadcrumbs: FC<DashboardBreadcrumbsProps> = ({ pathname, user }) => {
   const paths = pathname
     ?.split("/")
-    .filter((path) => path !== "")
+    .filter((p) => p !== "")
     .map((p) => p.charAt(0).toUpperCase().concat(p.slice(1)));
+
+  const storeName = paths?.[0];
+  const storeIndex = paths?.indexOf(storeName ?? "");
+  const result = storeIndex !== -1 ? paths?.slice(storeIndex! + 1) : [];
 
   return (
     <nav className="flex w-full items-center justify-between gap-x-4">
       <Breadcrumb>
         <BreadcrumbList className="flex items-center">
-          {paths &&
-            paths.map((path, index) => {
-              if (index === paths.length - 1) {
+          {result &&
+            result.map((path, index) => {
+              if (index === result.length - 1) {
                 return (
                   <BreadcrumbItem key={path}>
                     <BreadcrumbPage>{path}</BreadcrumbPage>
@@ -50,9 +54,16 @@ export const DashboardBreadcrumbs: FC<DashboardBreadcrumbsProps> = ({ pathname, 
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center gap-4">
-        <Button variant="outline" leftIcon={<Plus size={16} />} className="hidden md:inline-flex">
-          Agregar local
-        </Button>
+        {user.plan !== "free" && (
+          <Button
+            variant="outline"
+            leftIcon={<Plus size={16} />}
+            className="hidden md:inline-flex"
+            disabled={user.plan === "free"}
+          >
+            Agregar local
+          </Button>
+        )}
         <BreadcrumbsProfile user={user} />
       </div>
     </nav>

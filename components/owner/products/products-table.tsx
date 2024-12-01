@@ -85,7 +85,7 @@ export const columns: ColumnDef<Column>[] = [
         ? String(row.getValue("productDescription"))
         : "Sin descripción";
 
-      return <Paragraph className="truncate">{description}</Paragraph>;
+      return <Paragraph className="max-w-prose truncate">{description}</Paragraph>;
     },
   },
   {
@@ -228,18 +228,16 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -247,17 +245,13 @@ export const ProductsTable: FC<ProductsTableProps> = ({ data }) => {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="text-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
+            {table.getHeaderGroups().map(({ id, headers }) => (
+              <TableRow key={id}>
+                {headers.map(({ id, isPlaceholder, column, getContext }) => (
+                  <TableHead key={id} className="text-center">
+                    {isPlaceholder ? null : flexRender(column.columnDef.header, getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
