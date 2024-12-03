@@ -18,7 +18,7 @@ const authClient = createAuthClient({
     passkeyClient(),
     adminClient(),
     organizationClient(),
-    twoFactorClient({ redirect: false, twoFactorPage: "/2fa" }),
+    twoFactorClient(),
     oneTapClient({ clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }),
     inferAdditionalFields<typeof auth>(),
   ],
@@ -29,7 +29,7 @@ const authClient = createAuthClient({
           const retry = ctx.response.headers.get("X-Retry-After");
 
           toast.info(
-            `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`,
+            `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`
           );
           break;
 
