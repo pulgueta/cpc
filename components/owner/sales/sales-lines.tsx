@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const chartData = [
+const _chartData = [
   { date: "2024-09-01", desktop: 222 },
   { date: "2024-09-02", desktop: 97 },
   { date: "2024-09-03", desktop: 167 },
@@ -183,35 +183,16 @@ export const SalesLines: FC<SalesLinesProps> = ({ sales }) => {
         </SelectContent>
       </Select>
 
-      <ChartContainer
-        config={chartConfig}
-        className="max-h-[560px] min-h-80 w-full"
-      >
+      <ChartContainer config={chartConfig} className="max-h-[560px] min-h-80 w-full">
         <AreaChart data={filteredData}>
           <defs>
             <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-desktop)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-desktop)"
-                stopOpacity={0.1}
-              />
+              <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
             </linearGradient>
             <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.1}
-              />
+              <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} />

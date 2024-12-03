@@ -13,9 +13,7 @@ interface ProductCardProps extends ProductProps {
 }
 
 export const Product: FC<ProductCardProps> = (product) => {
-  const { incrementProduct, decrementProduct, removeProduct } = useSales(
-    (state) => state
-  );
+  const { incrementProduct, decrementProduct, removeProduct } = useSales((state) => state);
 
   return (
     <div className="flex items-center justify-between">
@@ -47,14 +45,8 @@ export const Product: FC<ProductCardProps> = (product) => {
         </div>
       </div>
       <div className="flex flex-col items-end gap-4">
-        <Paragraph>
-          {formatPrice(product.productPrice * product.quantity)}
-        </Paragraph>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() => removeProduct(product.id)}
-        >
+        <Paragraph>{formatPrice(product.productPrice * product.quantity)}</Paragraph>
+        <Button variant="destructive" size="sm" onClick={() => removeProduct(product.id)}>
           Eliminar
         </Button>
       </div>

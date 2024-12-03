@@ -7,11 +7,7 @@ import Link from "next/link";
 import type { LucideProps } from "lucide-react";
 import { ChevronRight, DollarSign, Store } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -32,9 +28,7 @@ interface Nav {
   title: string;
   url: string;
   isActive?: boolean;
-  icon: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
   items: {
     title: string;
     url: string;

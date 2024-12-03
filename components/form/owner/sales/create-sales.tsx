@@ -23,20 +23,14 @@ interface CreateSalesProps {
   storeOwnerId: string | undefined;
 }
 
-export const CreateSales: FC<CreateSalesProps> = ({
-  products: prods,
-  storeId,
-  storeOwnerId,
-}) => {
-  const [state, action, isPending] = useActionState(
-    createSaleAction,
-    undefined
-  );
+export const CreateSales: FC<CreateSalesProps> = ({ products: prods, storeId, storeOwnerId }) => {
+  const [state, action, isPending] = useActionState(createSaleAction, undefined);
 
   const { products, clearProducts } = useSales((state) => state);
   const { total } = useInvoice();
 
   const parsedProducts = products.map((product) => ({
+    productName: product.productName,
     productId: product.id,
     quantity: product.quantity,
     price: product.productPrice,
@@ -51,10 +45,7 @@ export const CreateSales: FC<CreateSalesProps> = ({
 
   return (
     <>
-      <Form
-        className="flex h-max flex-col justify-between gap-4"
-        action={action}
-      >
+      <Form className="flex h-max flex-col justify-between gap-4" action={action}>
         <div className="flex flex-col gap-2">
           <Label>Producto(s)</Label>
           <ProductsCarousel products={prods} />
@@ -70,11 +61,7 @@ export const CreateSales: FC<CreateSalesProps> = ({
           </div>
           <div className="flex flex-col gap-2">
             <Label>Correo electrónico del comprador (opcional)</Label>
-            <Input
-              placeholder="correo@default.com"
-              name="buyerEmail"
-              type="email"
-            />
+            <Input placeholder="correo@default.com" name="buyerEmail" type="email" />
           </div>
           <div className="flex flex-col gap-2">
             <Label>Documento de identidad</Label>
@@ -84,10 +71,7 @@ export const CreateSales: FC<CreateSalesProps> = ({
               className="my-1 flex gap-4"
             >
               {["CC", "CE", "TI", "NIT"].map((document) => (
-                <div
-                  className="flex flex-row items-center space-x-2"
-                  key={document}
-                >
+                <div className="flex flex-row items-center space-x-2" key={document}>
                   <RadioGroupItem value={document} id={document} />
                   <Label htmlFor={document}>{document}</Label>
                 </div>
@@ -112,18 +96,8 @@ export const CreateSales: FC<CreateSalesProps> = ({
           />
         </div>
 
-        <input
-          name="ownerId"
-          defaultValue={storeOwnerId}
-          type="hidden"
-          className="hidden"
-        />
-        <input
-          name="storeId"
-          defaultValue={storeId}
-          type="hidden"
-          className="hidden"
-        />
+        <input name="ownerId" defaultValue={storeOwnerId} type="hidden" className="hidden" />
+        <input name="storeId" defaultValue={storeId} type="hidden" className="hidden" />
 
         <input
           name="products"
@@ -132,12 +106,7 @@ export const CreateSales: FC<CreateSalesProps> = ({
           className="hidden"
         />
 
-        <input
-          name="total"
-          defaultValue={total}
-          type="hidden"
-          className="hidden"
-        />
+        <input name="total" defaultValue={total} type="hidden" className="hidden" />
 
         <Button loading={isPending}>Generar venta</Button>
       </Form>
