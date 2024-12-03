@@ -10,7 +10,10 @@ import { getStoreByOrgId } from "@/lib/database/store";
 const CreateSale = async () => {
   const owner = await getCurrentSession();
 
-  const storeId = await getStoreByOrgId(owner?.session.activeOrganizationId ?? "");
+  const storeId = await getStoreByOrgId(
+    // @ts-ignore
+    owner?.session.activeOrganizationId ?? "",
+  );
 
   const products = await getProducts(owner?.user.id ?? "");
 

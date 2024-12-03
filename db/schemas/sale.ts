@@ -7,6 +7,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { stores } from "./store";
 import { products } from "./product";
 import { user } from "./user";
+import { getRandomValues } from "@/lib/crypto/random-vals";
 
 export const sale = pgTable("sale", {
   id: text()
@@ -24,6 +25,9 @@ export const sale = pgTable("sale", {
   buyerName: text().notNull(),
   buyerPhone: text().notNull(),
   total: integer().notNull(),
+  invoiceNumber: text()
+    .unique()
+    .$defaultFn(() => getRandomValues(8)),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
@@ -40,10 +44,23 @@ export const saleItem = pgTable("saleItem", {
     .references(() => products.id, { onDelete: "cascade" }),
   quantity: integer().notNull(),
   price: integer().notNull(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
 
-export const saleItemRelations = relations(saleItem, ({ many }) => ({
-  products: many(products),
+export const saleRelations = relations(sale, ({ many }) => ({
+  saleItems: many(saleItem),
+}));
+
+export const saleItemRelations = relations(saleItem, ({ one }) => ({
+  sale: one(sale, {
+    fields: [saleItem.saleId],
+    references: [sale.id],
+  }),
+  products: one(products, {
+    fields: [saleItem.productId],
+    references: [products.id],
+  }),
 }));
 
 export type NewSaleItem = InferInsertModel<typeof saleItem>;

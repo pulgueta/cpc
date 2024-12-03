@@ -1,6 +1,7 @@
 const bucketFolders = {
   profilePictures: "profpics",
   products: "stores/products",
+  invoices: "invoices",
 } as const;
 
 export const folders = (folder: keyof typeof bucketFolders, data: string | undefined) => {
@@ -9,6 +10,8 @@ export const folders = (folder: keyof typeof bucketFolders, data: string | undef
       return bucketFolders.profilePictures;
     case "products":
       return bucketFolders.products.replace("/", `/${data}/`);
+    case "invoices":
+      return bucketFolders.invoices;
   }
 };
 

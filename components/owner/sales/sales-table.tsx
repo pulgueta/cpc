@@ -39,16 +39,10 @@ import {
 import { Paragraph } from "@/components/ui/typography";
 import { TableFooter } from "@/components/table/table-footer";
 import { formatPrice } from "@/lib/utils";
-import type { Category } from "@/db/schemas/category";
-import type { Product, Products, Sales } from "@/constants/db-types";
-import { TableActions } from "../table-actions";
-import { EditActions } from "@/components/modal/edit-actions";
-import { DeleteActions } from "@/components/modal/delete-actions";
-import { updateCategoryAction } from "@/actions/category/update-category";
-import { EditProduct } from "@/components/form/owner/products/edit-product";
-import { deleteProductAction } from "@/actions/product/delete-product";
+import type { SalesWithItems } from "@/constants/db-types";
+import { PreviewReceipt } from "./preview-receipt";
 
-export type Column = Sales[number];
+export type Column = SalesWithItems[number];
 
 export const columns: ColumnDef<Column>[] = [
   {
@@ -56,8 +50,7 @@ export const columns: ColumnDef<Column>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleccionar todas las filas"
@@ -74,6 +67,11 @@ export const columns: ColumnDef<Column>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: () => <div className="text-center">Factura #</div>,
+    cell: ({ row }) => <Paragraph>{row.original.invoiceNumber}</Paragraph>,
+  },
+  {
     accessorKey: "buyerName",
     header: () => <div className="text-center">Nombre</div>,
     cell: ({ row }) => <Paragraph>{row.getValue("buyerName")}</Paragraph>,
@@ -83,9 +81,7 @@ export const columns: ColumnDef<Column>[] = [
     header: () => <div className="text-center">Correo electrónico</div>,
     cell: ({ row }) => (
       <Paragraph>
-        {row.original.buyerEmail?.length
-          ? row.original.buyerEmail
-          : "No se proporcionó un correo"}
+        {row.original.buyerEmail?.length ? row.original.buyerEmail : "No se proporcionó un correo"}
       </Paragraph>
     ),
   },
@@ -106,54 +102,42 @@ export const columns: ColumnDef<Column>[] = [
   },
   {
     accessorKey: "total",
-    header: () => <div className="text-center">Total de compra</div>,
-    cell: ({ row }) => (
-      <Paragraph>{formatPrice(row.getValue("total"))}</Paragraph>
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        rightIcon={<ArrowUpDown size={16} />}
+      >
+        Total de compra
+      </Button>
     ),
+    cell: ({ row }) => <Paragraph>{formatPrice(row.getValue("total"))}</Paragraph>,
   },
   {
     accessorKey: "createdAt",
-    header: () => <div className="text-center">Fecha de compra</div>,
-    cell: ({ row }) => (
-      <Paragraph>{row.original.createdAt?.toLocaleDateString()}</Paragraph>
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        rightIcon={<ArrowUpDown size={16} />}
+      >
+        Fecha de compra
+      </Button>
     ),
+    cell: ({ row }) => <Paragraph>{row.original.createdAt?.toLocaleDateString()}</Paragraph>,
   },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   header: () => <div className="text-center">Acciones</div>,
-  //   cell: ({ row }) => {
-  //     const [edit, setEdit] = useState<boolean>(false);
-  //     const [del, setDel] = useState<boolean>(false);
-
-  //     const [key, value] = [Object.keys(row.original)[0], row.original.id];
-
-  //     return (
-  //       <TableActions setOpenDelete={setDel} setOpenEdit={setEdit}>
-  //         <EditActions
-  //           isServerAction={false}
-  //           initialState={undefined}
-  //           open={edit}
-  //           setOpen={setEdit}
-  //           serverAction={updateCategoryAction}
-  //         >
-  //           {() => <EditProduct product={row.original} />}
-  //         </EditActions>
-  //         <DeleteActions
-  //           name={key}
-  //           value={value}
-  //           open={del}
-  //           setOpen={setDel}
-  //           serverAction={deleteProductAction}
-  //         />
-  //       </TableActions>
-  //     );
-  //   },
-  // },
+  {
+    id: "actions",
+    enableHiding: false,
+    header: () => <div className="text-center">Ver factura</div>,
+    cell: ({ row }) => <PreviewReceipt order={row.original} />,
+  },
 ];
 
 interface SalesTableProps {
-  data: Sales;
+  data: SalesWithItems;
 }
 
 export const SalesTable: FC<SalesTableProps> = ({ data }) => {
@@ -182,25 +166,17 @@ export const SalesTable: FC<SalesTableProps> = ({ data }) => {
   });
 
   return (
-    <div className="w-full">
+    <div className="mx-auto w-full lg:max-w-2xl xl:max-w-4xl 2xl:max-w-full">
       <div className="flex items-center gap-4 py-4">
         <Input
-          placeholder="Filtrar venta por nombre..."
-          value={
-            (table.getColumn("buyerName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("buyerName")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filtrar ventas por nombre..."
+          value={(table.getColumn("buyerName")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("buyerName")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="ml-auto"
-              rightIcon={<ChevronDown size={16} />}
-            >
+            <Button variant="outline" className="ml-auto" rightIcon={<ChevronDown size={16} />}>
               Columnas
             </Button>
           </DropdownMenuTrigger>
@@ -229,9 +205,7 @@ export const SalesTable: FC<SalesTableProps> = ({ data }) => {
               <TableRow key={id}>
                 {headers.map(({ id, isPlaceholder, column, getContext }) => (
                   <TableHead key={id} className="text-center">
-                    {isPlaceholder
-                      ? null
-                      : flexRender(column.columnDef.header, getContext())}
+                    {isPlaceholder ? null : flexRender(column.columnDef.header, getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -240,26 +214,17 @@ export const SalesTable: FC<SalesTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sin resultados
                 </TableCell>
               </TableRow>

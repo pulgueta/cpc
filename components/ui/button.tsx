@@ -7,6 +7,7 @@ import { cva } from "class-variance-authority";
 import { Loader2Icon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -64,6 +65,8 @@ export interface ButtonProps
   loading?: boolean;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
+  tooltip?: boolean;
+  tooltipContent?: ReactNode;
 }
 
 export type ButtonIconProps = IconProps | IconRefProps;
@@ -81,13 +84,58 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
       loading = false,
       rightIcon,
       leftIcon,
+      tooltip = false,
+      tooltipContent,
       ...props
     },
     ref,
   ) => {
     const Comp = asChild ? Slot : "button";
 
-    return (
+    return tooltip ? (
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Comp
+              className={cn(buttonVariants({ variant, size, className }))}
+              disabled={loading}
+              aria-disabled={loading}
+              ref={ref}
+              {...props}
+            >
+              {loading ? (
+                <Loader2Icon size={16} className="animate-spin" />
+              ) : (
+                <>
+                  {rightIcon && (
+                    <div className="w-0 translate-x-[100%] pl-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                      {rightIcon}
+                    </div>
+                  )}
+                  {icon && iconPlacement === "left" && (
+                    <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-100 group-hover:pr-2 group-hover:opacity-100">
+                      {icon}
+                    </div>
+                  )}
+
+                  <Slottable>
+                    {leftIcon && <span className="mr-2 inline-block">{leftIcon}</span>}
+                    {children}
+                    {rightIcon && <span className="ml-2 inline-block">{rightIcon}</span>}
+                  </Slottable>
+                  {icon && iconPlacement === "right" && (
+                    <div className="w-0 translate-x-[100%] pl-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+                      {icon}
+                    </div>
+                  )}
+                </>
+              )}
+            </Comp>
+          </TooltipTrigger>
+          <TooltipContent>{tooltip && tooltipContent}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         disabled={loading}

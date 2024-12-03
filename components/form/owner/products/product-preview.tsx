@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Heading, Paragraph } from "@/components/ui/typography";
 import { formatPrice } from "@/lib/utils";
 
-// biome-ignore lint: later
+// biome-ignore lint: will remove later
 interface ProductPreviewProps {
   formValues?: ProductSchema;
 }

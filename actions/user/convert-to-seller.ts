@@ -11,8 +11,6 @@ export const convertToSellerAction = async (_prev: unknown, e: FormData) => {
   const user = await handleAction(converToSellerSchema, e);
 
   if ("error" in user) {
-    console.log({ error: user.error });
-
     return {
       error: user.error,
       defaultValues: user.defaultValues,

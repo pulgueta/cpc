@@ -13,14 +13,19 @@ export const Products = () => {
   const { products } = useSales((state) => state);
 
   const items = products.map((product) => ({
-    name: product.productName,
+    id: product.id,
+    productName: product.productName,
     quantity: product.quantity,
     price: product.productPrice,
   }));
 
   return (
     <div className="space-y-4">
-      <MemoizedPaperReceipt items={items} date={new Date().toLocaleDateString()} />
+      <MemoizedPaperReceipt
+        items={items}
+        invoiceNumber="Al finalizar"
+        date={new Date().toLocaleDateString()}
+      />
 
       {products.map((product) => (
         <MemoizedProduct key={product.id} {...product} />
