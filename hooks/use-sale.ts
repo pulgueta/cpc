@@ -39,13 +39,17 @@ export const useInvoice = () => {
   };
 
   const total = useMemo(
-    () =>
-      products.reduce(
-        (sum, item) => sum + item.quantity * item.productPrice,
-        0
-      ),
-    [products]
+    () => products.reduce((sum, item) => sum + item.quantity * item.productPrice, 0),
+    [products],
   );
 
-  return { quantities, updateQuantity, handleAddToInvoice, total };
+  const priceWithTax = total * 0.19;
+
+  return {
+    quantities,
+    updateQuantity,
+    handleAddToInvoice,
+    total,
+    priceWithTax,
+  };
 };

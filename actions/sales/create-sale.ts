@@ -3,6 +3,7 @@
 import { createSaleSchema } from "@/schemas/sale";
 import { handleAction } from "../handle-action";
 import { createSaleWithProducts } from "@/lib/database/sale";
+import { sendInvoiceEmail } from "@/lib/email";
 
 export const createSaleAction = async (_prev: unknown, e: FormData) => {
   const sale = await handleAction(createSaleSchema, e);
@@ -14,12 +15,15 @@ export const createSaleAction = async (_prev: unknown, e: FormData) => {
     };
   }
 
-  await createSaleWithProducts(sale, JSON.parse(sale.products));
+  const createdSale = await createSaleWithProducts(sale, JSON.parse(sale.products));
 
-  if (sale.buyerEmail) {
-    console.log("Send email to", sale.buyerEmail);
-
-    // send email
+  if (sale.buyerEmail?.length) {
+    await sendInvoiceEmail(
+      sale.buyerEmail,
+      createdSale.buyerName,
+      createdSale.createdAt!,
+      JSON.parse(sale.products),
+    );
   }
 
   return {

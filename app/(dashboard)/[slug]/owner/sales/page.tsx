@@ -1,8 +1,10 @@
+import { Suspense } from "react";
+
 import type { NextPage } from "next";
 import { notFound } from "next/navigation";
 
 import { OwnerHeader } from "@/components/owner-header";
-import { getStoreSales } from "@/lib/database/sale";
+import { getSalesWithItems, getStoreSales } from "@/lib/database/sale";
 import { getStoreBySlug } from "@/lib/database/store";
 import { SalesTable } from "@/components/owner/sales/sales-table";
 
@@ -18,6 +20,7 @@ const Sales: NextPage<Params> = async (props) => {
   if (!store) notFound();
 
   const sales = await getStoreSales(store.id);
+  const salesWithItems = await getSalesWithItems(sales);
 
   return (
     <>
@@ -26,9 +29,11 @@ const Sales: NextPage<Params> = async (props) => {
         description="Aquí podrás visualizar y administrar las ventas de tu tienda."
       />
 
-      <section className="w-full">
-        <SalesTable data={sales} />
-      </section>
+      <article className="w-full md:mx-auto md:max-w-[480px] lg:max-w-full">
+        <Suspense fallback={<></>}>
+          <SalesTable data={salesWithItems} />
+        </Suspense>
+      </article>
     </>
   );
 };

@@ -32,8 +32,8 @@ export const createProductSchema = createInsertSchema(products, {
     .gte(1000, {
       message: "El precio del producto debe ser mayor o igual a $1.000 pesos",
     })
-    .lte(30000000, {
-      message: "El precio del producto debe ser menor o igual a $30'000.000 pesos",
+    .lte(100000000, {
+      message: "El precio del producto debe ser menor o igual a $100'000.000 pesos",
     }),
   productImageUrl: any(),
   stock: coerce

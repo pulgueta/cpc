@@ -14,7 +14,7 @@ interface Params {
 }
 
 const Income: NextPage<Params> = async (props) => {
-  const params = await props.params;
+  const _params = await props.params;
 
   // const _salesGoal = await getStoreSalesGoal(params.slug);
   //   const store = await getStoreBySlug(params.slug);

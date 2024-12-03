@@ -31,15 +31,8 @@ interface CreateProductProps {
   storeId: string | undefined;
 }
 
-export const CreateProduct: FC<CreateProductProps> = ({
-  categories,
-  storeId,
-  storeOwnerId,
-}) => {
-  const [state, formAction, pending] = useActionState(
-    createProductAction,
-    undefined
-  );
+export const CreateProduct: FC<CreateProductProps> = ({ categories, storeId, storeOwnerId }) => {
+  const [state, formAction, pending] = useActionState(createProductAction, undefined);
 
   useEffect(() => {
     if (state?.message) {
@@ -80,10 +73,7 @@ export const CreateProduct: FC<CreateProductProps> = ({
         <div>
           <Label className="flex flex-col gap-2">
             Categoría del producto
-            <Select
-              name="productCategory"
-              defaultValue={state?.defaultValues?.productCategory}
-            >
+            <Select name="productCategory" defaultValue={state?.defaultValues?.productCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona una categoría" />
               </SelectTrigger>
@@ -126,27 +116,12 @@ export const CreateProduct: FC<CreateProductProps> = ({
         <div>
           <Label className="flex flex-col gap-2">
             Imagen del producto
-            <Input
-              type="file"
-              accept="image/*"
-              name="productImageUrl"
-              className="cursor-pointer"
-            />
+            <Input type="file" accept="image/*" name="productImageUrl" className="cursor-pointer" />
           </Label>
         </div>
 
-        <input
-          className="hidden"
-          type="hidden"
-          name="storeId"
-          defaultValue={storeId}
-        />
-        <input
-          className="hidden"
-          type="hidden"
-          name="storeOwnerId"
-          defaultValue={storeOwnerId}
-        />
+        <input className="hidden" type="hidden" name="storeId" defaultValue={storeId} />
+        <input className="hidden" type="hidden" name="storeOwnerId" defaultValue={storeOwnerId} />
 
         <Button loading={pending} className="w-full">
           Crear producto
