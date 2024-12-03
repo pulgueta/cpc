@@ -21,6 +21,9 @@ const OTPEmail: FC<Readonly<OTPEmailProps>> = ({ name = "John Doe", otp = "12345
         continuación para activar el dobble factor de autenticación. No compartas este código con
         nadie.
       </Text>
+      <Text className="text-pretty text-black dark:text-white">
+        Este código es válido por 3 minutos.
+      </Text>
       <Container className="flex items-center justify-center bg-neutral-50 py-4">
         <Text className="text-pretty font-semibold text-black text-xl dark:text-white">{otp}</Text>
       </Container>

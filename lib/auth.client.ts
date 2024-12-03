@@ -5,10 +5,12 @@ import {
   inferAdditionalFields,
   organizationClient,
   twoFactorClient,
+  oneTapClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
 import type { auth } from "./auth";
+import { env } from "@/env/client";
 
 const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_SITE_URL,
@@ -16,7 +18,8 @@ const authClient = createAuthClient({
     passkeyClient(),
     adminClient(),
     organizationClient(),
-    twoFactorClient({ twoFactorPage: "/settings" }),
+    twoFactorClient({ redirect: false, twoFactorPage: "/2fa" }),
+    oneTapClient({ clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }),
     inferAdditionalFields<typeof auth>(),
   ],
   fetchOptions: {
@@ -53,6 +56,9 @@ export const {
   signUp,
   signOut,
   twoFactor,
+  oneTap,
+  getSession,
+  useListOrganizations,
 } = authClient;
 
 export type Session = typeof $Infer.Session;

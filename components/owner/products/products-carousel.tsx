@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,6 +29,8 @@ interface ProductsCarouselProps {
 
 export const ProductsCarousel: FC<ProductsCarouselProps> = ({ products }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const store = usePathname().split("/")[1];
 
   const { handleAddToInvoice, updateQuantity, quantities } = useInvoice();
 
@@ -107,7 +110,7 @@ export const ProductsCarousel: FC<ProductsCarouselProps> = ({ products }) => {
                     No hay productos,{" "}
                     <Link
                       className="hover:underline hover:underline-offset-4"
-                      href="/owner/products"
+                      href={`/${store}/owner/products`}
                     >
                       agregar aquí
                     </Link>

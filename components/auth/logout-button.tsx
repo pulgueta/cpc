@@ -1,35 +1,35 @@
 "use client";
 
 import type { FC } from "react";
+import { useActionState } from "react";
 
-import { useRouter } from "next/navigation";
+import Form from "next/form";
 
 import { LogOutIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useSession, signOut } from "@/lib/auth.client";
+import { logout } from "./action";
 
 interface LogoutButtonProps {
   fullWidth?: boolean;
 }
 
 export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
-  const { push } = useRouter();
-
-  const { isPending } = useSession();
+  const [, formAction, pending] = useActionState(logout, undefined);
 
   return (
-    <Button
-      variant="destructive"
-      loading={isPending}
-      leftIcon={<LogOutIcon size={16} />}
-      onClick={() => signOut({ fetchOptions: { onSuccess: () => push("/login") } })}
-      className={cn({
-        "w-full": fullWidth,
-      })}
-    >
-      Cerrar sesión
-    </Button>
+    <Form action={formAction}>
+      <Button
+        variant="destructive"
+        loading={pending}
+        leftIcon={<LogOutIcon size={16} />}
+        className={cn({
+          "w-full": fullWidth,
+        })}
+      >
+        Cerrar sesión
+      </Button>
+    </Form>
   );
 };

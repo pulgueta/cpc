@@ -12,7 +12,6 @@ import {
   useSession,
 } from "@/lib/auth.client";
 import { urlToRedirect } from "@/constants/routes";
-import type { User } from "@/db/schemas/user";
 import { env } from "@/env/client";
 
 export const useAuth = () => {
@@ -26,10 +25,11 @@ export const useAuth = () => {
     const [{ data, error }] = await Promise.all([
       await signIn.social({
         provider: "google",
-        callbackURL: urlToRedirect(role),
+        callbackURL: urlToRedirect(role ?? ""),
       }),
       await linkSocial({
         provider: "google",
+        callbackURL: urlToRedirect(role ?? ""),
       }),
     ]);
 
@@ -92,17 +92,18 @@ export const useAuth = () => {
       {
         email,
         password,
-        callbackURL: urlToRedirect(role, env.NEXT_PUBLIC_SITE_URL),
+        callbackURL: urlToRedirect(role ?? "", env.NEXT_PUBLIC_SITE_URL),
         rememberMe: remember,
       },
       {
-        onSuccess: async (ctx) => {
-          console.log({ ctx: ctx.data });
-        },
         onError: (ctx) => {
           switch (ctx.error.status) {
             case 404:
               toast.error("No se encontró una cuenta con ese correo electrónico");
+              break;
+
+            case 403:
+              toast.error("Debes verificar tu correo electrónico para poder iniciar sesión");
               break;
 
             case 401:
@@ -131,19 +132,18 @@ export const useAuth = () => {
     name: string;
     roleToCreate: "storeOwner" | "user";
   }) => {
-    const base64 = btoa(email);
-
     await signUp.email(
       {
         email,
         password,
         name,
         role: roleToCreate,
-        callbackURL: `/settings?q=${base64}`,
+        callbackURL: "/login",
       },
       {
         onSuccess: () => {
           toast.success("Cuenta creada exitosamente");
+          push("/login");
         },
         onError: (ctx) => {
           if (ctx.error.status === 422) {

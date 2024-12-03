@@ -69,11 +69,11 @@ export const EditActions: FC<ActionsProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-full max-w-sm rounded md:max-w-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
         </AlertDialogHeader>
-        <ScrollArea className="max-h-[640px] min-h-full w-full">
+        <ScrollArea className="max-h-[600px] min-h-full w-full overflow-y-scroll">
           {isServerAction ? (
             <Form action={action} className="space-y-4">
               {children(isPending)}

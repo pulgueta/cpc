@@ -1,8 +1,9 @@
+"use client";
+
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 import Link from "next/link";
 
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { LucideProps } from "lucide-react";
 import { ChevronRight, DollarSign, Store } from "lucide-react";
 
@@ -20,6 +21,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ThemeSwitcher } from "@/components/theme-switch";
+import { StoresDropdown } from "@/components/owner/stores-dropdown";
+import { usePathname } from "next/navigation";
 
 interface Nav {
   title: string;
@@ -48,6 +51,10 @@ const data = {
           title: "Crear venta",
           url: "/owner/sales/create",
         },
+        {
+          title: "Ingresos",
+          url: "/owner/sales/income",
+        },
       ],
     },
     {
@@ -69,17 +76,21 @@ const data = {
 };
 
 export const StoreOwnerSidebar = () => {
+  const currentStore = usePathname().split("/")[1];
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <StoresDropdown />
+
             {data.navMain.map((item) => (
               <Collapsible
                 key={item.title}
                 asChild
                 defaultOpen={item.isActive}
-                className="group/collapsible"
+                className="group/collapsible mt-2"
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -94,7 +105,7 @@ export const StoreOwnerSidebar = () => {
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <Link href={`${subItem.url}`}>
+                            <Link href={`/${currentStore}${subItem.url}`}>
                               <span>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
@@ -105,7 +116,7 @@ export const StoreOwnerSidebar = () => {
                 </SidebarMenuItem>
               </Collapsible>
             ))}
-            <div className="mt-4">
+            <div>
               <ThemeSwitcher />
             </div>
           </SidebarMenu>

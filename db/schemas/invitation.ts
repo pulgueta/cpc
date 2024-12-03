@@ -16,6 +16,8 @@ export const invitation = pgTable("invitation", {
   inviterId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
 
 export type NewInvitation = InferInsertModel<typeof invitation>;

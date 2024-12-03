@@ -12,8 +12,8 @@ export const member = pgTable("member", {
   userId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  email: text().notNull(),
-  role: text().notNull(),
+  email: text(),
+  role: text(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });

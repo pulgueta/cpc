@@ -1,18 +1,12 @@
 "use client";
 
 import type { FC } from "react";
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Form from "next/form";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { Form, FormComponent } from "@/components/ui/form";
-import type { ProductSchema } from "@/schemas/product";
-import { updateProductSchema } from "@/schemas/product";
 import {
   Select,
   SelectContent,
@@ -23,175 +17,112 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Dropzone } from "./dropzone";
-import { useSession } from "@/lib/auth.client";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Paragraph } from "@/components/ui/typography";
-import { useFormDropzone } from "./use-dropzone";
 import type { Product } from "@/constants/db-types";
 import { useCategories } from "@/hooks/use-categories";
+import { createProductAction } from "@/actions/product/create-product";
+import { Label } from "@/components/ui/label";
+import { FormErros } from "../../form-alert-errors";
+import { NoCategories } from "../categories/no-categories";
 
 interface EditProductProps {
   product: Product;
 }
 
 export const EditProduct: FC<EditProductProps> = ({ product }) => {
+  const [state, formAction, pending] = useActionState(createProductAction, undefined);
+
   const { data: categories } = useCategories();
 
-  if (categories?.length === 0) {
-    return (
-      <div className="flex w-full items-center justify-center py-4">
-        <Paragraph>Debes crear al menos una categoría para poder crear productos</Paragraph>
-      </div>
-    );
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state.message);
+    }
+  }, [state]);
+
+  if (!product.category) {
+    return <NoCategories />;
   }
 
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-  const { refresh } = useRouter();
-
-  const form = useForm<ProductSchema>({
-    resolver: zodResolver(updateProductSchema),
-    defaultValues: {
-      productDescription: product.productDescription,
-      productImageUrl: product.productImageUrl,
-      productName: product.productName,
-      productPrice: product.productPrice,
-      stock: product.stock,
-      productCategory: product.productCategory,
-    },
-  });
-
-  const owner = useSession();
-
-  const { getInputProps, getRootProps } = useFormDropzone({ form, owner });
-
-  const onSubmit = form.handleSubmit(async (data) => {
-    const req = await fetch("/api/owner/products", {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-
-    const { message } = await req.json();
-
-    if (!req.ok) {
-      return toast.error(message);
-    }
-
-    setIsSuccess(true);
-
-    form.reset();
-
-    refresh();
-
-    return toast.success(message);
-  });
-
   return (
-    <Form {...form}>
-      <form onSubmit={onSubmit} className="flex w-full flex-col gap-12">
-        <div className="grid w-full grid-cols-1 gap-4">
-          <div className="grid w-full grid-cols-1 gap-4">
+    <Form action={formAction} className="flex w-full flex-col gap-4">
+      <div>
+        <Label className="flex flex-col gap-2">
+          Nombre del producto
+          <Input
+            placeholder="Audífonos Alta Calidad MX20"
+            name="productName"
+            defaultValue={state?.defaultValues?.productName}
+          />
+        </Label>
+      </div>
+      <div>
+        <Label className="flex flex-col gap-2">
+          Descripción del producto
+          <Textarea
+            placeholder="Lo mejor en tecnología al alcance de tu mano"
+            name="productDescription"
+            defaultValue={state?.defaultValues?.productDescription ?? ""}
+          />
+        </Label>
+      </div>
+      <div>
+        <Label className="flex flex-col gap-2">
+          Categoría del producto
+          <Select name="productCategory" defaultValue={state?.defaultValues?.productCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecciona una categoría" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories?.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.categoryName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Label>
+      </div>
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
+        <div>
+          <Label className="flex flex-col gap-2">
+            Precio del producto
             <Input
-              className="hidden"
-              {...form.register("storeOwnerId")}
-              defaultValue={owner.data?.user.id}
-              hidden
+              placeholder="150000"
+              type="number"
+              defaultValue={state?.defaultValues?.productPrice}
+              name="productPrice"
             />
-            <FormComponent
-              label="Nombre del producto"
-              name="productName"
-              render={({ field }) => <Input placeholder="Audífonos Alta Calidad MX20" {...field} />}
-            />
-
-            <FormComponent
-              label="Descripción del producto"
-              name="productDescription"
-              render={({ field }) => (
-                <Textarea
-                  placeholder="Lo mejor en tecnología al alcance de tu mano"
-                  className="min-h-32"
-                  {...field}
-                />
-              )}
-            />
-            <div className="grid grid-cols-1 gap-4">
-              <FormComponent
-                label="Categoría del producto"
-                name="productCategory"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue="">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona una categoría" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {categories?.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.categoryName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <FormComponent
-                  label="Precio del producto"
-                  name="productPrice"
-                  render={({ field }) => <Input placeholder="150000" type="number" {...field} />}
-                />
-                <FormComponent
-                  label="Disponibilidad del producto"
-                  name="stock"
-                  render={({ field }) => <Input placeholder="40" type="number" {...field} />}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center justify-start gap-4">
-            <div className="w-full lg:max-w-md">
-              <FormComponent
-                label="Imagen del producto"
-                name="productImageUrl"
-                render={({ field }) => (
-                  <Input
-                    placeholder="https://some-cdn.s3.us-east-2.amazonaws.com/uploads/product.jpg"
-                    disabled
-                    {...field}
-                  />
-                )}
-              />
-
-              <Dropzone
-                getInputProps={getInputProps}
-                getRootProps={getRootProps}
-                isPending={form.formState.isSubmitting}
-                isSuccess={isSuccess}
-              />
-            </div>
-            <div className="space-y-2">
-              <Paragraph muted>Previsualización de la imagen</Paragraph>
-              {form.watch("productImageUrl") ? (
-                <Image
-                  src={form.getValues("productImageUrl")}
-                  alt={form.getValues("productName")}
-                  width={600}
-                  height={600}
-                  className="aspect-square h-full w-full max-w-64 rounded object-cover shadow"
-                />
-              ) : (
-                <Skeleton className="aspect-square h-full w-full max-w-64 rounded object-cover shadow" />
-              )}
-            </div>
-          </div>
+          </Label>
         </div>
+        <div>
+          <Label className="flex flex-col gap-2">
+            Disponibilidad
+            <Input
+              placeholder="40"
+              type="number"
+              defaultValue={state?.defaultValues?.stock}
+              name="stock"
+            />
+          </Label>
+        </div>
+      </div>
+      <div>
+        <Label className="flex flex-col gap-2">
+          Imagen del producto
+          <Input type="file" accept="image/*" name="productImageUrl" className="cursor-pointer" />
+        </Label>
+      </div>
 
-        <Button loading={form.formState.isSubmitting} className="w-full">
-          Actualizar producto
-        </Button>
-      </form>
+      <input className="hidden" type="hidden" name="storeId" defaultValue={""} />
+      <input className="hidden" type="hidden" name="storeOwnerId" defaultValue={""} />
+
+      <Button loading={pending} className="w-full">
+        Editar producto
+      </Button>
+
+      <div>
+        <FormErros error={state?.error} />
+      </div>
     </Form>
   );
 };

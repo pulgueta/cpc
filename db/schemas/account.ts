@@ -8,14 +8,17 @@ export const account = pgTable("account", {
   accountId: text().notNull(),
   providerId: text().notNull(),
   userId: text()
-    .unique()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text(),
   refreshToken: text(),
   idToken: text(),
-  expiresAt: timestamp(),
+  accessTokenExpiresAt: timestamp(),
+  refreshTokenExpiresAt: timestamp(),
+  scope: text(),
   password: text(),
+  createdAt: timestamp().notNull(),
+  updatedAt: timestamp().notNull(),
 });
 
 export type NewAccount = InferInsertModel<typeof account>;

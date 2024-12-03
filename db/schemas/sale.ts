@@ -1,48 +1,70 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { timestamp, pgTable, text, integer } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
+import { stores } from "./store";
 import { products } from "./product";
+import { user } from "./user";
+import { getRandomValues } from "@/lib/crypto/random-vals";
 
-export const sales = pgTable("sale", {
+export const sale = pgTable("sale", {
   id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
+  storeId: text()
+    .notNull()
+    .references(() => stores.id, { onDelete: "cascade" }),
+  ownerId: text()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   documentType: text({ enum: ["CC", "TI", "CE", "NIT"] }).notNull(),
   document: text().notNull(),
   buyerEmail: text(),
   buyerName: text().notNull(),
   buyerPhone: text().notNull(),
+  total: integer().notNull(),
+  invoiceNumber: text()
+    .unique()
+    .$defaultFn(() => getRandomValues(8)),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
 
-export const saleProducts = pgTable("sale_product", {
+export const saleItem = pgTable("saleItem", {
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => createId()),
   saleId: text()
     .notNull()
-    .references(() => sales.id, { onDelete: "cascade" }),
+    .references(() => sale.id, { onDelete: "cascade" }),
   productId: text()
     .notNull()
     .references(() => products.id, { onDelete: "cascade" }),
   quantity: integer().notNull(),
+  price: integer().notNull(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });
 
-export const saleRelations = relations(sales, ({ many }) => ({
-  products: many(saleProducts),
+export const saleRelations = relations(sale, ({ many }) => ({
+  saleItems: many(saleItem),
 }));
 
-export const saleProductRelations = relations(saleProducts, ({ one }) => ({
-  sale: one(sales, {
-    fields: [saleProducts.saleId],
-    references: [sales.id],
+export const saleItemRelations = relations(saleItem, ({ one }) => ({
+  sale: one(sale, {
+    fields: [saleItem.saleId],
+    references: [sale.id],
   }),
-  product: one(products, {
-    fields: [saleProducts.productId],
+  products: one(products, {
+    fields: [saleItem.productId],
     references: [products.id],
   }),
 }));
 
-export type NewSale = InferInsertModel<typeof sales>;
-export type Sale = InferSelectModel<typeof sales>;
+export type NewSaleItem = InferInsertModel<typeof saleItem>;
+export type SaleItem = InferSelectModel<typeof saleItem>;
+
+export type NewSale = InferInsertModel<typeof sale>;
+export type Sale = InferSelectModel<typeof sale>;

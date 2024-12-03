@@ -5,9 +5,15 @@ import { Heading, Paragraph } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
 import { getProducts } from "@/lib/database/product";
 import { OwnerHeader } from "@/components/owner-header";
+import { getStoreByOrgId } from "@/lib/database/store";
 
 const CreateSale = async () => {
   const owner = await getCurrentSession();
+
+  const storeId = await getStoreByOrgId(
+    // @ts-ignore
+    owner?.session.activeOrganizationId ?? "",
+  );
 
   const products = await getProducts(owner?.user.id ?? "");
 
@@ -20,7 +26,7 @@ const CreateSale = async () => {
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded border p-4">
-          <CreateSales products={products} />
+          <CreateSales products={products} storeId={storeId?.id} storeOwnerId={owner?.user.id} />
         </div>
         <article className="rounded border bg-primary-foreground p-4">
           <Heading as="h3">Factura de venta</Heading>
@@ -28,7 +34,7 @@ const CreateSale = async () => {
             Aquí podrás ver todas las ventas realizadas en tu tienda.
           </Paragraph>
           <Products />
-          <Separator className="my-4" />
+          <Separator className="mt-8 mb-4" />
         </article>
       </section>
     </>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
 import { useStore } from "zustand";
 
@@ -19,7 +19,7 @@ export const useSales = <const T>(selector: (state: Sale) => T) => {
 export const useInvoice = () => {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
 
-  const { addProduct } = useSales((state) => state);
+  const { addProduct, products } = useSales((state) => state);
 
   const updateQuantity = (productId: string, delta: number) => {
     setQuantities((prev) => ({
@@ -30,11 +30,26 @@ export const useInvoice = () => {
 
   const handleAddToInvoice = (product: Product) => {
     const quantity = quantities[product.id] || 0;
+
     for (let i = 0; i < quantity; i++) {
       addProduct(product);
     }
+
     setQuantities((prev) => ({ ...prev, [product.id]: 0 }));
   };
 
-  return { quantities, updateQuantity, handleAddToInvoice };
+  const total = useMemo(
+    () => products.reduce((sum, item) => sum + item.quantity * item.productPrice, 0),
+    [products],
+  );
+
+  const priceWithTax = total * 0.19;
+
+  return {
+    quantities,
+    updateQuantity,
+    handleAddToInvoice,
+    total,
+    priceWithTax,
+  };
 };
