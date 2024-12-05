@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { next } from "@million/lint";
+
 import { env } from "@/env/server";
 import { env as client } from "@/env/client";
 
@@ -48,4 +50,4 @@ const nextConfig = {
   },
 } satisfies NextConfig;
 
-export default nextConfig;
+export default next({ rsc: true })(nextConfig);
