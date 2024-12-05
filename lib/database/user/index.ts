@@ -10,11 +10,7 @@ import { member } from "@/db/schemas/member";
 import { auth } from "@/lib/auth";
 import { cache } from "@/lib/cache";
 import { getCurrentSession } from "@/lib/auth/session";
-import type {
-  ConvertToSellerSchema,
-  LoginSchema,
-  RegisterSchema,
-} from "@/schemas/user";
+import type { ConvertToSellerSchema, LoginSchema, RegisterSchema } from "@/schemas/user";
 import { urlToRedirect } from "@/constants/routes";
 
 export const registerUser = async (data: RegisterSchema) => {
@@ -64,8 +60,7 @@ export const signInUser = async (data: LoginSchema) => {
 
     case 403:
       return {
-        error:
-          "Debes verificar tu correo electrónico para poder iniciar sesión",
+        error: "Debes verificar tu correo electrónico para poder iniciar sesión",
         defaultValues: data,
       };
 
@@ -83,10 +78,7 @@ export const signInUser = async (data: LoginSchema) => {
   }
 };
 
-export const getUserByEmail = async (
-  email: NewUser["email"],
-  getCached: boolean = false
-) => {
+export const getUserByEmail = async (email: NewUser["email"], getCached: boolean = false) => {
   const cached = await cache.get<User>(email);
 
   if (cached && getCached) {
@@ -104,10 +96,7 @@ export const getUserByEmail = async (
   return user;
 };
 
-export const getUserById = async (
-  id: User["id"],
-  getCached: boolean = false
-) => {
+export const getUserById = async (id: User["id"], getCached: boolean = false) => {
   const cached = await cache.get<User>(id);
 
   if (cached && getCached) {

@@ -15,10 +15,7 @@ import { FormErros } from "../form-alert-errors";
 
 export const RegisterForm = () => {
   const [show, setShow] = useState<boolean>(false);
-  const [state, formAction, isPending] = useActionState(
-    registerAction,
-    undefined
-  );
+  const [state, formAction, isPending] = useActionState(registerAction, undefined);
   const [name, email, password] = [useId(), useId(), useId()];
 
   return (
