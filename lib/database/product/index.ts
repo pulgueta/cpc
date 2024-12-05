@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import type { NewProduct, Product } from "@/db/schemas/product";
 import { products } from "@/db/schemas/product";
 import { db } from "@/db/config";
+import { base64Img } from "@/lib/base64-image";
 
 export const createProduct = async (data: NewProduct) => {
   const [product] = await db.insert(products).values(data).returning();
@@ -54,18 +55,16 @@ export const getProducts = cache(
       where: (t, { eq }) => eq(t.storeOwnerId, storeOwnerId),
       with: {
         category: true,
-        // storeOwner: {
-        //   columns: {
-        //     id: true,
-        //   },
-        // },
       },
       limit: pageSize,
       offset: (page - 1) * pageSize,
       orderBy: (t, { asc }) => [asc(t.createdAt)],
     });
 
-    return products;
+    return products.map(async (product) => ({
+      ...product,
+      productImageUrl: await base64Img(product.productImageUrl),
+    }));
   },
   ["products"],
   { revalidate: 3600, tags: ["products"] },
