@@ -1,18 +1,13 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useActionState, useEffect, useId, useState } from "react";
 
+import Form from "next/form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
 import { toast } from "sonner";
+import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
 
-import type { LoginSchema } from "@/schemas/user";
-import { loginSchema } from "@/schemas/user";
-import { Form, FormComponent } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -21,138 +16,113 @@ import { CREATE_USER } from "@/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/user/useAuth";
-import type { Role } from "@/constants/routes";
-import { urlToRedirect } from "@/constants/routes";
+import { loginAction } from "@/actions/user/login";
+import { FormErros } from "../form-alert-errors";
+import { googleLoginAction } from "@/actions/user/oauth-login";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
+  const [state, formAction, isPending] = useActionState(loginAction, undefined);
+  const [, googleLogin, googlePending] = useActionState(googleLoginAction, undefined);
 
-  const rememberId = useId();
+  const [email, password, remember] = [useId(), useId(), useId()];
 
-  const { push } = useRouter();
+  const { onPasskeyLogin } = useAuth();
 
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      remember: false,
-    },
-  });
-
-  const { onEmailLogin, onGoogleLogin, onPasskeyLogin } = useAuth();
-
-  const onSubmit = form.handleSubmit(async ({ email, password, remember }) => {
-    const { data, error } = await onEmailLogin({
-      email,
-      password: password ?? "",
-      remember,
-    });
-
-    if (error) {
-      return;
+  useEffect(() => {
+    if (state?.error) {
+      toast.error(state.error);
     }
-
-    toast.success(`¡Bienvenido de vuelta, ${data?.user.name}!`);
-    push(urlToRedirect(data?.user.role as Role));
-  });
+  }, [state]);
 
   return (
     <>
-      <Form {...form}>
-        <section className="space-y-4">
-          <form className="space-y-4" onSubmit={onSubmit}>
-            <FormComponent
-              name="email"
-              label="Correo"
-              render={({ field }) => (
-                <Input
-                  type="email"
-                  autoComplete="email"
-                  autoFocus
-                  aria-disabled={form.formState.isSubmitting}
-                  placeholder="correo@miempresa.com"
-                  className="shadow"
-                  minLength={CREATE_USER.email.minLength.value}
-                  maxLength={CREATE_USER.email.maxLength.value}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormComponent
-              name="password"
-              label="Contraseña"
-              render={({ field }) => (
-                <div className="relative w-full">
-                  <Input
-                    type={show ? "text" : "password"}
-                    autoComplete="current-password"
-                    aria-disabled={form.formState.isSubmitting}
-                    placeholder="********"
-                    className="shadow"
-                    minLength={CREATE_USER.password.minLength.value}
-                    maxLength={CREATE_USER.password.maxLength.value}
-                    {...field}
-                  />
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    type="button"
-                    className="absolute top-1 right-1"
-                    aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
-                    onClick={() => setShow(!show)}
-                  >
-                    {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-                  </Button>
-                </div>
-              )}
-            />
-
-            <Button className="w-full" loading={form.formState.isSubmitting}>
-              Ingresar
-            </Button>
-          </form>
-
-          <FormComponent
-            name="remember"
-            render={({ field }) => (
-              <div className="flex items-center gap-x-2">
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} id={rememberId} />
-                <Label htmlFor={rememberId} id={rememberId} className="text-muted-foreground">
-                  Recordarme
-                </Label>
-              </div>
-            )}
+      <Form action={formAction} className="space-y-4">
+        <div className="space-y-1">
+          <Label htmlFor={email}>Correo electrónico</Label>
+          <Input
+            type="email"
+            autoComplete="email"
+            name="email"
+            aria-disabled={isPending}
+            id={email}
+            placeholder="correo@miempresa.com"
+            className="shadow"
+            defaultValue={state?.defaultValues?.email}
           />
+        </div>
 
-          <div className="relative py-2 pb-4">
-            <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
-              O inicia sesión con:
-            </span>
-            <Separator />
+        <div className="space-y-1">
+          <Label htmlFor={password}>Contraseña</Label>
+          <div className="relative w-full">
+            <Input
+              type={show ? "text" : "password"}
+              autoComplete="current-password"
+              name="password"
+              aria-disabled={isPending}
+              placeholder="********"
+              className="shadow"
+              minLength={CREATE_USER.password.minLength.value}
+              maxLength={CREATE_USER.password.maxLength.value}
+            />
+            <Button
+              size="icon"
+              variant="ghost"
+              type="button"
+              className="absolute top-1 right-1"
+              aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
+              onClick={() => setShow(!show)}
+            >
+              {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+            </Button>
           </div>
+        </div>
 
-          <section className="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <Button
-              aria-label="Iniciar sesión con Google"
-              variant="outline"
-              onClick={onGoogleLogin}
-            >
-              <GoogleIcon className="mr-2 size-[18px]" />
-              Google
-            </Button>
-            <Button
-              aria-label="Iniciar sesión con Google"
-              variant="outline"
-              onClick={onPasskeyLogin}
-            >
-              <FingerprintIcon className="mr-2" size={16} />
-              Biometría
-            </Button>
-          </section>
-        </section>
+        <div className="flex items-center gap-x-2">
+          <Checkbox name="remember" id={remember} />
+          <Label htmlFor={remember} id={remember} className="text-muted-foreground">
+            Recordarme
+          </Label>
+        </div>
+
+        <Button className="w-full" loading={isPending}>
+          Ingresar
+        </Button>
       </Form>
+
+      <FormErros error={state?.error} />
+
+      <div className="relative my-4 py-4">
+        <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
+          O inicia sesión con:
+        </span>
+        <Separator />
+      </div>
+
+      <section className="grid grid-cols-1 gap-2 md:grid-cols-2">
+        <Form action={googleLogin}>
+          <Button
+            aria-label="Iniciar sesión con Google"
+            variant="outline"
+            disabled={isPending || googlePending}
+            className="w-full"
+          >
+            <GoogleIcon className="mr-2 size-[18px]" />
+            Google
+          </Button>
+        </Form>
+
+        <Button
+          aria-label="Iniciar sesión con Google"
+          variant="outline"
+          onClick={onPasskeyLogin}
+          disabled={isPending}
+          className="w-full"
+        >
+          <FingerprintIcon className="mr-2" size={16} />
+          Biometría
+        </Button>
+      </section>
 
       <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿No tienes cuenta?{" "}

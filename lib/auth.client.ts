@@ -29,7 +29,7 @@ const authClient = createAuthClient({
           const retry = ctx.response.headers.get("X-Retry-After");
 
           toast.info(
-            `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`
+            `Has excedido el límite de peticiones. Intenta nuevamente en ${retry} segundos.`,
           );
           break;
 
@@ -63,3 +63,4 @@ export const {
 
 export type Session = typeof $Infer.Session;
 export type Passkey = typeof $Infer.Passkey;
+export type Organization = typeof $Infer.Organization;

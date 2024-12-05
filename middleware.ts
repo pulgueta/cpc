@@ -13,8 +13,7 @@ const ADMIN_URL_PREFIX = "/admin" as const;
 const USER_URL_PREFIX = "/dashboard" as const;
 const SELLER_URL_PREFIX = "/settings/seller" as const;
 
-const isAuthRoute = (pathname: string) =>
-  authRoutes.some((route) => pathname.startsWith(route));
+const isAuthRoute = (pathname: string) => authRoutes.some((route) => pathname.startsWith(route));
 
 const isProtectedRoute = (pathname: string) =>
   pathname.match(OWNER_URL_PREFIX) ||
@@ -31,15 +30,12 @@ export default async function middleware(request: NextRequest) {
   headers.set(appHeaderKeys.ip, ip);
   headers.set(appHeaderKeys.geo, JSON.stringify(geo));
 
-  const { data: session } = await betterFetch<Session>(
-    "/api/auth/get-session",
-    {
-      baseURL: request.nextUrl.origin,
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-      },
-    }
-  );
+  const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
+    baseURL: request.nextUrl.origin,
+    headers: {
+      cookie: request.headers.get("cookie") || "",
+    },
+  });
 
   const pathname = request.nextUrl.pathname;
 
@@ -74,7 +70,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|403|404|500).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|403|404|500).*)"],
 };

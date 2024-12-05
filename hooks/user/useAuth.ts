@@ -1,48 +1,8 @@
-import { useRouter } from "next/navigation";
-
 import { toast } from "sonner";
 
-import {
-  passkey,
-  signIn,
-  signUp,
-  forgetPassword,
-  resetPassword,
-  linkSocial,
-  useSession,
-} from "@/lib/auth.client";
-import { urlToRedirect } from "@/constants/routes";
-import { env } from "@/env/client";
+import { passkey, signIn, forgetPassword, resetPassword } from "@/lib/auth.client";
 
 export const useAuth = () => {
-  const { push } = useRouter();
-
-  const { data, isPending } = useSession();
-
-  const role = isPending ? "user" : data?.user?.role;
-
-  const onGoogleLogin = async () => {
-    const [{ data, error }] = await Promise.all([
-      await signIn.social({
-        provider: "google",
-        callbackURL: urlToRedirect(role ?? ""),
-      }),
-      await linkSocial({
-        provider: "google",
-        callbackURL: urlToRedirect(role ?? ""),
-      }),
-    ]);
-
-    if (error) {
-      return toast.error(error.message);
-    }
-
-    if (data.redirect) {
-      toast.info("Redirigiendo...");
-      return push(data.url);
-    }
-  };
-
   const onPasskeyLogin = async () => {
     const data = await signIn.passkey();
 
@@ -79,86 +39,8 @@ export const useAuth = () => {
     return data;
   };
 
-  const onEmailLogin = async ({
-    email,
-    password,
-    remember,
-  }: {
-    email: string;
-    password: string;
-    remember: boolean;
-  }) => {
-    const data = await signIn.email(
-      {
-        email,
-        password,
-        callbackURL: urlToRedirect(role ?? "", env.NEXT_PUBLIC_SITE_URL),
-        rememberMe: remember,
-      },
-      {
-        onError: (ctx) => {
-          switch (ctx.error.status) {
-            case 404:
-              toast.error("No se encontró una cuenta con ese correo electrónico");
-              break;
-
-            case 403:
-              toast.error("Debes verificar tu correo electrónico para poder iniciar sesión");
-              break;
-
-            case 401:
-              toast.error("Credenciales incorrectas");
-              break;
-
-            case 500:
-              toast.error("Ha ocurrido un error. Por favor, intenta nuevamente más tarde.");
-              break;
-          }
-        },
-      },
-    );
-
-    return data;
-  };
-
-  const onRegister = async ({
-    email,
-    password,
-    roleToCreate,
-    name,
-  }: {
-    email: string;
-    password: string;
-    name: string;
-    roleToCreate: "storeOwner" | "user";
-  }) => {
-    await signUp.email(
-      {
-        email,
-        password,
-        name,
-        role: roleToCreate,
-        callbackURL: "/login",
-      },
-      {
-        onSuccess: () => {
-          toast.success("Cuenta creada exitosamente");
-          push("/login");
-        },
-        onError: (ctx) => {
-          if (ctx.error.status === 422) {
-            toast.error("El correo electrónico ya está en uso");
-          }
-        },
-      },
-    );
-  };
-
   return {
-    onGoogleLogin,
     onPasskeyLogin,
-    onEmailLogin,
-    onRegister,
     onPasskeyRegister,
     onForgetPassword,
     onUpdatePassword,

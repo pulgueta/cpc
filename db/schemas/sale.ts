@@ -25,9 +25,7 @@ export const sale = pgTable("sale", {
   buyerName: text().notNull(),
   buyerPhone: text().notNull(),
   total: integer().notNull(),
-  invoiceNumber: text()
-    .unique()
-    .$defaultFn(() => getRandomValues(8)),
+  invoiceNumber: integer().unique().$defaultFn(getRandomValues),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().$onUpdateFn(() => new Date()),
 });

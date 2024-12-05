@@ -1,3 +1,5 @@
+import { unstable_cache as cache, revalidateTag } from "next/cache";
+
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/config";
@@ -34,49 +36,42 @@ export const createSaleWithProducts = async (
     ]);
   });
 
+  revalidateTag("sales");
+
   return sale;
 };
 
-export const getSalesWithItems = async (sales: Sale[]) => {
-  const salesWithItems = await Promise.all(
-    sales.map(async (sale) => {
-      const saleItems = await db.query.saleItem.findMany({
-        where: (t, { eq }) => eq(t.saleId, sale.id),
-        with: {
-          products: true,
+export const getStoreSales = cache(
+  async (storeId: Sale["storeId"], limit = 1) => {
+    const sales = await db.query.sale.findMany({
+      where: (t, { eq }) => eq(t.storeId, storeId),
+      with: {
+        saleItems: {
+          with: {
+            products: true,
+          },
         },
-      });
+      },
+      limit: limit * 11,
+      orderBy: ({ createdAt }, { asc }) => [asc(createdAt)],
+    });
 
-      return {
-        ...sale,
-        saleItems: saleItems.map((item) => ({
-          quantity: item.quantity,
-          ...item.products,
-        })),
-      };
-    }),
-  );
+    return sales;
+  },
+  ["sales"],
+  { revalidate: 500, tags: ["sales"] },
+);
 
-  return salesWithItems;
-};
+export const getStoreSalesGoal = cache(
+  async (slug: Store["slug"]) => {
+    const owner = await getCurrentSession();
 
-export const getStoreSales = async (storeId: Sale["storeId"], limit = 15, offset = 0) => {
-  const sales = await db.query.sale.findMany({
-    where: (t, { eq }) => eq(t.storeId, storeId),
-    limit,
-    offset,
-    orderBy: ({ createdAt }, { asc }) => [asc(createdAt)],
-  });
+    const currentStore = await db.query.stores.findFirst({
+      where: (t, { eq, and }) => and(eq(t.ownerId, owner?.user.id ?? ""), eq(t.slug, slug)),
+    });
 
-  return sales;
-};
-
-export const getStoreSalesGoal = async (slug: Store["slug"]) => {
-  const owner = await getCurrentSession();
-
-  const currentStore = await db.query.stores.findFirst({
-    where: (t, { eq, and }) => and(eq(t.ownerId, owner?.user.id ?? ""), eq(t.slug, slug)),
-  });
-
-  return currentStore?.salesGoal;
-};
+    return currentStore?.salesGoal;
+  },
+  ["salesGoal"],
+  { revalidate: 7200, tags: ["salesGoal"] },
+);

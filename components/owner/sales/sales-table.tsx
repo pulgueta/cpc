@@ -39,10 +39,10 @@ import {
 import { Paragraph } from "@/components/ui/typography";
 import { TableFooter } from "@/components/table/table-footer";
 import { formatPrice } from "@/lib/utils";
-import type { SalesWithItems } from "@/constants/db-types";
+import type { Sales } from "@/constants/db-types";
 import { PreviewReceipt } from "./preview-receipt";
 
-export type Column = SalesWithItems[number];
+export type Column = Sales[number];
 
 export const columns: ColumnDef<Column>[] = [
   {
@@ -126,7 +126,9 @@ export const columns: ColumnDef<Column>[] = [
         Fecha de compra
       </Button>
     ),
-    cell: ({ row }) => <Paragraph>{row.original.createdAt?.toLocaleDateString()}</Paragraph>,
+    cell: ({ row }) => (
+      <Paragraph>{new Date(row.original.createdAt!).toLocaleDateString()}</Paragraph>
+    ),
   },
   {
     id: "actions",
@@ -137,7 +139,7 @@ export const columns: ColumnDef<Column>[] = [
 ];
 
 interface SalesTableProps {
-  data: SalesWithItems;
+  data: Sales;
 }
 
 export const SalesTable: FC<SalesTableProps> = ({ data }) => {

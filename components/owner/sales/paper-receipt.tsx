@@ -16,7 +16,7 @@ interface ReceiptItem {
 interface ReceiptProps {
   items: ReceiptItem[];
   invoiceNumber: string | undefined;
-  date: string | undefined;
+  date: Date | null;
   customerName?: string | undefined;
   total?: number;
 }
@@ -42,7 +42,7 @@ export const PaperReceipt: FC<ReceiptProps> = ({
           <p className="text-xs">{data?.session.activeOrganizationId}</p>
           <p>--------------------</p>
           <p className="text-xs">Factura: {invoiceNumber}</p>
-          <p className="text-xs">Fecha: {date}</p>
+          <p className="text-xs">Fecha: {new Date(date!).toLocaleDateString()}</p>
           <p className="text-xs">Cliente: {customerName}</p>
         </div>
 

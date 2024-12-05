@@ -1,5 +1,7 @@
 import type { FC } from "react";
 
+import { parseAsInteger, useQueryState } from "nuqs";
+
 import { Button } from "../ui/button";
 
 interface TableFooterProps {
@@ -19,12 +21,16 @@ export const TableFooter: FC<TableFooterProps> = ({
   canPreviousPage,
   canNextPage,
 }) => {
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+
   const handleNextPage = () => {
     nextPage();
+    setPage(page + 1);
   };
 
   const handlePreviousPage = () => {
     previousPage();
+    setPage(page - 1);
   };
 
   return (

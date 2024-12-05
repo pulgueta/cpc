@@ -1,5 +1,5 @@
 import type { TypeOf } from "zod";
-import { boolean, enum as zodEnum, string, number, coerce } from "zod";
+import { enum as zodEnum, string, coerce } from "zod";
 import { createInsertSchema } from "drizzle-zod";
 
 import { user } from "@/db/schemas";
@@ -49,7 +49,7 @@ export const loginSchema = registerSchema
     password: true,
   })
   .extend({
-    remember: boolean().optional().default(false),
+    remember: zodEnum(["on"]).optional(),
   });
 
 export const forgotPasswordSchema = registerSchema.pick({

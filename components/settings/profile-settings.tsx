@@ -1,19 +1,24 @@
 import type { FC } from "react";
 
-import Image from "next/image";
+// import Image from "next/image";
 
-import { Camera } from "lucide-react";
+// import { Camera } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Skeleton } from "@/components/ui/skeleton";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Tooltip,
+//   TooltipContent,
+//   TooltipProvider,
+//   TooltipTrigger,
+// } from "@/components/ui/tooltip";
+// import { Switch } from "@/components/ui/switch";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { Skeleton } from "@/components/ui/skeleton";
 import { Heading, Paragraph } from "@/components/ui/typography";
-import { TwoFADialog } from "@/components/modal/2fa";
 import { isUserSignedWithSocial } from "@/lib/database/user";
+import dynamic from "next/dynamic";
+
+const TwoFADialog = dynamic(() => import("@/components/modal/2fa").then((mod) => mod.TwoFADialog));
 
 interface ProfileSettingsProps {
   userInfo: {
@@ -26,13 +31,16 @@ interface ProfileSettingsProps {
   saveDisabled: boolean;
 }
 
-export const ProfileSettings: FC<ProfileSettingsProps> = async ({ userInfo, saveDisabled }) => {
+export const ProfileSettings: FC<ProfileSettingsProps> = async ({
+  userInfo,
+  // saveDisabled,
+}) => {
   const isSocial = await isUserSignedWithSocial();
 
   return (
     <form className="space-y-6">
       <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-        <div className="relative">
+        {/* <div className="relative">
           {userInfo.imageSrc && userInfo.name ? (
             <Image
               src={userInfo.imageSrc}
@@ -61,48 +69,51 @@ export const ProfileSettings: FC<ProfileSettingsProps> = async ({ userInfo, save
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <input id="profile-upload" type="file" accept="image/*" className="hidden" />
-        </div>
+          <input
+            id="profile-upload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+          />
+        </div> */}
         <div className="text-center sm:text-left">
-          <Paragraph variant="body" weight="bold">
-            Correo electrónico
-          </Paragraph>
+          <Paragraph variant="body">{userInfo.name}</Paragraph>
           <Paragraph>{userInfo.email}</Paragraph>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="name">Nombre</Label>
-        <Input id="name" placeholder={userInfo.name} disabled={isSocial} />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="email">Correo electrónico</Label>
-        <Input id="email" type="email" placeholder={userInfo.email} disabled={isSocial} />
-      </div>
-
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Label>Documento de identidad</Label>
-        <RadioGroup defaultValue="CC" name="documentType" className="my-1 flex gap-4" required>
+        <RadioGroup
+          defaultValue="CC"
+          name="documentType"
+          className="my-1 flex gap-4"
+          required
+        >
           {["CC", "CE", "TI", "NIT"].map((document) => (
-            <div className="flex flex-row items-center space-x-2" key={document}>
+            <div
+              className="flex flex-row items-center space-x-2"
+              key={document}
+            >
               <RadioGroupItem value={document} id={document} />
               <Label htmlFor={document}>{document}</Label>
             </div>
           ))}
         </RadioGroup>
         <Input placeholder="647281291" type="number" name="document" required />
-      </div>
+      </div> */}
 
       <div className="space-y-4">
         <Heading as="h3">Configuración de cuenta</Heading>
-        <div className="flex items-center justify-between">
-          <Label htmlFor="email-notifications">Recibir notificaciones por correo</Label>
+        {/* <div className="flex items-center justify-between">
+          <Label htmlFor="email-notifications">
+            Recibir notificaciones por correo
+          </Label>
           <Switch id="email-notifications" />
-        </div>
+        </div> */}
         {!isSocial && (
           <div className="flex items-center justify-between">
-            <Label htmlFor="activate2FA">Autenticación de dos factores</Label>
+            <Paragraph>Autenticación de dos factores</Paragraph>
             <TwoFADialog
               is2FAEnabled={userInfo.is2FAEnabled ?? false}
               isEmailVerified={userInfo.isEmailVerified ?? false}
@@ -111,9 +122,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = async ({ userInfo, save
         )}
       </div>
 
-      <Button className="w-full" disabled={saveDisabled}>
+      {/* <Button className="w-full" disabled={saveDisabled}>
         Guardar cambios
-      </Button>
+      </Button> */}
     </form>
   );
 };

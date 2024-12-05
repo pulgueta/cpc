@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/neon-serverless";
 
 import { db } from "@/db/config";
 import type { NewUser, User } from "@/db/schemas/user";
@@ -11,9 +10,83 @@ import { member } from "@/db/schemas/member";
 import { auth } from "@/lib/auth";
 import { cache } from "@/lib/cache";
 import { getCurrentSession } from "@/lib/auth/session";
-import type { ConvertToSellerSchema } from "@/schemas/user";
+import type {
+  ConvertToSellerSchema,
+  LoginSchema,
+  RegisterSchema,
+} from "@/schemas/user";
+import { urlToRedirect } from "@/constants/routes";
 
-export const getUserByEmail = async (email: NewUser["email"], getCached: boolean = false) => {
+export const registerUser = async (data: RegisterSchema) => {
+  const user = await auth.api.signUpEmail({
+    headers: await headers(),
+    body: {
+      email: data.email,
+      password: data.password,
+      name: data.name,
+    },
+    asResponse: true,
+  });
+
+  switch (user.status) {
+    case 422:
+      return {
+        error: "El correo electrónico ya está registrado",
+        defaultValues: data,
+      };
+  }
+
+  return {
+    message: "Usuario registrado con éxito",
+  };
+};
+
+export const signInUser = async (data: LoginSchema) => {
+  const user = await getUserByEmail(data.email);
+
+  const session = await auth.api.signInEmail({
+    headers: await headers(),
+    body: {
+      email: data.email,
+      password: data.password!,
+      rememberMe: data.remember === "on",
+      callbackURL: urlToRedirect(user?.role ?? "/"),
+    },
+    asResponse: true,
+  });
+
+  switch (session.status) {
+    case 404:
+      return {
+        error: "No se encontró una cuenta con ese correo electrónico",
+        defaultValues: data,
+      };
+
+    case 403:
+      return {
+        error:
+          "Debes verificar tu correo electrónico para poder iniciar sesión",
+        defaultValues: data,
+      };
+
+    case 401:
+      return {
+        error: "Credenciales incorrectas",
+        defaultValues: data,
+      };
+
+    case 500:
+      return {
+        error: "Ha ocurrido un error. Por favor, intenta nuevamente más tarde.",
+        defaultValues: data,
+      };
+  }
+};
+
+export const getUserByEmail = async (
+  email: NewUser["email"],
+  getCached: boolean = false
+) => {
   const cached = await cache.get<User>(email);
 
   if (cached && getCached) {
@@ -31,7 +104,10 @@ export const getUserByEmail = async (email: NewUser["email"], getCached: boolean
   return user;
 };
 
-export const getUserById = async (id: User["id"], getCached: boolean = false) => {
+export const getUserById = async (
+  id: User["id"],
+  getCached: boolean = false
+) => {
   const cached = await cache.get<User>(id);
 
   if (cached && getCached) {
@@ -67,7 +143,7 @@ export const isUserSignedWithSocial = async () => {
   const sessionUser = await getCurrentSession();
 
   const user = await db.query.account.findFirst({
-    where: (t, { eq }) => eq(t.id, sessionUser?.user.id ?? ""),
+    where: (t, { eq }) => eq(t.userId, sessionUser?.user.id ?? ""),
   });
 
   return user?.providerId !== "credential";

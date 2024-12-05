@@ -1,83 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import Link from "next/link";
 
-import { usePathname, useRouter } from "next/navigation";
+import { ChevronsUpDown, Plus, Store } from "lucide-react";
 
-import { useListOrganizations } from "@/lib/auth.client";
-import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { useSidebar } from "@/components/ui/sidebar";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import type { Organization } from "@/lib/auth.client";
+import { Skeleton } from "../ui/skeleton";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 
-export const StoresDropdown = () => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
+interface StoresDropdownProps {
+  organizations?: Organization[] | null;
+  isMobile?: boolean;
+}
 
-  const { push } = useRouter();
-  const pathname = usePathname();
+export const StoresDropdown: FC<StoresDropdownProps> = ({ organizations, isMobile }) => {
+  const [activeOrg, setActiveOrg] = useState<Organization | undefined>(organizations?.[0]);
 
-  const currentStore = pathname.split("/")[1];
-
-  const { data: orgz } = useListOrganizations();
-
-  const { state } = useSidebar();
+  useEffect(() => {
+    setActiveOrg(organizations?.[0]);
+  }, [organizations]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn("w-full justify-between", {
-            "text-xs": state === "collapsed",
-          })}
-        >
-          {value
-            ? orgz?.find((org) => org.id === value)?.name
-            : currentStore.charAt(0).toUpperCase() + currentStore.slice(1)}
-          <ChevronsUpDown size={16} className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandInput placeholder="Buscar tienda..." />
-          <CommandList>
-            <CommandEmpty>No se encontraron tiendas.</CommandEmpty>
-            <CommandGroup>
-              {orgz?.map((org) => (
-                <CommandItem
-                  key={org.id}
-                  value={org.name}
-                  disabled={org.slug === currentStore}
-                  onSelect={(curr) => {
-                    setValue(curr === value ? "" : curr);
-                    setOpen(false);
-                    push(`/${org.slug}/owner/sales`);
-                  }}
-                >
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton className="border py-5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+              <div className="flex aspect-square size-6 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Store size={14} />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">
+                  {activeOrg?.name ? activeOrg.name : <Skeleton className="h-6 w-full" />}
+                </span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-muted-foreground text-xs">Locales</DropdownMenuLabel>
+            {organizations?.map((org, index) => (
+              <DropdownMenuItem
+                key={org.name}
+                onClick={() => setActiveOrg(org)}
+                asChild
+                className="gap-2 p-2"
+              >
+                <Link href={`/${org.slug}/owner/sales`}>
                   {org.name}
-                  <Check
-                    size={16}
-                    className={cn("ml-auto", value === org.id ? "opacity-100" : "opacity-0")}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2" asChild>
+              <Button
+                variant="ghost"
+                className="w-full items-center justify-start text-muted-foreground text-xs"
+                disabled
+              >
+                <Plus size={16} />
+                Agregar local
+                <Badge className="text-xs">Pronto</Badge>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 };

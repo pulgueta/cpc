@@ -12,6 +12,7 @@ import { ProductsTable } from "@/components/owner/products/products-table";
 import { searchParamsCache } from "@/lib/search-params";
 import { OwnerHeader } from "@/components/owner-header";
 import { getStoreByOrgId } from "@/lib/database/store";
+import { CreateProductSkeleton } from "@/components/form/owner/products/create-product-skeleton";
 
 interface ProductsProps {
   searchParams: Promise<SearchParams>;
@@ -38,7 +39,7 @@ const Products: NextPage<ProductsProps> = async ({ searchParams }) => {
 
       <section className="flex w-full flex-col justify-between gap-4">
         <article className="w-full">
-          <Suspense fallback={<></>}>
+          <Suspense fallback={<CreateProductSkeleton />}>
             <CreateProduct
               categories={categories}
               storeOwnerId={owner?.user.id}

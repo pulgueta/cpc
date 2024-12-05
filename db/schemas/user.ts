@@ -1,6 +1,12 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { timestamp, pgTable, text, boolean, integer } from "drizzle-orm/pg-core";
+import {
+  timestamp,
+  pgTable,
+  text,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
@@ -12,7 +18,7 @@ export const user = pgTable("user", {
     .$defaultFn(() => createId()),
   name: text().notNull(),
   email: text().notNull().unique(),
-  password: text(),
+  password: text().notNull(),
   emailVerified: boolean(),
   image: text(),
   role: text({ enum: ["user", "storeOwner", "admin"] }).notNull(),
@@ -27,6 +33,7 @@ export const user = pgTable("user", {
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp()
     .notNull()
+    .defaultNow()
     .$onUpdateFn(() => new Date()),
 });
 

@@ -1,13 +1,6 @@
 import type { RateLimit } from "better-auth";
 import { betterAuth } from "better-auth";
-import {
-  passkey,
-  admin,
-  organization,
-  oAuthProxy,
-  twoFactor,
-  oneTap,
-} from "better-auth/plugins";
+import { passkey, admin, organization, oAuthProxy, twoFactor, oneTap } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -15,11 +8,7 @@ import { hashValue, verifyValue } from "./crypto";
 import { db } from "@/db/config";
 import * as schema from "@/db/schemas";
 import { cache } from "./cache";
-import {
-  sendOtpEmail,
-  sendPasswordResetEmail,
-  sendWelcomeEmail,
-} from "./email";
+import { sendOtpEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./email";
 import { env, env as server } from "@/env/server";
 import { env as client } from "@/env/client";
 

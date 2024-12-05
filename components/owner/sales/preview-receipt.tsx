@@ -67,7 +67,7 @@ export const PreviewReceipt: FC<PreviewReceiptProps> = ({ order }) => {
 
         <div className="mb-4">
           <PaperReceipt
-            date={order.createdAt?.toLocaleDateString()}
+            date={order.createdAt}
             items={items!}
             customerName={order.buyerName}
             invoiceNumber={order.invoiceNumber!}
