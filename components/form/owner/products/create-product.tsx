@@ -22,7 +22,6 @@ import { Label } from "@/components/ui/label";
 import { ProductPreview } from "./product-preview";
 import { createProductAction } from "@/actions/product/create-product";
 import { FormErros } from "../../form-alert-errors";
-import { ProductSchema } from "@/schemas/product";
 import { NoCategories } from "../categories/no-categories";
 
 interface CreateProductProps {
@@ -132,7 +131,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories, storeId, sto
         </div>
       </Form>
 
-      <ProductPreview formValues={state?.defaultValues as ProductSchema} />
+      <ProductPreview />
     </div>
   );
 };

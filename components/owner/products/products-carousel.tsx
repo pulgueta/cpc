@@ -69,6 +69,8 @@ export const ProductsCarousel: FC<ProductsCarouselProps> = ({ products }) => {
                             alt={product.productName}
                             layout="fill"
                             objectFit="cover"
+                            placeholder="blur"
+                            blurDataURL={product.blurDataUrl}
                           />
                         </div>
                         <CardTitle>{product.productName}</CardTitle>

@@ -1,5 +1,3 @@
-import type { FC } from "react";
-
 import {
   Card,
   CardContent,
@@ -8,18 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { ProductSchema } from "@/schemas/product";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heading, Paragraph } from "@/components/ui/typography";
 import { formatPrice } from "@/lib/utils";
 
-// biome-ignore lint: will remove later
-interface ProductPreviewProps {
-  formValues?: ProductSchema;
-}
-
-export const ProductPreview: FC<ProductPreviewProps> = ({ formValues }) => {
+export const ProductPreview = () => {
   return (
     <Card className="w-full lg:w-1/2">
       <CardHeader>
@@ -33,26 +25,24 @@ export const ProductPreview: FC<ProductPreviewProps> = ({ formValues }) => {
           <div>
             <img
               src={"https://via.placeholder.com/150"}
-              alt={formValues?.productName ?? "Producto"}
+              alt="Producto"
               className="size-32 rounded-lg object-cover"
             />
           </div>
           <div className="space-y-1">
-            <Heading as="h3">{formValues?.productName ?? "Título"}</Heading>
+            <Heading as="h3">Título</Heading>
             <Paragraph>
-              <span className="font-bold">Precio:</span>{" "}
-              {formatPrice(formValues?.productPrice ?? 150000)}
+              <span className="font-bold">Precio:</span> {formatPrice(150000)}
             </Paragraph>
-            <Badge>{formValues?.productCategory ?? "Categoría"}</Badge>
+            <Badge>Categoría</Badge>
             <Paragraph>
-              <span className="font-bold">Disponibilidad:</span> {formValues?.stock ?? 50}
+              <span className="font-bold">Disponibilidad:</span> 50
             </Paragraph>
           </div>
         </div>
 
         <Paragraph className="mt-4">
-          {formValues?.productDescription ??
-            "Descripción del producto. Puedes agregar una descripción detallada del producto aquí."}
+          Descripción del producto. Puedes agregar una descripción detallada del producto aquí.
         </Paragraph>
       </CardContent>
       <CardFooter className="flex-col gap-2.5 border-t pt-4">

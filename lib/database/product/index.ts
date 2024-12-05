@@ -61,10 +61,14 @@ export const getProducts = cache(
       orderBy: (t, { asc }) => [asc(t.createdAt)],
     });
 
-    return products.map(async (product) => ({
-      ...product,
-      productImageUrl: await base64Img(product.productImageUrl),
-    }));
+    const productsWithBlur = await Promise.all(
+      products.map(async (product) => ({
+        ...product,
+        blurDataUrl: await base64Img(product.productImageUrl),
+      })),
+    );
+
+    return productsWithBlur;
   },
   ["products"],
   { revalidate: 3600, tags: ["products"] },
