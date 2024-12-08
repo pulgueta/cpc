@@ -12,7 +12,6 @@ export const user = pgTable("user", {
     .$defaultFn(() => createId()),
   name: text().notNull(),
   email: text().notNull().unique(),
-  password: text().notNull(),
   emailVerified: boolean(),
   image: text(),
   role: text({ enum: ["user", "storeOwner", "admin"] }).notNull(),

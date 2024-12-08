@@ -41,17 +41,19 @@ interface HeadingProps
   extends HTMLAttributes<HTMLHeadingElement>,
     VariantProps<typeof headingVariants> {
   center?: boolean;
+  muted?: boolean;
 }
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ as, className, children, fontStyle, weight, center = false, ...rest }, ref) => {
+  ({ as, className, children, fontStyle, weight, center = false, muted = false, ...rest }, ref) => {
     const Comp = as || "h1";
 
     return (
       <Comp
         ref={ref}
-        className={cn(headingVariants({ as, className, fontStyle, weight }), {
+        className={cn(headingVariants({ className, fontStyle, as, weight }), {
           "text-center": center,
+          "text-muted-foreground": muted,
         })}
         {...rest}
       >

@@ -14,7 +14,7 @@ const Register = () => {
       <header className="mb-4">
         <Heading center>Crear una cuenta</Heading>
 
-        <Paragraph center muted weight="normal" className="mt-2">
+        <Paragraph muted weight="normal" className="mt-1">
           Crea una cuenta ahora para poder obtener los beneficios, descuentos, eventos y mucho más
           que hay para ti en el Centro Popular Comercial.
         </Paragraph>

@@ -20,22 +20,20 @@ import type {
 import { urlToRedirect } from "@/constants/routes";
 
 export const registerUser = async (data: RegisterSchema) => {
-  const user = await auth.api.signUpEmail({
+  const created = await auth.api.signUpEmail({
     headers: await headers(),
     body: {
       email: data.email,
       password: data.password,
       name: data.name,
     },
-    asResponse: true,
   });
 
-  switch (user.status) {
-    case 422:
-      return {
-        error: "El correo electrónico ya está registrado",
-        defaultValues: data,
-      };
+  if (!created) {
+    return {
+      error: "Ha ocurrido un error. Por favor, intenta nuevamente más tarde.",
+      defaultValues: data,
+    };
   }
 
   return {
@@ -44,7 +42,7 @@ export const registerUser = async (data: RegisterSchema) => {
 };
 
 export const signInUser = async (data: LoginSchema) => {
-  const user = await getUserByEmail(data.email);
+  const user = await getUserByEmail(data.email, true);
 
   const session = await auth.api.signInEmail({
     headers: await headers(),

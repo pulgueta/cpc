@@ -29,8 +29,16 @@ export const registerSchema = createInsertSchema(user, {
         message: CREATE_USER.email.maxLength.message,
       })
       .email(CREATE_USER.email.email),
-  password: () =>
-    string({
+
+  role: (s) => s.role.optional(),
+})
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    password: string({
       invalid_type_error: CREATE_USER.password.invalid_type_error,
       required_error: CREATE_USER.password.required_error,
     })
@@ -40,12 +48,7 @@ export const registerSchema = createInsertSchema(user, {
       .max(CREATE_USER.password.maxLength.value, {
         message: CREATE_USER.password.maxLength.message,
       }),
-  role: (s) => s.role.optional(),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+  });
 
 export const loginSchema = registerSchema
   .pick({
