@@ -13,7 +13,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
+import { buttonVariants } from "../ui/button-variants";
 import { authRoutes, noAuthRoutes } from "@/constants/routes";
 import { LogoutButton } from "../auth/logout-button";
 

@@ -126,14 +126,14 @@ export const auth = betterAuth({
     organization(),
     oAuthProxy(),
     oneTap(),
-    twoFactor({
-      issuer: "Centro Popular Comercial",
-      otpOptions: {
-        sendOTP: async ({ user, otp }) => {
-          await sendOtpEmail({ email: user.email, name: user.name }, otp);
-        },
-      },
-    }),
+    // twoFactor({
+    //   issuer: "Centro Popular Comercial",
+    //   otpOptions: {
+    //     sendOTP: async ({ user, otp }) => {
+    //       await sendOtpEmail({ email: user.email, name: user.name }, otp);
+    //     },
+    //   },
+    // }),
     nextCookies(),
   ],
   account: {

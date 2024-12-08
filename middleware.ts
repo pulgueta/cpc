@@ -3,23 +3,17 @@ import { NextResponse } from "next/server";
 
 import { betterFetch } from "@better-fetch/fetch";
 
-import { appHeaderKeys, authRoutes } from "@/constants";
+import { appHeaderKeys } from "@/constants";
 import { urlToRedirect } from "@/constants/routes";
-import { getUserInformation } from "@/lib/middleware";
+import {
+  ADMIN_URL_PREFIX,
+  getUserInformation,
+  isAuthRoute,
+  isProtectedRoute,
+  OWNER_URL_PREFIX,
+  USER_URL_PREFIX,
+} from "@/lib/middleware";
 import type { Session } from "@/lib/auth";
-
-const OWNER_URL_PREFIX = /^\/[^/]+\/owner/;
-const ADMIN_URL_PREFIX = "/admin" as const;
-const USER_URL_PREFIX = "/dashboard" as const;
-const SELLER_URL_PREFIX = "/settings/seller" as const;
-
-const isAuthRoute = (pathname: string) => authRoutes.some((route) => pathname.startsWith(route));
-
-const isProtectedRoute = (pathname: string) =>
-  pathname.match(OWNER_URL_PREFIX) ||
-  pathname.startsWith(ADMIN_URL_PREFIX) ||
-  pathname.startsWith(USER_URL_PREFIX) ||
-  pathname.startsWith(SELLER_URL_PREFIX);
 
 export default async function middleware(request: NextRequest) {
   const headers = new Headers(request.headers);

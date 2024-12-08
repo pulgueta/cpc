@@ -18,7 +18,7 @@ import { useSession } from "@/lib/auth.client";
 export const CreateCategory = () => {
   const [categoryName, categoryDescription] = [useId(), useId()];
 
-  const [state, action, isPending] = useActionState(createCategoryAction, undefined);
+  const [state, action] = useActionState(createCategoryAction, undefined);
 
   const sessionData = useSession();
 
@@ -53,9 +53,7 @@ export const CreateCategory = () => {
           hidden
         />
 
-        <Button leftIcon={<Plus size={16} />} loading={isPending}>
-          Crear categoría
-        </Button>
+        <Button leftIcon={<Plus size={16} />}>Crear categoría</Button>
       </Form>
 
       {Array.isArray(state?.error)

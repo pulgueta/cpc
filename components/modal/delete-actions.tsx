@@ -70,7 +70,7 @@ export const DeleteActions: FC<ActionsProps<ServerAction>> = ({
         <div>
           <Form action={action} className="space-y-4">
             <Input id={inputId} name={name} hidden className="hidden" defaultValue={value} />
-            <Button loading={isPending} className="w-full" variant="destructive">
+            <Button className="w-full" variant="destructive">
               Sí, eliminar
             </Button>
           </Form>

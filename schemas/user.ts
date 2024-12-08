@@ -41,6 +41,10 @@ export const registerSchema = createInsertSchema(user, {
         message: CREATE_USER.password.maxLength.message,
       }),
   role: (s) => s.role.optional(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const loginSchema = registerSchema
@@ -56,9 +60,16 @@ export const forgotPasswordSchema = registerSchema.pick({
   email: true,
 });
 
-export const resetPasswordSchema = registerSchema.pick({
-  password: true,
-});
+export const resetPasswordSchema = registerSchema
+  .pick({
+    password: true,
+  })
+  .extend({
+    token: string({
+      required_error: "El token es requerido",
+      invalid_type_error: "El token debe ser texto válido",
+    }),
+  });
 
 export const generate2FAQr = registerSchema.pick({
   password: true,

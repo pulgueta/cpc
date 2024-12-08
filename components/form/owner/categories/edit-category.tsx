@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Category } from "@/constants/db-types";
 
 interface EditCategoryProps {
-  isPending: boolean;
   category: Category;
 }
 
-export const EditCategory: FC<EditCategoryProps> = ({ isPending, category }) => {
+export const EditCategory: FC<EditCategoryProps> = ({ category }) => {
   const [categoryName, categoryDescription] = [useId(), useId()];
 
   return (
@@ -40,9 +39,7 @@ export const EditCategory: FC<EditCategoryProps> = ({ isPending, category }) => 
 
       <Input className="hidden" name="id" defaultValue={category.id} hidden />
 
-      <Button loading={isPending} className="w-full">
-        Actualizar categoría
-      </Button>
+      <Button className="w-full">Actualizar categoría</Button>
     </>
   );
 };

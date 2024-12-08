@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { CREATE_USER } from "@/constants";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { QRCodeBackup } from "@/components/modal/qr-code-with-backup";
 import { validateAndGenerateQrCode } from "@/actions/user/generate-qr";
 
@@ -22,7 +22,7 @@ export const Enable2FA = () => {
 
   const passwordId = useId();
 
-  const [state, action, isPending] = useActionState(validateAndGenerateQrCode, undefined);
+  const [state, action] = useActionState(validateAndGenerateQrCode, undefined);
 
   const [, _setValue] = useQueryState("twofaEnabled", parseAsBoolean.withDefault(false));
 
@@ -48,16 +48,18 @@ export const Enable2FA = () => {
             minLength={CREATE_USER.password.minLength.value}
             maxLength={CREATE_USER.password.maxLength.value}
           />
-          <Button
-            size="icon"
-            variant="ghost"
+          <button
             type="button"
-            className="absolute top-1 right-1"
-            aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
+            className={buttonVariants({
+              className: "absolute top-1 right-1",
+              size: "icon",
+              variant: "ghost",
+            })}
             onClick={() => setShow(!show)}
+            aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
           >
             {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -85,9 +87,7 @@ export const Enable2FA = () => {
             </Alert>
           )}
 
-      <Button className="mt-4 w-full" loading={isPending}>
-        Generar código QR
-      </Button>
+      <Button className="mt-4 w-full">Generar código QR</Button>
     </Form>
   );
 };

@@ -8,7 +8,7 @@ import Link from "next/link";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { registerAction } from "@/actions/user/register";
 import { Label } from "@/components/ui/label";
 import { FormErros } from "../form-alert-errors";
@@ -62,22 +62,22 @@ export const RegisterForm = () => {
               className="shadow"
               defaultValue={state?.defaultValues?.password}
             />
-            <Button
-              size="icon"
-              variant="ghost"
+            <button
               type="button"
-              className="absolute top-1 right-1"
+              className={buttonVariants({
+                className: "absolute top-1 right-1",
+                size: "icon",
+                variant: "ghost",
+              })}
               onClick={() => setShow(!show)}
               aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-            </Button>
+            </button>
           </div>
         </div>
 
-        <Button className="w-full" loading={isPending}>
-          Crear cuenta
-        </Button>
+        <Button className="w-full">Crear cuenta</Button>
 
         <FormErros error={state?.error} />
       </Form>

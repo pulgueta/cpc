@@ -4,7 +4,7 @@ import { getCurrentSession } from "@/lib/auth/session";
 import { LogoutButton } from "../auth/logout-button";
 import { ThemeSwitcher } from "../theme-switch";
 import { MobileNav } from "./mobile-nav";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button-variants";
 import { authRoutes, noAuthRoutes } from "@/constants/routes";
 
 export const Navbar = async () => {

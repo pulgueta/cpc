@@ -24,7 +24,7 @@ interface CreateSalesProps {
 }
 
 export const CreateSales: FC<CreateSalesProps> = ({ products: prods, storeId, storeOwnerId }) => {
-  const [state, action, isPending] = useActionState(createSaleAction, undefined);
+  const [state, action] = useActionState(createSaleAction, undefined);
 
   const { products, clearProducts } = useSales((state) => state);
   const { total } = useInvoice();
@@ -108,7 +108,7 @@ export const CreateSales: FC<CreateSalesProps> = ({ products: prods, storeId, st
 
         <input name="total" defaultValue={total} type="hidden" className="hidden" />
 
-        <Button loading={isPending}>Generar venta</Button>
+        <Button>Generar venta</Button>
       </Form>
 
       <FormErros error={state?.error} />

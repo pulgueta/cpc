@@ -1,14 +1,10 @@
-import { LogoutButton } from "@/components/auth/logout-button";
-import { getCurrentSession } from "@/lib/auth/session";
+import { Heading, Paragraph } from "@/components/ui/typography";
 
-const Home = async () => {
-  const user = await getCurrentSession();
-
+const Home = () => {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-white p-4 dark:bg-neutral-900">
-      <LogoutButton />
-
-      <pre>{JSON.stringify(user?.user, null, 4)}</pre>
+      <Heading>Storefront</Heading>
+      <Paragraph>Aquí va a haber algo pronto.</Paragraph>
     </main>
   );
 };

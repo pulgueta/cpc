@@ -4,24 +4,10 @@ import { twMerge } from "tailwind-merge";
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
-const truncateNumber = (amount: number): string => {
-  switch (true) {
-    case amount >= 1_000_000_000_000:
-      return (amount / 1_000_000_000_000).toFixed(1).replace(".", ",") + "B";
-
-    case amount >= 1_000_000_000:
-      return (amount / 1_000_000_000).toFixed(1).replace(".", ",") + "MM";
-
-    case amount >= 1_000_000:
-      return (amount / 1_000_000).toFixed(1).replace(".", ",") + "M";
-
-    case amount >= 100_000:
-      return (amount / 1_000).toFixed(1).replace(".", ",") + "K";
-
-    default:
-      return amount.toString();
-  }
-};
+const truncateNumber = (amount: number): string =>
+  Intl.NumberFormat("es-CO", {
+    notation: "compact",
+  }).format(amount);
 
 export const formatPrice = (price: number, truncate: boolean = false): string => {
   if (truncate) {

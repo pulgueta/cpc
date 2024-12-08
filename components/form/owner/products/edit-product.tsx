@@ -29,7 +29,7 @@ interface EditProductProps {
 }
 
 export const EditProduct: FC<EditProductProps> = ({ product }) => {
-  const [state, formAction, pending] = useActionState(createProductAction, undefined);
+  const [state, formAction, _pending] = useActionState(createProductAction, undefined);
 
   const { data: categories } = useCategories();
 
@@ -116,9 +116,7 @@ export const EditProduct: FC<EditProductProps> = ({ product }) => {
       <input className="hidden" type="hidden" name="storeId" defaultValue={""} />
       <input className="hidden" type="hidden" name="storeOwnerId" defaultValue={""} />
 
-      <Button loading={pending} className="w-full">
-        Editar producto
-      </Button>
+      <Button className="w-full">Editar producto</Button>
 
       <div>
         <FormErros error={state?.error} />

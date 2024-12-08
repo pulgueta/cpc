@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 export const RequestToSell = () => {
   const [email, storeName, mainPhone, salesGoal] = [useId(), useId(), useId(), useId()];
 
-  const [state, formAction, pending] = useActionState(convertToSellerAction, undefined);
+  const [state, formAction, _pending] = useActionState(convertToSellerAction, undefined);
 
   const { data: session, isPending } = useSession();
 
@@ -101,9 +101,7 @@ export const RequestToSell = () => {
         <FormErros error={state?.error} />
       </div>
 
-      <Button loading={pending} className="mx-auto w-full max-w-xs">
-        Empezar a vender
-      </Button>
+      <Button className="mx-auto w-full max-w-xs">Empezar a vender</Button>
     </Form>
   );
 };

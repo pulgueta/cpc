@@ -4,7 +4,6 @@ import {
   adminClient,
   inferAdditionalFields,
   organizationClient,
-  twoFactorClient,
   oneTapClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
@@ -18,7 +17,7 @@ const authClient = createAuthClient({
     passkeyClient(),
     adminClient(),
     organizationClient(),
-    twoFactorClient(),
+    // twoFactorClient(),
     oneTapClient({ clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }),
     inferAdditionalFields<typeof auth>(),
   ],
@@ -42,20 +41,13 @@ const authClient = createAuthClient({
 });
 
 export const {
-  sendVerificationEmail,
-  verifyEmail,
-  signIn,
   linkSocial,
   $Infer,
-  forgetPassword,
-  resetPassword,
   useSession,
   passkey,
+  signIn,
   admin,
   useListPasskeys,
-  signUp,
-  signOut,
-  twoFactor,
   oneTap,
   getSession,
   useListOrganizations,

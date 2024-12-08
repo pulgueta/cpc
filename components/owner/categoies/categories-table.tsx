@@ -113,7 +113,7 @@ export const columns: ColumnDef<Column>[] = [
             setOpen={setEdit}
             serverAction={updateCategoryAction}
           >
-            {(isPending) => <EditCategory isPending={isPending} category={row.original} />}
+            {() => <EditCategory category={row.original} />}
           </EditActions>
           <DeleteActions
             name={key}

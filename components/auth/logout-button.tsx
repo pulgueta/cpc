@@ -16,13 +16,12 @@ interface LogoutButtonProps {
 }
 
 export const LogoutButton: FC<LogoutButtonProps> = ({ fullWidth = false }) => {
-  const [, formAction, pending] = useActionState(logout, undefined);
+  const [, formAction] = useActionState(logout, undefined);
 
   return (
     <Form action={formAction}>
       <Button
         variant="destructive"
-        loading={pending}
         leftIcon={<LogOutIcon size={16} />}
         className={cn({
           "w-full": fullWidth,

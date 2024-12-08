@@ -10,7 +10,13 @@ import { member } from "@/db/schemas/member";
 import { auth } from "@/lib/auth";
 import { cache } from "@/lib/cache";
 import { getCurrentSession } from "@/lib/auth/session";
-import type { ConvertToSellerSchema, LoginSchema, RegisterSchema } from "@/schemas/user";
+import type {
+  ConvertToSellerSchema,
+  ForgotPasswordSchema,
+  LoginSchema,
+  RegisterSchema,
+  ResetPasswordSchema,
+} from "@/schemas/user";
 import { urlToRedirect } from "@/constants/routes";
 
 export const registerUser = async (data: RegisterSchema) => {
@@ -78,6 +84,53 @@ export const signInUser = async (data: LoginSchema) => {
   }
 };
 
+export const forgotPassword = async ({ email }: ForgotPasswordSchema) => {
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    return {
+      error: "No se encontró una cuenta con ese correo electrónico",
+    };
+  }
+
+  const sent = await auth.api.forgetPassword({
+    headers: await headers(),
+    body: {
+      email,
+    },
+  });
+
+  if (!sent.status) {
+    return {
+      error: "Ha ocurrido un error. Por favor, intenta nuevamente más tarde.",
+    };
+  }
+
+  return {
+    message: "Correo de recuperación enviado",
+  };
+};
+
+export const resetPassword = async (data: ResetPasswordSchema) => {
+  const updated = await auth.api.resetPassword({
+    headers: await headers(),
+    body: {
+      newPassword: data.password,
+      token: data.token,
+    },
+  });
+
+  if (!updated.status) {
+    return {
+      error: "Ha ocurrido un error. Por favor, intenta nuevamente más tarde.",
+    };
+  }
+
+  return {
+    message: "Contraseña actualizada",
+  };
+};
+
 export const getUserByEmail = async (email: NewUser["email"], getCached: boolean = false) => {
   const cached = await cache.get<User>(email);
 
@@ -114,19 +167,19 @@ export const getUserById = async (id: User["id"], getCached: boolean = false) =>
   return user;
 };
 
-export const generateQrCode = async (pwd: string) => {
-  const verification = await auth.api.enableTwoFactor({
-    headers: await headers(),
-    body: {
-      password: pwd,
-    },
-  });
+// export const generateQrCode = async (pwd: string) => {
+//   const verification = await auth.api.enableTwoFactor({
+//     headers: await headers(),
+//     body: {
+//       password: pwd,
+//     },
+//   });
 
-  return {
-    message: "Código QR generado",
-    verification,
-  };
-};
+//   return {
+//     message: "Código QR generado",
+//     verification,
+//   };
+// };
 
 export const isUserSignedWithSocial = async () => {
   const sessionUser = await getCurrentSession();

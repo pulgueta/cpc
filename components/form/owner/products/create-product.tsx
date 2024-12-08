@@ -31,7 +31,7 @@ interface CreateProductProps {
 }
 
 export const CreateProduct: FC<CreateProductProps> = ({ categories, storeId, storeOwnerId }) => {
-  const [state, formAction, pending] = useActionState(createProductAction, undefined);
+  const [state, formAction, _pending] = useActionState(createProductAction, undefined);
 
   useEffect(() => {
     if (state?.message) {
@@ -122,9 +122,7 @@ export const CreateProduct: FC<CreateProductProps> = ({ categories, storeId, sto
         <input className="hidden" type="hidden" name="storeId" defaultValue={storeId} />
         <input className="hidden" type="hidden" name="storeOwnerId" defaultValue={storeOwnerId} />
 
-        <Button loading={pending} className="w-full">
-          Crear producto
-        </Button>
+        <Button className="w-full">Crear producto</Button>
 
         <div>
           <FormErros error={state?.error} />

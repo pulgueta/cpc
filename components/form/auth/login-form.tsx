@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/icons/google";
 import { CREATE_USER } from "@/constants";
@@ -65,16 +65,18 @@ export const LoginForm = () => {
               minLength={CREATE_USER.password.minLength.value}
               maxLength={CREATE_USER.password.maxLength.value}
             />
-            <Button
-              size="icon"
-              variant="ghost"
+            <button
               type="button"
-              className="absolute top-1 right-1"
-              aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
+              className={buttonVariants({
+                className: "absolute top-1 right-1",
+                size: "icon",
+                variant: "ghost",
+              })}
               onClick={() => setShow(!show)}
+              aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {show ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -85,9 +87,7 @@ export const LoginForm = () => {
           </Label>
         </div>
 
-        <Button className="w-full" loading={isPending}>
-          Ingresar
-        </Button>
+        <Button className="w-full">Ingresar</Button>
       </Form>
 
       <FormErros error={state?.error} />
