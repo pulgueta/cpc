@@ -5,6 +5,7 @@ import {
   inferAdditionalFields,
   organizationClient,
   oneTapClient,
+  twoFactorClient,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
@@ -12,12 +13,12 @@ import type { auth } from "./auth";
 import { env } from "@/env/client";
 
 const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_SITE_URL,
+  baseURL: env.NEXT_PUBLIC_SITE_URL,
   plugins: [
     passkeyClient(),
     adminClient(),
     organizationClient(),
-    // twoFactorClient(),
+    twoFactorClient(),
     oneTapClient({ clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }),
     inferAdditionalFields<typeof auth>(),
   ],

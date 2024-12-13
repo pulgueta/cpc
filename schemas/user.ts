@@ -30,7 +30,7 @@ export const registerSchema = createInsertSchema(user, {
       })
       .email(CREATE_USER.email.email),
 
-  role: (s) => s.role.optional(),
+  role: (s) => s.default("user"),
 })
   .omit({
     id: true,
