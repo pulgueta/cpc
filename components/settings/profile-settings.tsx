@@ -1,6 +1,7 @@
 import type { FC } from "react";
 
 // import Image from "next/image";
+// import dynamic from "next/dynamic";
 
 // import { Camera } from "lucide-react";
 
@@ -15,10 +16,9 @@ import type { FC } from "react";
 // import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // import { Skeleton } from "@/components/ui/skeleton";
 import { Heading, Paragraph } from "@/components/ui/typography";
-import { isUserSignedWithSocial } from "@/lib/database/user";
-import dynamic from "next/dynamic";
+// import { isUserSignedWithSocial } from "@/lib/database/user";
 
-const TwoFADialog = dynamic(() => import("@/components/modal/2fa").then((mod) => mod.TwoFADialog));
+// const TwoFADialog = dynamic(() => import("@/components/modal/2fa").then((mod) => mod.TwoFADialog));
 
 interface ProfileSettingsProps {
   userInfo: {
@@ -35,7 +35,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = async ({
   userInfo,
   // saveDisabled,
 }) => {
-  const isSocial = await isUserSignedWithSocial();
+  // const isSocial = await isUserSignedWithSocial();
 
   return (
     <form className="space-y-6">
@@ -104,14 +104,15 @@ export const ProfileSettings: FC<ProfileSettingsProps> = async ({
       </div> */}
 
       <div className="space-y-4">
-        <Heading as="h3">Configuración de cuenta</Heading>
+        {/* <Heading as="h3">Configuración de cuenta</Heading> */}
+        <Heading as="h3">Pronto más detalles ;)</Heading>
         {/* <div className="flex items-center justify-between">
           <Label htmlFor="email-notifications">
             Recibir notificaciones por correo
           </Label>
           <Switch id="email-notifications" />
         </div> */}
-        {!isSocial && (
+        {/* {!isSocial && (
           <div className="flex items-center justify-between">
             <Paragraph>Autenticación de dos factores</Paragraph>
             <TwoFADialog
@@ -119,7 +120,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = async ({
               isEmailVerified={userInfo.isEmailVerified ?? false}
             />
           </div>
-        )}
+        )} */}
       </div>
 
       {/* <Button className="w-full" disabled={saveDisabled}>

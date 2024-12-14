@@ -2,14 +2,15 @@ import { headers } from "next/headers";
 
 import { eq } from "drizzle-orm";
 
+import { urlToRedirect } from "@/constants/routes";
 import { db } from "@/db/config";
+import { member } from "@/db/schemas/member";
+import { stores } from "@/db/schemas/store";
 import type { NewUser, User } from "@/db/schemas/user";
 import { user } from "@/db/schemas/user";
-import { stores } from "@/db/schemas/store";
-import { member } from "@/db/schemas/member";
 import { auth } from "@/lib/auth";
-import { cache } from "@/lib/cache";
 import { getCurrentSession } from "@/lib/auth/session";
+import { cache } from "@/lib/cache";
 import type {
   ConvertToSellerSchema,
   ForgotPasswordSchema,
@@ -17,7 +18,6 @@ import type {
   RegisterSchema,
   ResetPasswordSchema,
 } from "@/schemas/user";
-import { urlToRedirect } from "@/constants/routes";
 
 export const registerUser = async (data: RegisterSchema) => {
   const created = await auth.api.signUpEmail({
@@ -165,19 +165,19 @@ export const getUserById = async (id: User["id"], getCached: boolean = false) =>
   return user;
 };
 
-// export const generateQrCode = async (pwd: string) => {
-//   const verification = await auth.api.enableTwoFactor({
-//     headers: await headers(),
-//     body: {
-//       password: pwd,
-//     },
-//   });
+export const generateQrCode = async (pwd: string) => {
+  const verification = await auth.api.enableTwoFactor({
+    headers: await headers(),
+    body: {
+      password: pwd,
+    },
+  });
 
-//   return {
-//     message: "Código QR generado",
-//     verification,
-//   };
-// };
+  return {
+    message: "Código QR generado",
+    verification,
+  };
+};
 
 export const isUserSignedWithSocial = async () => {
   const sessionUser = await getCurrentSession();

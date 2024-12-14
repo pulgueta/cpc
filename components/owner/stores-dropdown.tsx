@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { Organization } from "@/lib/auth.client";
-import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 interface StoresDropdownProps {
   organizations?: Organization[] | null;

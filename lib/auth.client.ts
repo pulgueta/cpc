@@ -1,16 +1,16 @@
-import { createAuthClient } from "better-auth/react";
 import {
-  passkeyClient,
   adminClient,
   inferAdditionalFields,
-  organizationClient,
   oneTapClient,
+  organizationClient,
+  passkeyClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
+import { createAuthClient } from "better-auth/react";
 import { toast } from "sonner";
 
-import type { auth } from "./auth";
 import { env } from "@/env/client";
+import type { auth } from "./auth";
 
 const authClient = createAuthClient({
   baseURL: env.NEXT_PUBLIC_SITE_URL,
@@ -45,6 +45,7 @@ export const {
   linkSocial,
   $Infer,
   useSession,
+  twoFactor,
   passkey,
   signIn,
   admin,

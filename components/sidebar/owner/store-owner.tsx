@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { StoresDropdown } from "@/components/owner/stores-dropdown";
+import { ThemeSwitcher } from "@/components/theme-switch";
 import {
   Sidebar,
   SidebarContent,
@@ -18,8 +20,6 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ThemeSwitcher } from "@/components/theme-switch";
-import { StoresDropdown } from "@/components/owner/stores-dropdown";
 import { useListOrganizations } from "@/lib/auth.client";
 
 const data = {
@@ -54,6 +54,10 @@ const data = {
           title: "Categorías",
           url: "/owner/categories",
         },
+        // {
+        //   title: "Ajustes",
+        //   url: "/owner/settings",
+        // },
       ],
     },
   ],

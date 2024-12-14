@@ -5,29 +5,29 @@ import { useActionState, useEffect, useId, useState } from "react";
 import Form from "next/form";
 import Link from "next/link";
 
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";
-import { EyeIcon, EyeOffIcon, FingerprintIcon } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { GoogleIcon } from "@/components/icons/google";
-import { CREATE_USER } from "@/constants";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/user/useAuth";
+// import { useAuth } from "@/hooks/user/useAuth";
 import { loginAction } from "@/actions/user/login";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+// import { Separator } from "@/components/ui/separator";
+// import { GoogleIcon } from "@/components/icons/google";
+import { CREATE_USER } from "@/constants";
 import { FormErros } from "../form-alert-errors";
-import { googleLoginAction } from "@/actions/user/oauth-login";
+// import { googleLoginAction } from "@/actions/user/oauth-login";
 
 export const LoginForm = () => {
   const [show, setShow] = useState<boolean>(false);
   const [state, formAction, isPending] = useActionState(loginAction, undefined);
-  const [, googleLogin, googlePending] = useActionState(googleLoginAction, undefined);
+  // const [, googleLogin, googlePending] = useActionState(googleLoginAction, undefined);
 
   const [email, password, remember] = [useId(), useId(), useId()];
 
-  const { onPasskeyLogin } = useAuth();
+  // const { onPasskeyLogin } = useAuth();
 
   useEffect(() => {
     if (state?.error) {
@@ -92,7 +92,7 @@ export const LoginForm = () => {
 
       <FormErros error={state?.error} />
 
-      <div className="relative my-4 py-4">
+      {/* <div className="relative my-4 py-4">
         <span className="-translate-x-1/2 absolute top-1.5 left-1/2 bg-white px-2.5 font-medium text-muted-foreground text-sm dark:bg-neutral-900">
           O inicia sesión con:
         </span>
@@ -122,7 +122,7 @@ export const LoginForm = () => {
           <FingerprintIcon className="mr-2" size={16} />
           Biometría
         </Button>
-      </section>
+      </section> */}
 
       <p className="mt-4 text-center text-muted-foreground text-sm">
         ¿No tienes cuenta?{" "}

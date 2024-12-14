@@ -4,18 +4,18 @@ import { useActionState, useId } from "react";
 
 import Form from "next/form";
 
+import { convertToSellerAction } from "@/actions/user/convert-to-seller";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormErros } from "../form-alert-errors";
-import { convertToSellerAction } from "@/actions/user/convert-to-seller";
-import { useSession } from "@/lib/auth.client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useSession } from "@/lib/auth.client";
+import { FormErros } from "../form-alert-errors";
 
 export const RequestToSell = () => {
   const [email, storeName, mainPhone, salesGoal] = [useId(), useId(), useId(), useId()];
 
-  const [state, formAction, _pending] = useActionState(convertToSellerAction, undefined);
+  const [state, formAction] = useActionState(convertToSellerAction, undefined);
 
   const { data: session, isPending } = useSession();
 

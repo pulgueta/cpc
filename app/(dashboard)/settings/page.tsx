@@ -1,19 +1,20 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 
-import { User2Icon, Menu, AlertCircle, ShoppingBagIcon } from "lucide-react";
+import { AlertCircle, Menu, ShoppingBagIcon, User2Icon } from "lucide-react";
 
+import { LogoutButton } from "@/components/auth/logout-button";
+import { StoresSettingsDropdown } from "@/components/owner/stores-settings-dropdown";
+import { ProfileSettings } from "@/components/settings/profile-settings";
+import { ThemeSwitcher } from "@/components/theme-switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeSwitcher } from "@/components/theme-switch";
 import { Heading } from "@/components/ui/typography";
 import { getCurrentSession } from "@/lib/auth/session";
-import { LogoutButton } from "@/components/auth/logout-button";
 import { getUserByEmail } from "@/lib/database/user";
-import { ProfileSettings } from "@/components/settings/profile-settings";
-import { StoresDropdown } from "@/components/owner/stores-dropdown";
 
 interface SettingsProps {
   searchParams: Promise<{ q: string }>;
@@ -40,7 +41,7 @@ const Settings: NextPage<SettingsProps> = async ({ searchParams }) => {
 
   const NavContent = () => (
     <nav className="flex h-full flex-col items-start justify-between p-0 md:p-4">
-      <div className="w-full space-y-4">
+      <div className="flex w-full flex-col items-start gap-4">
         <Link
           href="/settings"
           className={buttonVariants({
@@ -67,7 +68,7 @@ const Settings: NextPage<SettingsProps> = async ({ searchParams }) => {
               </Link>
             )}
 
-            {session?.user.role === "storeOwner" && <StoresDropdown />}
+            {session?.user.role === "storeOwner" && <StoresSettingsDropdown />}
 
             <Separator className="m-4 w-full" />
 
