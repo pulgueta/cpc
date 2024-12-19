@@ -1,12 +1,12 @@
-import { unstable_cache as cache, revalidateTag } from "next/cache";
+import { unstable_cache as cache } from "next/cache";
 
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/config";
-import type { Store } from "@/db/schemas/store";
-import type { NewSale, Sale } from "@/db/schemas/sale";
-import { sale as sales, saleItem } from "@/db/schemas/sale";
 import { products as productTable } from "@/db/schemas/product";
+import type { NewSale, Sale } from "@/db/schemas/sale";
+import { saleItem, sale as sales } from "@/db/schemas/sale";
+import type { Store } from "@/db/schemas/store";
 import { getCurrentSession } from "@/lib/auth/session";
 
 export const createSaleWithProducts = async (
@@ -35,8 +35,6 @@ export const createSaleWithProducts = async (
         .returning(),
     ]);
   });
-
-  revalidateTag("sales");
 
   return sale;
 };

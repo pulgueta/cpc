@@ -1,12 +1,12 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { timestamp, pgTable, text, index, integer } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
 
-import { user } from "./user";
 import { categories } from "./category";
 import { stores } from "./store";
+import { user } from "./user";
 
 export const products = pgTable(
   "product",
@@ -31,9 +31,7 @@ export const products = pgTable(
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp().$onUpdateFn(() => new Date()),
   },
-  (t) => ({
-    productIdx: index("product_idx").on(t.productName),
-  }),
+  (t) => [index("product_idx").on(t.productName)],
 );
 
 export const productRelations = relations(products, ({ one }) => ({

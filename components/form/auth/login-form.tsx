@@ -87,7 +87,9 @@ export const LoginForm = () => {
           </Label>
         </div>
 
-        <Button className="w-full">Ingresar</Button>
+        <Button loading={isPending} className="w-full">
+          Ingresar
+        </Button>
       </Form>
 
       <FormErros error={state?.error} />

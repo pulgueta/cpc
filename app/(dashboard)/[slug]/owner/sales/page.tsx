@@ -6,9 +6,9 @@ import { notFound } from "next/navigation";
 import { createSearchParamsCache, parseAsInteger } from "nuqs/server";
 
 import { OwnerHeader } from "@/components/owner-header";
+import { SalesTable } from "@/components/owner/sales/sales-table";
 import { getStoreSales } from "@/lib/database/sale";
 import { getStoreBySlug } from "@/lib/database/store";
-import { SalesTable } from "@/components/owner/sales/sales-table";
 
 interface Params {
   params: Promise<{ slug: string }>;

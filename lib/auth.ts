@@ -89,7 +89,7 @@ export const auth = betterAuth({
   rateLimit: {
     enabled: true,
     window: 30,
-    max: 5,
+    max: 15,
     storage: "secondary-storage",
     customStorage: {
       get: async (k) => (await cache.get(k)) as RateLimit | undefined,

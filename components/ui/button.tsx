@@ -2,14 +2,13 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
-import { useFormStatus } from "react-dom";
 
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import type { VariantProps } from "class-variance-authority";
 import { Loader2Icon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { buttonVariants } from "./button-variants";
 
 interface IconProps {
@@ -30,6 +29,7 @@ export interface ButtonProps
   leftIcon?: ReactNode;
   tooltip?: boolean;
   tooltipContent?: ReactNode;
+  loading?: boolean;
 }
 
 export type ButtonIconProps = IconProps | IconRefProps;
@@ -48,12 +48,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
       leftIcon,
       tooltip = false,
       tooltipContent,
+      loading = false,
       ...props
     },
     ref,
   ) => {
-    const { pending } = useFormStatus();
-
     const Comp = asChild ? Slot : "button";
 
     return tooltip ? (
@@ -62,12 +61,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
           <TooltipTrigger asChild>
             <Comp
               className={cn(buttonVariants({ variant, size, className }))}
-              disabled={pending}
-              aria-disabled={pending}
+              disabled={loading}
+              aria-disabled={loading}
               ref={ref}
               {...props}
             >
-              {pending ? (
+              {loading ? (
                 <Loader2Icon size={16} className="animate-spin" />
               ) : (
                 <>
@@ -102,12 +101,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps>(
     ) : (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        disabled={pending}
-        aria-disabled={pending}
+        disabled={loading}
+        aria-disabled={loading}
         ref={ref}
         {...props}
       >
-        {pending ? (
+        {loading ? (
           <Loader2Icon size={16} className="animate-spin" />
         ) : (
           <>

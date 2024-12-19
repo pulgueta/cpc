@@ -1,10 +1,11 @@
 import { createInsertSchema } from "drizzle-zod";
 import type { TypeOf } from "zod";
-import { any, coerce, number, object, string, enum as zodEnum } from "zod";
+import { any, coerce, string, enum as zodEnum } from "zod";
 
 import { sale } from "@/db/schemas/sale";
 
 export const createSaleSchema = createInsertSchema(sale, {
+  id: () => string().optional(),
   buyerEmail: string().optional(),
   buyerName: () =>
     string({
@@ -43,9 +44,12 @@ export const createSaleSchema = createInsertSchema(sale, {
   ownerId: () => string({ required_error: "El propietario es requerido" }),
   storeId: () => string({ required_error: "La tienda es requerida" }),
   total: () => coerce.number().positive(),
-}).extend({
-  products: any().optional(),
-});
+  invoiceNumber: () => coerce.number().positive(),
+})
+  .extend({
+    products: any().optional(),
+  })
+  .omit({ createdAt: true, updatedAt: true });
 
 export const sendInvoiceSchema = createSaleSchema.pick({ buyerEmail: true });
 
